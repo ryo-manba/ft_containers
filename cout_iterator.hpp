@@ -1,9 +1,9 @@
-#ifndef ITERATOR_HPP
-#define ITERATOR_HPP
+#ifndef COUT_ITERATOR_HPP
+#define COUT_ITERATOR_HPP
 
 #include <iterator>
 
-// 出力イテレータ
+// 出力イテレーター
 struct cout_iterator
 {
     using difference_type   = void;
