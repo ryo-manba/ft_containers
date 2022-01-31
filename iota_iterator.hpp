@@ -14,7 +14,9 @@ struct iota_iterator
     using reference  = T &;
     using pointer    = T *;
     // イテレーターカテゴリーは前方イテレーター
-    using iterator_category = std::forward_iterator_tag;
+//    using iterator_category = std::forward_iterator_tag;
+    // イテレーターカテゴリーは双方向イテレーター
+    using iterator_category = std::bidirectional_iterator_tag;
 
     // 値を保持する
     T value;
@@ -37,6 +39,19 @@ struct iota_iterator
     {
         auto temp = *this;
         ++(*this);
+        return temp;
+    }
+
+    iota_iterator& operator--()
+    {
+        --value;
+        return *this;
+    }
+
+    iota_iterator operator--(int)
+    {
+        auto temp = *this;
+        --value;
         return temp;
     }
 
