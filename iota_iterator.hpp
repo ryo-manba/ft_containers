@@ -55,8 +55,76 @@ struct iota_iterator
         return temp;
     }
 
+    iota_iterator& operator+=(difference_type n)
+    {
+        value += n;
+        return *this;
+    }
+
+    // iterator + n
+    iota_iterator operator+(difference_type n) const
+    {
+        auto temp = *this;
+        temp += n;
+        return *this;
+    }
+
+    iota_iterator& operator-=(difference_type n)
+    {
+        value -= n;
+        return *this;
+    }
+    iota_iterator operator-(difference_type n) const
+    {
+        auto temp = *this;
+        temp -= n;
+        return *this;
+    }
+
+    difference_type operator -(iota_iterator const& i)
+    {
+        return value - i.value;
+    }
+
     bool operator==(iota_iterator const &i) { return value == i.value; }
     bool operator!=(iota_iterator const &i) { return !(*this == i); }
+    bool operator<(iota_iterator const& i) const
+    {
+        return value < i.value;
+    }
+    bool operator<=(iota_iterator const& i) const
+    {
+        return value <= i.value;
+    }
+    bool operator>(iota_iterator const& i) const
+    {
+        return value > i.value;
+    }
+    bool operator>=(iota_iterator const& i) const
+    {
+        return value >= i.value;
+    }
 };
+
+
+// difference_type + iota_iteratorの場合
+template <typename T>
+iota_iterator<T> operator +
+(
+    typename iota_iterator<T>::difference_type n,
+    iota_iterator<T> const& i
+)
+{
+    return i + n;
+}
+
+template<typename T>
+iota_iterator<T>operator -
+(
+    typename iota_iterator<T>::difference_type n,
+    iota_iterator<T> const & i
+)
+{ return i - n; }
+
 
 #endif
