@@ -5,60 +5,52 @@
 #include <memory>
 
 namespace ft {
-template <typename T, typename Allocator = std::allocator<T> > class vector {
+template <typename T, typename Allocator = std::allocator<T>> class vector {
 
-public:
-  //         typedef T  value_type;
-  //         typedef size_t size_type;
-  //         typedef T* pointer;
-  // //        typedef const pointer const_pointer;
-  //         using const_pointer = const pointer;
-  //         typedef value_type& reference;
-  //         typedef const value_type& const_reference;
-  //         typedef Allocator allocator_type;
+  public:
+          typedef T  value_type;
+          typedef size_t size_type;
+          typedef T* pointer;
+          typedef const pointer const_pointer;
+          typedef value_type& reference;
+          typedef const value_type& const_reference;
+          typedef Allocator allocator_type;
 
-  //         typedef pointer iterator;
-  //         typedef const_pointer const_iterator;
-  //         typedef std::reverse_iterator<iterator> reverse_iterator;
-  //         typedef std::reverse_iterator<const_iterator>
-  //         const_reverse_iterator;
+          typedef pointer iterator;
+          typedef const_pointer const_iterator;
+          typedef std::reverse_iterator<iterator> reverse_iterator;
+          typedef std::reverse_iterator<const_iterator>
+          const_reverse_iterator;
 
-  using value_type = T;
-  using pointer = T *;
-  using const_pointer = const pointer;
-  using reference = value_type &;
-  using const_reference = const value_type &;
-  using allocator_type = Allocator;
-  using size_type = std::size_t;
-  using difference_type = std::ptrdiff_t;
+  // using value_type = T;
+  // using pointer = T *;
+  // using const_pointer = const pointer;
+  // using reference = value_type &;
+  // using const_reference = const value_type &;
+  // using allocator_type = Allocator;
+  // using size_type = std::size_t;
+  // using difference_type = std::ptrdiff_t;
 
-  using iterator = pointer;
-  using const_iterator = const_pointer;
-  using reverse_iterator = std::reverse_iterator<iterator>;
-  using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+  // using iterator = pointer;
+  // using const_iterator = const_pointer;
+  // using reverse_iterator = std::reverse_iterator<iterator>;
+  // using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
   // constructor
   vector() : vector(allocator_type()) {}
-  vector(const allocator_type &alloc)
+  explicit vector(const Allocator& alloc)
       : first(NULL), last(NULL), reserved_last(NULL), alloc(alloc) {}
-
-  //        vector(std::size_t n = 0, Allocator a = Allocator());
-  //        vector( size_type size, const allocator_type & alloc =
-  //        allocator_type() )
-  //            : vector( alloc ) { resize( size ) ;}
-
-  //        vector( size_type size, const_reference value, const allocator_type
-  //        & alloc = allocator_type())
-  //            : vector( alloc ) { resize( size, value ) ;}
-  vector(size_type count, const T &value = T(),
+  explicit vector(size_type count, const T& value = T(),
          const Allocator &alloc = Allocator())
       : vector(alloc) {
     resize(count, value);
   }
 
-  template <typename InputIterator>
-  vector(InputIterator first, InputIterator last,
-         const Allocator & = Allocator())
+  template <typename InputIt>
+  vector(InputIt first, InputIt last,
+         const Allocator& alloc = Allocator(),
+         typename std::enable_if<!std::is_integral<InputIt>::value,
+         InputIt>::type* = NULL)
       : first(NULL), last(NULL), reserved_last(NULL), alloc(alloc) {
     reserve(std::distance(first, last));
     for (auto i = first; i != last; ++i) {
@@ -75,15 +67,15 @@ public:
   }
 
   // copy constructor
-  vector(const vector &r)
+  vector(const vector& other)
       : first(NULL), last(NULL), reserved_last(NULL),
-        alloc(traits::select_on_container_copy_construction(r.alloc)) {
+        alloc(traits::select_on_container_copy_construction(other.alloc)) {
     // コピー元の要素数を保持できるだけのストレージを確保
-    reserve(r.size());
+    reserve(other.size());
     // コピー元の要素をコピー構築
     // destはコピー先
     // [src, last)はコピー元
-    for (auto dest = first, src = r.begin(), last = r.end(); src != last;
+    for (auto dest = first, src = other.begin(), last = other.end(); src != last;
          ++dest, ++src) {
       construct(dest, *src);
     }
@@ -165,10 +157,10 @@ public:
   }
 
   // DEBUG
-  reference front() { return first; }
-  const_reference front() const { return first; }
-  reference back() { return last - 1; }
-  const_reference back() const { return last - 1; }
+  reference front() { return *first; }
+  const_reference front() const { return *first; }
+  reference back() { return *(last - 1); }
+  const_reference back() const { return *(last - 1); }
 
   pointer data() { return first; }
   const_pointer data() const { return first; }
@@ -203,11 +195,6 @@ public:
     last = first;
     reserved_last = first + sz;
 
-    // 例外安全のため
-    // 関数を抜けるときに古いストレージを破棄する
-//    std::scope_exit e(
-//        [&] { traits::deallocate(alloc, old_first, old_capacity); });
-
     // 古いストレージから新しいストレージに要素をコピー構築
     // 実際にはムーブ構築
     for (auto old_iter = old_first; old_iter != old_last; ++old_iter, ++last) {
@@ -221,7 +208,6 @@ public:
          riter != rend; ++riter) {
       destroy(&*riter);
     }
-    // scope_exitによって自動的にストレージが破棄される
   }
 
   void resize(size_type sz) {
@@ -253,7 +239,7 @@ public:
     }
   }
 
-private:
+  private:
   pointer first;
   pointer last;
   pointer reserved_last;
