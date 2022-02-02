@@ -12,7 +12,7 @@ struct integral_constant
     static const Tp value = v;
     typedef Tp value_type;
     typedef integral_constant<Tp, v> type;
-    const value_type() operator()() const { return value; }
+    const value_type operator()() const { return value; }
 };
 
 template <typename Tp, Tp v>
@@ -26,12 +26,12 @@ typedef integral_constant<bool, false> false_type;
 
 /// is_same
 template <typename Tp, typename Up>
-struct is_same<Tp, Tp> : public false_type
+struct is_same : public false_type
 {
 };
 
-template <typename Tp, typename Up>
-struct is_same : public true_type
+template <typename Tp>
+struct is_same<Tp, Tp> : public true_type
 {
 };
 
@@ -67,25 +67,25 @@ struct remove_volatile<Tp volatile>
 template <typename Tp>
 struct remove_cv
 {
-    using type = Tp;
+    typedef Tp type;
 };
 
 template <typename Tp>
 struct remove_cv<const Tp>
 {
-    using type = Tp;
+    typedef Tp type;
 };
 
 template <typename Tp>
 struct remove_cv<volatile Tp>
 {
-    using type = Tp;
+    typedef Tp type;
 };
 
 template <typename Tp>
 struct remove_cv<const volatile Tp>
 {
-    using type = Tp;
+    typedef Tp type;
 };
 
 /// 整数型以外はfalseを返す
@@ -144,20 +144,10 @@ struct is_integral_helper<unsigned long> : public true_type
 {
 };
 
-template <>
-struct is_integral_helper<long long> : public true_type
-{
-};
-
-template <>
-struct is_integral_helper<unsigned long long> : public true_type
-{
-};
-
 /// is_integral
 template <typename Tp>
 struct is_integral
-    : public is_integral_helper<typename remove_cv<T>::type>::type
+    : public is_integral_helper<typename remove_cv<Tp>::type>::type
 {
 };
 
