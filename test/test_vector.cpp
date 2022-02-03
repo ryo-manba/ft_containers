@@ -4,8 +4,6 @@
 
 #define debug(var)  do{std::cout << #var << " : ";view(var);}while(0)
 template<typename T> void view(T e){std::cout << e << std::endl;}
-template<typename T> void view(const std::vector<T>& v){for(const auto& e : v){ std::cout << e << " "; } std::cout << std::endl;}
-template<typename T> void view(const std::vector<std::vector<T> >& vv){ for(const auto& v : vv){ view(v); } }
 
 #define SIZE 5
 
@@ -284,8 +282,14 @@ void testSwap(T vec)
     std::cout << "-----" << __func__ << "-----" << std::endl;
 
     static_cast<void>(vec);
-    std::vector<int> v1 = {1, 2, 3};
-    std::vector<int> v2 = {4, 5, 6};
+    std::vector<int> v1;
+    std::vector<int> v2;
+
+    for (size_t i = 0; i < 3; ++i)
+    {
+        v1.push_back(i);
+        v2.push_back(i+3);
+    }
 
     v1.swap(v2);
     std::cout << "v1 : ";
@@ -327,7 +331,7 @@ template <typename T>
 void testCapacities(T vec)
 {
     testSize(vec);
-    testMaxSize(vec);
+//    testMaxSize(vec);
     testResize(vec);
     testCapacity(vec);
     testEmpty(vec);
@@ -346,32 +350,33 @@ void testElementAccess(T vec)
 template<typename T>
 void testModifiers(T vec)
 {
-    testAssign(vec);
+//    testAssign(vec);
     testPushBack(vec);
-    testPopBack(vec);
-    testInsert(vec);
-    testErase(vec);
+//    testPopBack(vec);
+//    testInsert(vec);
+//    testErase(vec);
     testSwap(vec);
-    testClear(vec);
+//    testClear(vec);
 }
 
 template<typename T>
 void testAllocator(T vec)
 {
-    testGetAllocator(vec);
+    static_cast<void>(vec);
+//    testGetAllocator(vec);
 }
 
 void testVector(void)
 {
-    std::vector<int> vec(SIZE);
+    ft::vector<int> vec;
 
-    testIterators(vec);
-    testCapacities(vec);
-    testModifiers(vec);
-    testAllocator(vec);
+//    testIterators(vec);
+//    testCapacities(vec);
+//    testModifiers(vec);
+//    testAllocator(vec);
 }
 
 int main(void)
 {
-//    testVector();
+    testVector();
 }

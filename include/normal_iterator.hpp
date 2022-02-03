@@ -6,45 +6,39 @@
 
 namespace ft
 {
-template<class Iterator>
-class normal_iterator : public std::iterator<std::random_access_iterator_tag, Iterator>
+template<class T>
+class normal_iterator : public ft::iterator<std::random_access_iterator_tag, T>
 {
 protected:
-    Iterator current_;
-    typedef iterator_traits<Iterator> traits_type;
+    T* current_;
+//    typedef iterator_traits<Iterator> traits_type;
+    typedef typename ft::iterator<std::random_access_iterator_tag, T> traits_type;
 
 public:
-    typedef Iterator iterator_type;
     typedef typename traits_type::iterator_category iterator_category;
     typedef typename traits_type::value_type value_type;
     typedef typename traits_type::difference_type difference_type;
-    typedef typename traits_type::reference reference;
-    typedef typename traits_type::pointer pointer;
+    typedef T& reference;
+    typedef T* pointer;
 
     // Member functions
     normal_iterator() : current_(NULL) {}
-
     normal_iterator(pointer& p) : current_(p) {}
     normal_iterator(const normal_iterator& other)
-        : current_(other.current_) { }
-
-    ~normal_iterator();
-/*    // よく分かってない
-    template <typename Iter>
-    normal_iterator(
-        const normal_iterator<
-            Iter, typename enable_if<
-                      (std::are_same<Iter::pointer>::value),
-                >::type>& it)
-        : current_(it.base())
+        : current_(other.base()) { }
+    normal_iterator& operator=(const normal_iterator& other)
     {
+        if (this == &other)
+            return *this;
+        current_ = other.base();
+        return *this;
     }
-*/
+    pointer base() const { return current_; }
+    ~normal_iterator() { }
 
     // Forward iterator requirements
     reference operator*() const { return *current_; }
-
-    pointer operator->() const { return current_; }
+    pointer operator->() const { return &(operator*()); }
 
     normal_iterator& operator++()
     {
@@ -52,7 +46,12 @@ public:
         return *this;
     }
 
-    normal_iterator operator++(int) { return normal_iterator(current_++); }
+    normal_iterator operator++(int) 
+    {
+        normal_iterator tmp = *this;
+        ++current_;
+        return tmp;
+    }
 
     // Bidirectional iterator requirements
     normal_iterator& operator--()
@@ -61,7 +60,12 @@ public:
         return *this;
     }
 
-    normal_iterator operator--(int) { return normal_iterator(current_--); }
+    normal_iterator operator--(int)
+    {
+        normal_iterator tmp = *this;
+        --current_;
+        return tmp;
+    }
 
     // Random access iterator requirements
     reference operator[](difference_type n) const { return current_[n]; }
@@ -69,7 +73,7 @@ public:
     normal_iterator& operator+=(difference_type n)
     {
         current_ += n;
-        return +this;
+        return *this;
     }
 
     normal_iterator operator+(difference_type n) const
@@ -87,8 +91,6 @@ public:
     {
         return normal_iterator(current_ - n);
     }
-
-    const Iterator& base() const { return current_; }
 };
 
     // Non-member functions

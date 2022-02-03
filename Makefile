@@ -1,14 +1,16 @@
 NAME    := a.out
 CXX     := clang++
-CXXFLAGS:= -Wall -Wextra -Werror -std=c++11 -MMD -MP -pedantic
+CXXFLAGS:= -Wall -Wextra -Werror -std=c++98 -MMD -MP -pedantic
 
 # Directories
-SRCDIR  := ./src
+#SRCDIR  := ./src
+SRCDIR  := ./test
 OBJDIR  := ./obj
 DEPDIR  := ./dep
 INCDIR  := ./include
 
-SRCFILE := main.cpp
+#SRCFILE := main.cpp
+SRCFILE := test_vector.cpp
 
 SRCS    := $(addprefix $(SRCDIR)/, $(SRCFILE))
 OBJS    := $(addprefix $(OBJDIR)/, $(notdir $(SRCS:.cpp=.o)))
