@@ -23,7 +23,7 @@ public:
     typedef size_t size_type;
 
     typedef ft::normal_iterator<value_type> iterator;
-    typedef ft::normal_iterator<const value_type> const_iterator;
+    typedef ft::normal_iterator<value_type> const_iterator;
     typedef ft::reverse_iterator<iterator> reverse_iterator;
     typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
@@ -256,6 +256,46 @@ public:
                 construct(last_, value);    // ここが引数valueに変更されている
             }
         }
+    }
+
+    // !!TODO 実装
+    size_t max_size(void)
+    {return 1;}
+
+    void assign(size_type n, const value_type& val)
+    {
+        (void)n;
+        (void)val;
+        return ;
+    }
+    void insert(const_iterator position, size_type n, const value_type& x)
+    {
+        (void)position;
+        (void)n;
+        (void)x;
+//        return position;
+    }
+//    void insert(iterator position, size_type n, const value_type& x)
+//    {
+//        (void)n;
+//        (void)x;
+////        return position;
+//    }
+    iterator erase(iterator position)
+    {
+        return position;
+    }
+    void swap(vector& x)
+    {
+        (void)x;
+        return ;
+    }
+    allocator_type get_allocator() const
+    {return 0; }
+
+    void pop_back()
+    {
+        return;
     }
 
 protected:

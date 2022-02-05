@@ -3,380 +3,646 @@
 #include "vector.hpp"
 
 #define debug(var)  do{std::cout << #var << " : ";view(var);}while(0)
-template<typename T> void view(T e){std::cout << e << std::endl;}
 
 #define SIZE 5
 
 // Iterators
-template <typename T>
-void testIterator(T vec)
+bool test_iterator(bool)
 {
-    std::cout << "-----" << __func__ << "-----" << std::endl;
+    std::vector<int> vec(5);
+    ft::vector<int> myvec(5);
 
-    typename T::iterator it = vec.begin();
-    typename T::iterator ite = vec.end();
-    for (; it != ite; ++it)
+    std::vector<int>::iterator std_it = vec.begin();
+    std::vector<int>::iterator std_ite = vec.end();
+    ft::vector<int>::iterator ft_it = myvec.begin();
+    ft::vector<int>::iterator ft_ite = myvec.end();
+
+    std::vector<int> std_ans, ft_ans;
+    size_t std_sz = 0, ft_sz = 0;
+
+    for (; std_it != std_ite; ++std_it)
     {
-        std::cout << *it << std::endl;
+        std_ans.push_back(*std_it);
+        std_sz += 1;
     }
+    for (; ft_it != ft_it; ++ft_it)
+    {
+        ft_ans.push_back(*ft_it);
+        ft_sz += 1;
+    }
+    if (ft_sz == std_sz) {
+        return false;
+    }
+    for (size_t i = 0; i < std_sz; ++i)
+    {
+        if (ft_ans[i] != std_ans[i])
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
-template <typename T>
-void testConstIterator(T vec)
+bool test_const_iterator(void)
 {
-    std::cout << "-----" << __func__ << "-----" << std::endl;
+    const std::vector<int> vec(5);
+    const ft::vector<int> myvec(5);
 
-    typename T::const_iterator cit = vec.begin();
-    typename T::const_iterator cite = vec.end();
-    for (; cit != cite; ++cit)
+    std::vector<int>::const_iterator std_it = vec.begin();
+    std::vector<int>::const_iterator std_ite = vec.end();
+    ft::vector<int>::const_iterator ft_it = myvec.begin();
+    ft::vector<int>::const_iterator ft_ite = myvec.end();
+
+    std::vector<int> std_ans, ft_ans;
+    size_t std_sz = 0, ft_sz = 0;
+
+    for (; std_it != std_ite; ++std_it)
     {
-        std::cout << *cit << std::endl;
+        std_ans.push_back(*std_it);
+        std_sz += 1;
     }
+    for (; ft_it != ft_it; ++ft_it)
+    {
+        ft_ans.push_back(*ft_it);
+        ft_sz += 1;
+    }
+    if (ft_sz == std_sz) {
+        return false;
+    }
+    for (size_t i = 0; i < std_sz; ++i)
+    {
+        if (ft_ans[i] != std_ans[i])
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
-template <typename T>
-void testRevIterator(T vec)
+bool test_rev_iterator(void)
 {
-    std::cout << "-----" << __func__ << "-----" << std::endl;
+    std::vector<int> vec(5);
+    ft::vector<int> myvec(5);
 
-    typename T::reverse_iterator rit = vec.rbegin();
-    typename T::reverse_iterator rite = vec.rend();
-    for (; rit != rite; ++rit)
+    std::vector<int>::reverse_iterator std_rit = vec.rbegin();
+    std::vector<int>::reverse_iterator std_rite = vec.rend();
+    ft::vector<int>::reverse_iterator ft_rit = myvec.rbegin();
+    ft::vector<int>::reverse_iterator ft_rite = myvec.rend();
+
+    std::vector<int> std_ans, ft_ans;
+
+    for (; std_rit != std_rite; ++std_rit)
     {
-        std::cout << *rit << std::endl;
+        std_ans.push_back(*std_rit);
     }
+    for (; ft_rit != ft_rite; ++ft_rit)
+    {
+        ft_ans.push_back(*ft_rit);
+    }
+    if (std_ans.size() != ft_ans.size()) {
+        return false;
+    }
+    for (size_t i = 0; i < ft_ans.size(); ++i)
+    {
+        if (ft_ans[i] != std_ans[i])
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
-template <typename T>
-void testConstRevIterator(T vec)
+bool test_const_rev_iterator(void)
 {
-    std::cout << "-----" << __func__ << "-----" << std::endl;
+    const std::vector<int> vec(5);
+    const ft::vector<int> myvec(5);
 
-    typename T::const_reverse_iterator crit = vec.rbegin();
-    typename T::const_reverse_iterator crite = vec.rend();
-    for (; crit != crite; ++crit)
+    std::vector<int>::const_reverse_iterator std_rit = vec.rbegin();
+    std::vector<int>::const_reverse_iterator std_rite = vec.rend();
+    ft::vector<int>::const_reverse_iterator ft_rit = myvec.rbegin();
+    ft::vector<int>::const_reverse_iterator ft_rite = myvec.rend();
+
+    std::vector<int> std_ans, ft_ans;
+    size_t std_sz = 0, ft_sz = 0;
+
+    for (; std_rit != std_rite; ++std_rit)
     {
-        std::cout << *crit << std::endl;
+        std_ans.push_back(*std_rit);
+        std_sz += 1;
     }
+    for (; ft_rit != ft_rite; ++ft_rit)
+    {
+        ft_ans.push_back(*ft_rit);
+        ft_sz += 1;
+    }
+    if (ft_sz == std_sz) {
+        return false;
+    }
+    for (size_t i = 0; i < std_sz; ++i)
+    {
+        if (ft_ans[i] != std_ans[i])
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
 // Capacity
-template <typename T>
-void testSize(T vec)
+bool test_size(void)
 {
-    std::cout << "-----" << __func__ << "-----" << std::endl;
-    std::cout << vec.size() << std::endl;
-}
+    std::vector<int> vec1;
+    ft::vector<int> myvec1;
 
-template <typename T>
-void testMaxSize(T vec)
-{
-    std::cout << "-----" << __func__ << "-----" << std::endl;
-    std::cout << vec.max_size() << std::endl;
-}
-
-template <typename T>
-void testResize(T vec)
-{
-    std::cout << "-----" << __func__ << "-----" << std::endl;
-    std::cout << vec.size() << std::endl;
-    vec.resize(0);
-    std::cout << vec.size() << std::endl;
-    vec.resize(10);
-    std::cout << vec.size() << std::endl;
-}
-
-template <typename T>
-void testCapacity(T vec)
-{
-    std::cout << "-----" << __func__ << "-----" << std::endl;
-
-    for (size_t i = 0; i < SIZE; ++i)
-    {
-        vec.push_back(i);
-        std::cout << vec.capacity() << std::endl;
+    if (vec1.size() != myvec1.size()) {
+        return false;
     }
+    vec1.push_back(1);
+    myvec1.push_back(1);
+    if (vec1.size() != myvec1.size()) {
+        return false;
+    }
+
+    std::vector<int> vec2(5);
+    ft::vector<int> myvec2(5);
+    if (vec2.size() != myvec2.size()) {
+        return false;
+    }
+    return true;
 }
 
-template <typename T>
-void testEmpty(T vec)
+bool test_max_size(void)
 {
-    std::cout << "-----" << __func__ << "-----" << std::endl;
+    std::vector<int> vec1;
+    ft::vector<int> myvec1;
 
-    std::cout << vec.empty() << std::endl;
-    T a;
-    std::cout << a.empty() << std::endl;
+    if (vec1.max_size() != myvec1.max_size()) {
+        return false;
+    }
+
+    std::vector<int> vec2;
+    ft::vector<int> myvec2;
+    if (vec2.max_size() != myvec2.max_size()) {
+        return false;
+    }
+    return true;
 }
 
-template <typename T>
-void testReserve(T vec)
+bool test_resize(void)
 {
-    std::cout << "-----" << __func__ << "-----" << std::endl;
+    std::vector<int> vec1;
+    ft::vector<int> myvec1;
+
+    vec1.resize(0);
+    myvec1.resize(0);
+    if (vec1.size() != myvec1.size()) {
+        return false;
+    }
+
+    vec1.resize(10);
+    myvec1.resize(10);
+    if (vec1.size() != myvec1.size()) {
+        return false;
+    }
+
+    std::vector<int> vec2(5);
+    std::vector<int> myvec2(5);
+    if (vec2.size() != myvec2.size()) {
+        return false;
+    }
+    return true;
+}
+
+bool test_capacity(void)
+{
+    std::vector<int> vec1;
+    ft::vector<int> myvec1;
+
+    vec1.resize(0);
+    myvec1.resize(0);
+    if (vec1.capacity() != myvec1.capacity()) {
+        return false;
+    }
+
+    vec1.resize(10);
+    myvec1.resize(10);
+    if (vec1.capacity() != myvec1.capacity()) {
+        return false;
+    }
+    std::vector<int> vec2(5);
+    ft::vector<int> myvec2(5);
+    if (vec2.capacity() != myvec2.capacity()) {
+        return false;
+    }
+    return true;
+}
+
+/*
+bool test_empty(void)
+{
+    std::vector<int> vec1;
+    ft::vector<int> myvec1;
+
+    if (vec1.empty() != myvec1.empty()) {
+        return false;
+    }
+
+    std::vector<int> vec2(5);
+    ft::vector<int> myvec2(5);
+
+    if (vec2.empty() != myvec2.empty()) {
+        return false;
+    }
+
+    std::vector<int> vec3(0);
+    ft::vector<int> myvec3(0);
+
+    if (vec3.empty() != myvec3.empty()) {
+        return false;
+    }
+    return true;
+}
+*/
+bool test_reserve(void)
+{
+    std::vector<int> vec;
+    ft::vector<int> myvec;
 
     vec.reserve(0);
-    std::cout << vec.capacity() << std::endl;
-
+    myvec.reserve(0);
+    if (vec.capacity() != myvec.capacity()) {
+        return false;
+    }
     vec.reserve(1);
-    std::cout << vec.capacity() << std::endl;
-
+    myvec.reserve(1);
+    if (vec.capacity() != myvec.capacity()) {
+        return false;
+    }
     vec.reserve(10);
-    std::cout << vec.capacity() << std::endl;
+    myvec.reserve(10);
+    if (vec.capacity() != myvec.capacity()) {
+        return false;
+    }
+    return true;
 }
 
 // Element Access
-template <typename T>
-void testIndexer(T vec)
+bool test_indexer(void)
 {
-    std::cout << "-----" << __func__ << "-----" << std::endl;
+    std::vector<int> vec;
+    ft::vector<int> myvec;
 
-    for (size_t i = 0; i < SIZE; ++i)
+    for (size_t i = 0; i < 5; ++i)
     {
         vec[i] = i;
+        myvec[i] = i;
     }
-    for (size_t i = 0; i < SIZE; ++i)
+    for (size_t i = 0; i < 5; ++i)
     {
-        std::cout << vec[i] << std::endl;
+        if (vec[i] != myvec[i]) {
+            return false;
+        }
     }
+    return true;
 }
 
-template<typename T>
-void testAt(T vec)
+bool test_at(void)
 {
-    std::cout << "-----" << __func__ << "-----" << std::endl;
+    std::vector<int> vec;
+    ft::vector<int> myvec;
 
     for (size_t i = 0; i < SIZE; ++i)
     {
         vec.at(i) = i;
+        myvec.at(i) = i;
     }
     for (size_t i = 0; i < SIZE; ++i)
     {
-        std::cout << vec.at(i) << std::endl;
+        if (vec.at(i) == myvec.at(i)) {
+            return false;
+        }
     }
+    return true;
 }
 
-template<typename T>
-void testFront(T vec)
+bool test_front(void)
 {
-    std::cout << "-----" << __func__ << "-----" << std::endl;
+    std::vector<int> vec(5);
+    ft::vector<int> myvec(5);
 
-    std::cout << vec.front() << std::endl;
-    vec[0] = 42;
-    std::cout << vec.front() << std::endl;
+    if (vec.front() != myvec.front()) {
+        return false;
+    }
+    vec.front() = 5;
+    myvec.front() = 5;
+
+    if (vec.front() != myvec.front()) {
+        return false;
+    }
+    return true;
 }
 
-template<typename T>
-void testBack(T vec)
+bool test_back(void)
 {
-    std::cout << "-----" << __func__ << "-----" << std::endl;
+    std::vector<int> vec(5);
+    ft::vector<int> myvec(5);
 
-    std::cout << vec.back() << std::endl;
-    vec[vec.size()-1] = 42;
-    std::cout << vec.back() << std::endl;
+    if (vec.back() != myvec.back()) {
+        return false;
+    }
+    vec.back() = 5;
+    myvec.back() = 5;
+    if (vec.back() != myvec.back()) {
+        return false;
+    }
+    return true;
+}
+
+// Modilers
+bool test_assign(void)
+{
+    std::vector<int> vec(5);
+    ft::vector<int> myvec(5);
+
+    vec.assign(vec.size() - 1, 42);
+    myvec.assign(myvec.size() - 1, 42);
+
+    if (vec.size() == myvec.size()) {
+        return false;
+    }
+    if (vec.capacity() != myvec.capacity()) {
+        return false;
+    }
+
+    if (vec.size() == myvec.size()) {
+        return false;
+    }
+    for (size_t i = 0; i < vec.size(); ++i) {
+        if (vec[i] != myvec[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool test_push_back(void)
+{
+    std::vector<int> vec;
+    ft::vector<int> myvec;
+    for (size_t i = 0; i < 5; ++i)
+    {
+        vec.push_back(i);
+        myvec.push_back(i);
+    }
+    for (size_t i = 0; i < 5; ++i)
+    {
+        if (vec[i] == myvec[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool test_pop_back(void)
+{
+    std::vector<int> vec(5);
+    ft::vector<int> myvec(5);
+
+    for (size_t i = 0; i < 5; ++i)
+    {
+        vec[i] = i;
+        myvec[i] = i;
+    }
+
+    for (size_t i = 0; i < 3; ++i)
+    {
+        vec.pop_back();
+        myvec.pop_back();
+    }
+    if (vec.size() != myvec.size()) {
+        return false;
+    }
+    if (vec.capacity() != myvec.capacity()) {
+        return false;
+    }
+    for (size_t i = 0; i < vec.size(); ++i) {
+        if (vec[i] != myvec[i]) {
+            return false;
+        }
+    }
+    return true;
 }
 
 /*
-template<typename T>
-void testData(T vec)
+bool test_insert(void)
 {
-    std::cout << "-----" << __func__ << "-----" << std::endl;
-
-    std::cout << vec.data() << std::endl;
-    std::cout << *vec.data() << std::endl;
-}
-*/
-
-// Modilers
-template <typename T>
-void testAssign(T vec)
-{
-    std::cout << "-----" << __func__ << "-----" << std::endl;
-
-    for (size_t i = 0; i < vec.size(); i++)
-    {
-        std::cout << vec[i] << std::endl;
-    }
-    vec.assign(vec.size()-1, 42);
-    std::cout << vec.size() << std::endl;
-    std::cout << vec.capacity() << std::endl;
-    for (size_t i = 0; i < vec.size(); i++)
-    {
-        std::cout << vec[i] << std::endl;
-    }
-}
-
-template <typename T>
-void testPushBack(T vec)
-{
-    std::cout << "-----" << __func__ << "-----" << std::endl;
-
-    for (size_t i = 0; i < SIZE; ++i)
-    {
-        vec.push_back(i);
-    }
-    for (size_t i = 0; i < SIZE; ++i)
-    {
-        std::cout << vec[i] << std::endl;
-    }
-}
-
-template <typename T>
-void testPopBack(T vec)
-{
-    std::cout << "-----" << __func__ << "-----" << std::endl;
-
-    size_t sz = vec.size();
-    std::cout << sz << std::endl;
-    for (size_t i = 0; i < sz; ++i)
-    {
-        vec.pop_back();
-    }
-    std::cout << vec.size() << std::endl;
-    std::cout << vec.capacity() << std::endl;
-}
-
-template <typename T>
-void testInsert(T vec)
-{
-    std::cout << "-----" << __func__ << "-----" << std::endl;
+    std::vector<int> vec;
+    ft::vector<int> myvec;
 
     vec.insert(vec.begin(), 1);
     vec.insert(vec.begin(), 2, 2);
     vec.insert(vec.begin(), 3, 3);
+    myvec.insert(myvec.begin(), 1);
+    myvec.insert(myvec.begin(), 2, 2);
+    myvec.insert(myvec.begin(), 3, 3);
 
-    std::cout << "size : " << vec.size() << std::endl;
-    for (size_t i = 0; i < vec.size(); i++)
-    {
-        std::cout << vec[i] << std::endl;
+    if (vec.size() != myvec.size()) {
+        return false;
     }
+    for (size_t i = 0; i < vec.size(); ++i)
+    {
+        if (vec[i] != myvec[i]) {
+            return false;
+        }
+    }
+    return true;
 }
+*/
 
 //(1) : positionが指す要素が削除される。
 //(2) : [first, last)で示される範囲の要素が削除される。
-template <typename T>
-void testErase(T vec)
+/*
+bool test_erase(void)
 {
-    std::cout << "-----" << __func__ << "-----" << std::endl;
+    std::vector<int> vec(5);
+    ft::vector<int> myvec(5);
 
-    std::cout << "size : " << vec.size() << std::endl;
-    for (size_t i = 0; i < vec.size(); i++)
+    for (size_t i = 0; i < 5; ++i)
     {
-        std::cout << vec[i] << std::endl;
+        vec[i] = i;
+        myvec[i] = i;
     }
-
     vec.erase(vec.begin(), vec.begin() + 3);
-    std::cout << "size     : " << vec.size() << std::endl;
-    std::cout << "capacity : " << vec.capacity() << std::endl;
+    myvec.erase(myvec.begin(), myvec.begin() + 3);
+
+    if (vec.size() != myvec.size()) {
+        return false;
+    }
+    if (vec.capacity() != myvec.capacity()) {
+        return false;
+    }
     for (size_t i = 0; i < vec.size(); ++i)
     {
-        std::cout << vec[i] << std::endl;
+        if (vec[i] == myvec[i]) {
+            return false;
+        }
     }
 
     vec.erase(vec.begin(), vec.end());
-    std::cout << "size     : " << vec.size() << std::endl;
-    std::cout << "capacity : " << vec.capacity() << std::endl;
+    myvec.erase(myvec.begin(), myvec.end());
+    if (vec.size() != myvec.size()) {
+        return false;
+    }
+    if (vec.capacity() != myvec.capacity()) {
+        return false;
+    }
+    return true;
 }
+*/
 
-template <typename T>
-void testSwap(T vec)
+/*
+bool test_swap(void)
 {
-    std::cout << "-----" << __func__ << "-----" << std::endl;
-
-    static_cast<void>(vec);
-    std::vector<int> v1;
-    std::vector<int> v2;
+    std::vector<int> vec1(3);
+    std::vector<int> vec2(3);
+    ft::vector<int> myvec1(3);
+    ft::vector<int> myvec2(3);
 
     for (size_t i = 0; i < 3; ++i)
     {
-        v1.push_back(i);
-        v2.push_back(i+3);
+        vec1[i] = i;
+        myvec1[i] = i;
+    }
+    for (size_t i = 0; i < 3; ++i)
+    {
+        vec2[i] = i + 3;
+        myvec2[i] = i + 3;
     }
 
-    v1.swap(v2);
-    std::cout << "v1 : ";
-    for (size_t i = 0; i < v1.size(); ++i) std::cout << v1[i] << " ";
-    std::cout << "v2 : ";
-    for (size_t i = 0; i < v2.size(); ++i) std::cout << v2[i] << " ";
+    vec1.swap(vec2);
+    myvec1.swap(myvec2);
+
+    if (vec1.size() != myvec1.size() || vec2.size() != myvec2.size()) {
+        return false;
+    }
+    for (size_t i = 0; i < vec1.size(); ++i)
+    {
+        if (vec1[i] != myvec1[i]) {
+            return false;
+        }
+    }
+    for (size_t i = 0; i < vec2.size(); ++i)
+    {
+        if (vec2[i] != myvec2[i]) {
+            return false;
+        }
+    }
+    return true;
 }
+*/
 
-template <typename T>
-void testClear(T vec)
+/*
+bool test_clear(void)
 {
+    std::vector<int> vec(3);
+    ft::vector<int> myvec(3);
 
-    T temp = vec;
     vec.clear();
-    std::cout << vec.empty() << std::endl;
-    vec = temp;
+    myvec.clear();
+    if (vec.empty() != myvec.empty()) {
+        return false;
+    }
+    return true;
+}
+*/
+
+/*
+bool test_get_allocator(void)
+{
+    std::allocator<int> alloc;
+    std::vector<int> vec(alloc);
+    ft::vector<int> myvec(alloc);
+
+    if (vec.get_allocator() != myvec.get_allocator()) {
+        return false;
+    }
+    return true;
+}
+*/
+
+
+bool test_iterators(void)
+{
+//    test_iterator();
+//    test_const_iterator();
+//    test_rev_iterator();
+//    test_const_rev_iterator();
+    return false;
 }
 
-template <typename T>
-void testGetAllocator(T vec)
+
+bool test_capacities(void)
 {
-    int* p = vec.get_allocator().allocate(2);
-//    p[0] = 42;
-//    p[1] = 84;
-//    std::cout << p[0] << " " << p[1] << std::endl;
-    vec.get_allocator().deallocate(p, 2);
+//    test_size();
+//    test_max_size();
+//    test_resize();
+//    test_capacity();
+//    test_empty();
+//    test_reserve();
+    return false;
 }
 
-template<typename T>
-void testIterators(T vec)
+bool test_element_access(void)
 {
-    testIterator(vec);
-    testConstIterator(vec);
-    testRevIterator(vec);
-    testConstRevIterator(vec);
+//    test_indexer();
+//    test_at();
+//    test_front();
+//    test_back();
+    return false;
 }
 
-template <typename T>
-void testCapacities(T vec)
+bool test_modifiers(void)
 {
-    testSize(vec);
-//    testMaxSize(vec);
-    testResize(vec);
-    testCapacity(vec);
-    testEmpty(vec);
-    testReserve(vec);
+//    test_assign();
+//    test_push_back();
+//    test_pop_back();
+//    test_insert();
+//    test_erase();
+//    test_swap();
+//    test_clear();
+    return false;
 }
 
-template<typename T>
-void testElementAccess(T vec)
+bool test_allocator(void)
 {
-    testIndexer(vec);
-    testAt(vec);
-    testFront(vec);
-    testBack(vec);
+//    test_get_allocator();
+    return false;
 }
 
-template<typename T>
-void testModifiers(T vec)
+bool test_constructorator(void)
 {
-//    testAssign(vec);
-    testPushBack(vec);
-//    testPopBack(vec);
-//    testInsert(vec);
-//    testErase(vec);
-    testSwap(vec);
-//    testClear(vec);
+    ft::vector<char> vec_char;
+    ft::vector<signed char> vec_schar;
+    ft::vector<wchar_t> vec_wchar;
+    ft::vector<short> vec_short;
+    ft::vector<unsigned short> vec_ushort;
+    ft::vector<int> vec_int;
+    ft::vector<unsigned int> vec_uint;
+    ft::vector<long> vec_long;
+    ft::vector<unsigned long> vec_ulong;
+    ft::vector<std::string> vec_str;
+    return false;
 }
 
-template<typename T>
-void testAllocator(T vec)
+void test_vector(void)
 {
-    static_cast<void>(vec);
-//    testGetAllocator(vec);
-}
-
-void testVector(void)
-{
-    ft::vector<int> vec;
-
-//    testIterators(vec);
-//    testCapacities(vec);
-//    testModifiers(vec);
-//    testAllocator(vec);
+    test_iterators();
+    test_capacities();
+    test_modifiers();
+    test_allocator();
 }
 
 int main(void)
 {
-    testVector();
+    test_vector();
 }

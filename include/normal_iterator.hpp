@@ -6,12 +6,11 @@
 
 namespace ft
 {
-template<class T>
+template<typename T>
 class normal_iterator : public ft::iterator<std::random_access_iterator_tag, T>
 {
 protected:
     T* current_;
-//    typedef iterator_traits<Iterator> traits_type;
     typedef typename ft::iterator<std::random_access_iterator_tag, T> traits_type;
 
 public:
@@ -23,7 +22,7 @@ public:
 
     // Member functions
     normal_iterator() : current_(NULL) {}
-    normal_iterator(pointer& p) : current_(p) {}
+    normal_iterator(pointer p) : current_(p) {}
     normal_iterator(const normal_iterator& other)
         : current_(other.base()) { }
     normal_iterator& operator=(const normal_iterator& other)
@@ -33,8 +32,8 @@ public:
         current_ = other.base();
         return *this;
     }
-    pointer base() const { return current_; }
     ~normal_iterator() { }
+    pointer base() const { return current_; }
 
     // Forward iterator requirements
     reference operator*() const { return *current_; }
@@ -46,7 +45,7 @@ public:
         return *this;
     }
 
-    normal_iterator operator++(int) 
+    normal_iterator operator++(int)
     {
         normal_iterator tmp = *this;
         ++current_;
