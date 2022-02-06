@@ -3,10 +3,11 @@
 
 #include <iostream>
 #include <memory>
+
 #include "iterator.hpp"
-#include "utils.hpp"
-#include "type_traits.hpp"
 #include "normal_iterator.hpp"
+#include "type_traits.hpp"
+#include "utils.hpp"
 
 namespace ft
 {
@@ -28,36 +29,50 @@ public:
     typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
     // constructor
-    vector() :
-    first_(NULL), last_(NULL), reserved_last_(NULL), alloc_(allocator_type()) {}
+    vector()
+        : first_(NULL),
+          last_(NULL),
+          reserved_last_(NULL),
+          alloc_(allocator_type())
+    {
+    }
 
     explicit vector(const Allocator& alloc_)
         : first_(NULL), last_(NULL), reserved_last_(NULL), alloc_(alloc_)
     {
     }
+
     explicit vector(size_type count, const T& value = T(),
                     const Allocator& alloc_ = Allocator())
         : first_(NULL), last_(NULL), reserved_last_(NULL), alloc_(alloc_)
     {
         resize(count, value);
     }
+    /*
+        template< class InputIt >
+        vector( InputIt first, InputIt last,
+            const Allocator& alloc = Allocator() )
+        {
+
+        }
+        */
 
     template <typename InputIt>
     vector(InputIt first_, InputIt last_, const Allocator& alloc_ = Allocator(),
            typename ft::enable_if<!ft::is_integral<InputIt>::value,
-                                   InputIt>::type* = NULL)
+                                  InputIt>::type* = NULL)
         : first_(NULL), last_(NULL), reserved_last_(NULL), alloc_(alloc_)
     {
         reserve(ft::distance(first_, last_));
-        for (pointer i = first_; i != last_; ++i) { push_back(*i); }
+        for (pointer i = first_; i != last_; ++i)
+        {
+            push_back(*i);
+        }
     }
 
-// copy constructor
+    // copy constructor
     vector(const vector& other)
-        : first_(NULL),
-          last_(NULL),
-          reserved_last_(NULL),
-          alloc_(other.alloc_)
+        : first_(NULL), last_(NULL), reserved_last_(NULL), alloc_(other.alloc_)
     {
         // コピー元の要素数を保持できるだけのストレージを確保
         reserve(other.size());
@@ -100,7 +115,8 @@ public:
                 // 有効な要素はコピー
                 std::copy(r.begin(), r.begin() + r.size(), begin());
                 // 残りはコピー構築
-                for (const_iterator src_iter = r.begin() + r.size(), src_end = r.end();
+                for (const_iterator src_iter = r.begin() + r.size(),
+                                    src_end  = r.end();
                      src_iter != src_end; ++src_iter, ++last_)
                 {
                     construct(last_, *src_iter);
@@ -114,7 +130,7 @@ public:
                 reserve(r.size());
                 // コピー構築
                 for (const_iterator src_iter = r.begin(), src_end = r.end(),
-                          dest_iter = begin();
+                                    dest_iter = begin();
                      src_iter != src_end; ++src_iter, ++dest_iter, ++last_)
                 {
                     construct(dest_iter, *src_iter);
@@ -147,13 +163,28 @@ public:
     }
 
     // 容量確認
-    size_type size() const { return end() - begin(); }
-    bool empty() const { return begin() == end(); }
-    size_type capacity() const { return reserved_last_ - first_; }
+    size_type size() const
+    {
+        return end() - begin();
+    }
+    bool empty() const
+    {
+        return begin() == end();
+    }
+    size_type capacity() const
+    {
+        return reserved_last_ - first_;
+    }
 
     // 要素アクセス
-    reference operator[](size_type i) { return first_[i]; }
-    const_reference operator[](size_type i) const { return first_[i]; }
+    reference operator[](size_type i)
+    {
+        return first_[i];
+    }
+    const_reference operator[](size_type i) const
+    {
+        return first_[i];
+    }
 
     reference at(size_type i)
     {
@@ -167,25 +198,70 @@ public:
     }
 
     // DEBUG
-    reference front() { return *first_; }
-    const_reference front() const { return *first_; }
-    reference back() { return *(last_ - 1); }
-    const_reference back() const { return *(last_ - 1); }
+    reference front()
+    {
+        return *first_;
+    }
+    const_reference front() const
+    {
+        return *first_;
+    }
+    reference back()
+    {
+        return *(last_ - 1);
+    }
+    const_reference back() const
+    {
+        return *(last_ - 1);
+    }
 
-    pointer data() { return first_; }
-    const_pointer data() const { return first_; }
+    pointer data()
+    {
+        return first_;
+    }
+    const_pointer data() const
+    {
+        return first_;
+    }
 
     // イテレーターアクセス
-    iterator begin() { return first_; }
-    const_iterator begin() const { return first_; }
-    iterator end() { return last_; }
-    const_iterator end() const { return last_; }
-    reverse_iterator rbegin() { return reverse_iterator(end()); }
-    const_reverse_iterator rbegin() const { return reverse_iterator(end()); }
-    reverse_iterator rend() { return reverse_iterator(begin()); }
-    const_reverse_iterator rend() const { return reverse_iterator(begin()); }
+    iterator begin()
+    {
+        return first_;
+    }
+    const_iterator begin() const
+    {
+        return first_;
+    }
+    iterator end()
+    {
+        return last_;
+    }
+    const_iterator end() const
+    {
+        return last_;
+    }
+    reverse_iterator rbegin()
+    {
+        return reverse_iterator(end());
+    }
+    const_reverse_iterator rbegin() const
+    {
+        return reverse_iterator(end());
+    }
+    reverse_iterator rend()
+    {
+        return reverse_iterator(begin());
+    }
+    const_reverse_iterator rend() const
+    {
+        return reverse_iterator(begin());
+    }
 
-    void clear() { destroy_until(rend()); }
+    void clear()
+    {
+        destroy_until(rend());
+    }
 
     void reserve(size_type sz)
     {
@@ -205,7 +281,6 @@ public:
         last_          = first_;
         reserved_last_ = first_ + sz;
 
-
         // 実際にはムーブ構築
         for (pointer old_iter = old_first; old_iter != old_last;
              ++old_iter, ++last_)
@@ -216,7 +291,7 @@ public:
 
         // 新しいストレージにコピーし終えたので古いストレージの値は破棄
         for (reverse_iterator riter = reverse_iterator(old_last),
-                  rend  = reverse_iterator(old_first);
+                              rend  = reverse_iterator(old_first);
              riter != rend; ++riter)
         {
             destroy(&*riter);
@@ -236,7 +311,10 @@ public:
         else if (sz > size())
         {
             reserve(sz);
-            for (; last_ != reserved_last_; ++last_) { construct(last_); }
+            for (; last_ != reserved_last_; ++last_)
+            {
+                construct(last_);
+            }
         }
     }
 
@@ -260,38 +338,62 @@ public:
 
     // !!TODO 実装
     size_t max_size(void)
-    {return 1;}
+    {
+        return 1;
+    }
 
+    /**
+     * コンテナの再代入。
+     * (1) : 範囲を代入。
+     * (2) : n個の値tを代入。
+     */
     void assign(size_type n, const value_type& val)
     {
-        (void)n;
+        if (n > capacity())
+        {
+        }
         (void)val;
-        return ;
+        return;
     }
+
     void insert(const_iterator position, size_type n, const value_type& x)
     {
         (void)position;
         (void)n;
         (void)x;
-//        return position;
+        //        return position;
     }
-//    void insert(iterator position, size_type n, const value_type& x)
-//    {
-//        (void)n;
-//        (void)x;
-////        return position;
-//    }
+    void insert(const_iterator position, size_type n)
+    {
+        (void)position;
+        (void)n;
+    }
+    //    void insert(iterator position, size_type n, const value_type& x)
+    //    {
+    //        (void)n;
+    //        (void)x;
+    ////        return position;
+    //    }
     iterator erase(iterator position)
     {
         return position;
     }
+
+    iterator erase(iterator position, iterator p)
+    {
+        (void)position;
+        return p;
+    }
+
     void swap(vector& x)
     {
         (void)x;
-        return ;
+        return;
     }
     allocator_type get_allocator() const
-    {return 0; }
+    {
+        return alloc_;
+    }
 
     void pop_back()
     {
@@ -306,14 +408,26 @@ protected:
 
     // ヘルパー関数
 
-    pointer allocate(size_type n) { return alloc_.allocate(n); }
-    void deallocate() { alloc_.deallocate(first_, capacity()); }
-    void construct(pointer ptr) { alloc_.construct(ptr, 0); }
+    pointer allocate(size_type n)
+    {
+        return alloc_.allocate(n);
+    }
+    void deallocate()
+    {
+        alloc_.deallocate(first_, capacity());
+    }
+    void construct(pointer ptr)
+    {
+        alloc_.construct(ptr, 0);
+    }
     void construct(pointer ptr, const_reference value)
     {
-      alloc_.construct(ptr, value);
+        alloc_.construct(ptr, value);
     }
-    void destroy(pointer ptr) { alloc_.destroy(ptr); }
+    void destroy(pointer ptr)
+    {
+        alloc_.destroy(ptr);
+    }
 
     void destroy_until(reverse_iterator rend)
     {
