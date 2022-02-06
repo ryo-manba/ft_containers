@@ -17,6 +17,7 @@ class vector
 public:
     typedef T value_type;
     typedef Allocator allocator_type;
+    typedef typename allocator_type::difference_type difference_type;
     typedef typename allocator_type::pointer pointer;
     typedef typename allocator_type::const_pointer const_pointer;
     typedef typename allocator_type::reference reference;
@@ -336,10 +337,13 @@ public:
         }
     }
 
-    // !!TODO 実装
-    size_t max_size(void)
+    // コンテナが保持できる最大の要素数を返す
+    size_type max_size(void) const
     {
-        return 1;
+        const size_t diffmax = std::numeric_limits<size_type>::max() / sizeof(value_type); // GCC
+        const size_t allocmax = std::numeric_limits<difference_type>::max();
+
+        return std::min<size_type>(diffmax, allocmax);
     }
 
     /**
