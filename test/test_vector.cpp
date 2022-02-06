@@ -19,6 +19,7 @@ void view(T e)
 }
 /**********************/
 
+#define SIZE 5
 
 int test(bool result, std::string test_case)
 {
