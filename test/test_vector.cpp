@@ -7,7 +7,8 @@
 /************************/
 // debug
 #define debug(var)                  \
-    do {                            \
+    do                              \
+    {                               \
         std::cout << #var << " : "; \
         view(var);                  \
     } while (0)
@@ -22,7 +23,10 @@ void view(T e)
 
 void test(bool result, std::string test_case)
 {
-    if (result == true) { std::cout << GREEN << "[OK]" << RESET; }
+    if (result == true)
+    {
+        std::cout << GREEN << "[OK]" << RESET;
+    }
     else
     {
         std::cout << RED << "[KO]" << RESET;
@@ -54,10 +58,16 @@ bool test_iterator(void)
         ft_ans.push_back(*ft_it);
         ft_sz += 1;
     }
-    if (ft_sz != std_sz) { return false; }
+    if (ft_sz != std_sz)
+    {
+        return false;
+    }
     for (size_t i = 0; i < std_sz; ++i)
     {
-        if (ft_ans[i] != std_ans[i]) { return false; }
+        if (ft_ans[i] != std_ans[i])
+        {
+            return false;
+        }
     }
     return true;
 }
@@ -82,11 +92,17 @@ bool test_const_iterator(void)
     {
         ft_ans.push_back(*ft_it);
     }
-    if (ft_ans.size() != std_ans.size()) { return false; }
+    if (ft_ans.size() != std_ans.size())
+    {
+        return false;
+    }
     size_t sz = std_ans.size();
     for (size_t i = 0; i < sz; ++i)
     {
-        if (ft_ans[i] != std_ans[i]) { return false; }
+        if (ft_ans[i] != std_ans[i])
+        {
+            return false;
+        }
     }
     return true;
 }
@@ -103,13 +119,25 @@ bool test_reverse_iterator(void)
 
     std::vector<int> std_ans, ft_ans;
 
-    for (; std_rit != std_rite; ++std_rit) { std_ans.push_back(*std_rit); }
-    for (; ft_rit != ft_rite; ++ft_rit) { ft_ans.push_back(*ft_rit); }
-    if (std_ans.size() != ft_ans.size()) { return false; }
+    for (; std_rit != std_rite; ++std_rit)
+    {
+        std_ans.push_back(*std_rit);
+    }
+    for (; ft_rit != ft_rite; ++ft_rit)
+    {
+        ft_ans.push_back(*ft_rit);
+    }
+    if (std_ans.size() != ft_ans.size())
+    {
+        return false;
+    }
     size_t sz = std_ans.size();
     for (size_t i = 0; i < sz; ++i)
     {
-        if (ft_ans[i] != std_ans[i]) { return false; }
+        if (ft_ans[i] != std_ans[i])
+        {
+            return false;
+        }
     }
     return true;
 }
@@ -134,11 +162,17 @@ bool test_const_reverse_iterator(void)
     {
         ft_ans.push_back(*ft_rit);
     }
-    if (ft_ans.size() != std_ans.size()) { return false; }
+    if (ft_ans.size() != std_ans.size())
+    {
+        return false;
+    }
     size_t sz = std_ans.size();
     for (size_t i = 0; i < sz; ++i)
     {
-        if (ft_ans[i] != std_ans[i]) { return false; }
+        if (ft_ans[i] != std_ans[i])
+        {
+            return false;
+        }
     }
     return true;
 }
@@ -149,14 +183,23 @@ bool test_size(void)
     std::vector<int> vec1;
     ft::vector<int> myvec1;
 
-    if (vec1.size() != myvec1.size()) { return false; }
+    if (vec1.size() != myvec1.size())
+    {
+        return false;
+    }
     vec1.push_back(1);
     myvec1.push_back(1);
-    if (vec1.size() != myvec1.size()) { return false; }
+    if (vec1.size() != myvec1.size())
+    {
+        return false;
+    }
 
     std::vector<int> vec2(5);
     ft::vector<int> myvec2(5);
-    if (vec2.size() != myvec2.size()) { return false; }
+    if (vec2.size() != myvec2.size())
+    {
+        return false;
+    }
     return true;
 }
 
@@ -165,11 +208,17 @@ bool test_max_size(void)
     std::vector<int> vec1;
     ft::vector<int> myvec1;
 
-    if (vec1.max_size() != myvec1.max_size()) { return false; }
+    if (vec1.max_size() != myvec1.max_size())
+    {
+        return false;
+    }
 
     std::vector<int> vec2;
     ft::vector<int> myvec2;
-    if (vec2.max_size() != myvec2.max_size()) { return false; }
+    if (vec2.max_size() != myvec2.max_size())
+    {
+        return false;
+    }
     return true;
 }
 
@@ -180,15 +229,24 @@ bool test_resize(void)
 
     vec1.resize(0);
     myvec1.resize(0);
-    if (vec1.size() != myvec1.size()) { return false; }
+    if (vec1.size() != myvec1.size())
+    {
+        return false;
+    }
 
     vec1.resize(10);
     myvec1.resize(10);
-    if (vec1.size() != myvec1.size()) { return false; }
+    if (vec1.size() != myvec1.size())
+    {
+        return false;
+    }
 
     std::vector<int> vec2(5);
     std::vector<int> myvec2(5);
-    if (vec2.size() != myvec2.size()) { return false; }
+    if (vec2.size() != myvec2.size())
+    {
+        return false;
+    }
     return true;
 }
 
@@ -199,43 +257,54 @@ bool test_capacity(void)
 
     vec1.resize(0);
     myvec1.resize(0);
-    if (vec1.capacity() != myvec1.capacity()) { return false; }
+    if (vec1.capacity() != myvec1.capacity())
+    {
+        return false;
+    }
 
     vec1.resize(10);
     myvec1.resize(10);
-    if (vec1.capacity() != myvec1.capacity()) { return false; }
+    if (vec1.capacity() != myvec1.capacity())
+    {
+        return false;
+    }
     std::vector<int> vec2(5);
     ft::vector<int> myvec2(5);
-    if (vec2.capacity() != myvec2.capacity()) { return false; }
+    if (vec2.capacity() != myvec2.capacity())
+    {
+        return false;
+    }
     return true;
 }
 
-/*
 bool test_empty(void)
 {
     std::vector<int> vec1;
     ft::vector<int> myvec1;
 
-    if (vec1.empty() != myvec1.empty()) {
+    if (vec1.empty() != myvec1.empty())
+    {
         return false;
     }
 
     std::vector<int> vec2(5);
     ft::vector<int> myvec2(5);
 
-    if (vec2.empty() != myvec2.empty()) {
+    if (vec2.empty() != myvec2.empty())
+    {
         return false;
     }
 
     std::vector<int> vec3(0);
     ft::vector<int> myvec3(0);
 
-    if (vec3.empty() != myvec3.empty()) {
+    if (vec3.empty() != myvec3.empty())
+    {
         return false;
     }
     return true;
 }
-*/
+
 bool test_reserve(void)
 {
     std::vector<int> vec;
@@ -243,13 +312,22 @@ bool test_reserve(void)
 
     vec.reserve(0);
     myvec.reserve(0);
-    if (vec.capacity() != myvec.capacity()) { return false; }
+    if (vec.capacity() != myvec.capacity())
+    {
+        return false;
+    }
     vec.reserve(1);
     myvec.reserve(1);
-    if (vec.capacity() != myvec.capacity()) { return false; }
+    if (vec.capacity() != myvec.capacity())
+    {
+        return false;
+    }
     vec.reserve(10);
     myvec.reserve(10);
-    if (vec.capacity() != myvec.capacity()) { return false; }
+    if (vec.capacity() != myvec.capacity())
+    {
+        return false;
+    }
     return true;
 }
 
@@ -266,7 +344,10 @@ bool test_indexer(void)
     }
     for (size_t i = 0; i < 5; ++i)
     {
-        if (vec[i] != myvec[i]) { return false; }
+        if (vec[i] != myvec[i])
+        {
+            return false;
+        }
     }
     return true;
 }
@@ -283,7 +364,10 @@ bool test_at(void)
     }
     for (size_t i = 0; i < SIZE; ++i)
     {
-        if (vec.at(i) == myvec.at(i)) { return false; }
+        if (vec.at(i) == myvec.at(i))
+        {
+            return false;
+        }
     }
     return true;
 }
@@ -293,11 +377,17 @@ bool test_front(void)
     std::vector<int> vec(5);
     ft::vector<int> myvec(5);
 
-    if (vec.front() != myvec.front()) { return false; }
+    if (vec.front() != myvec.front())
+    {
+        return false;
+    }
     vec.front()   = 5;
     myvec.front() = 5;
 
-    if (vec.front() != myvec.front()) { return false; }
+    if (vec.front() != myvec.front())
+    {
+        return false;
+    }
     return true;
 }
 
@@ -306,10 +396,16 @@ bool test_back(void)
     std::vector<int> vec(5);
     ft::vector<int> myvec(5);
 
-    if (vec.back() != myvec.back()) { return false; }
+    if (vec.back() != myvec.back())
+    {
+        return false;
+    }
     vec.back()   = 5;
     myvec.back() = 5;
-    if (vec.back() != myvec.back()) { return false; }
+    if (vec.back() != myvec.back())
+    {
+        return false;
+    }
     return true;
 }
 
@@ -322,13 +418,25 @@ bool test_assign(void)
     vec.assign(vec.size() - 1, 42);
     myvec.assign(myvec.size() - 1, 42);
 
-    if (vec.size() == myvec.size()) { return false; }
-    if (vec.capacity() != myvec.capacity()) { return false; }
+    if (vec.size() == myvec.size())
+    {
+        return false;
+    }
+    if (vec.capacity() != myvec.capacity())
+    {
+        return false;
+    }
 
-    if (vec.size() == myvec.size()) { return false; }
+    if (vec.size() == myvec.size())
+    {
+        return false;
+    }
     for (size_t i = 0; i < vec.size(); ++i)
     {
-        if (vec[i] != myvec[i]) { return false; }
+        if (vec[i] != myvec[i])
+        {
+            return false;
+        }
     }
     return true;
 }
@@ -344,7 +452,10 @@ bool test_push_back(void)
     }
     for (size_t i = 0; i < 5; ++i)
     {
-        if (vec[i] == myvec[i]) { return false; }
+        if (vec[i] == myvec[i])
+        {
+            return false;
+        }
     }
     return true;
 }
@@ -365,16 +476,24 @@ bool test_pop_back(void)
         vec.pop_back();
         myvec.pop_back();
     }
-    if (vec.size() != myvec.size()) { return false; }
-    if (vec.capacity() != myvec.capacity()) { return false; }
+    if (vec.size() != myvec.size())
+    {
+        return false;
+    }
+    if (vec.capacity() != myvec.capacity())
+    {
+        return false;
+    }
     for (size_t i = 0; i < vec.size(); ++i)
     {
-        if (vec[i] != myvec[i]) { return false; }
+        if (vec[i] != myvec[i])
+        {
+            return false;
+        }
     }
     return true;
 }
 
-/*
 bool test_insert(void)
 {
     std::vector<int> vec;
@@ -387,22 +506,22 @@ bool test_insert(void)
     myvec.insert(myvec.begin(), 2, 2);
     myvec.insert(myvec.begin(), 3, 3);
 
-    if (vec.size() != myvec.size()) {
+    if (vec.size() != myvec.size())
+    {
         return false;
     }
     for (size_t i = 0; i < vec.size(); ++i)
     {
-        if (vec[i] != myvec[i]) {
+        if (vec[i] != myvec[i])
+        {
             return false;
         }
     }
     return true;
 }
-*/
 
 //(1) : positionが指す要素が削除される。
 //(2) : [first, last)で示される範囲の要素が削除される。
-/*
 bool test_erase(void)
 {
     std::vector<int> vec(5);
@@ -410,38 +529,41 @@ bool test_erase(void)
 
     for (size_t i = 0; i < 5; ++i)
     {
-        vec[i] = i;
+        vec[i]   = i;
         myvec[i] = i;
     }
     vec.erase(vec.begin(), vec.begin() + 3);
     myvec.erase(myvec.begin(), myvec.begin() + 3);
 
-    if (vec.size() != myvec.size()) {
+    if (vec.size() != myvec.size())
+    {
         return false;
     }
-    if (vec.capacity() != myvec.capacity()) {
+    if (vec.capacity() != myvec.capacity())
+    {
         return false;
     }
     for (size_t i = 0; i < vec.size(); ++i)
     {
-        if (vec[i] == myvec[i]) {
+        if (vec[i] == myvec[i])
+        {
             return false;
         }
     }
 
     vec.erase(vec.begin(), vec.end());
     myvec.erase(myvec.begin(), myvec.end());
-    if (vec.size() != myvec.size()) {
+    if (vec.size() != myvec.size())
+    {
         return false;
     }
-    if (vec.capacity() != myvec.capacity()) {
+    if (vec.capacity() != myvec.capacity())
+    {
         return false;
     }
     return true;
 }
-*/
 
-/*
 bool test_swap(void)
 {
     std::vector<int> vec1(3);
@@ -451,38 +573,39 @@ bool test_swap(void)
 
     for (size_t i = 0; i < 3; ++i)
     {
-        vec1[i] = i;
+        vec1[i]   = i;
         myvec1[i] = i;
     }
     for (size_t i = 0; i < 3; ++i)
     {
-        vec2[i] = i + 3;
+        vec2[i]   = i + 3;
         myvec2[i] = i + 3;
     }
 
     vec1.swap(vec2);
     myvec1.swap(myvec2);
 
-    if (vec1.size() != myvec1.size() || vec2.size() != myvec2.size()) {
+    if (vec1.size() != myvec1.size() || vec2.size() != myvec2.size())
+    {
         return false;
     }
     for (size_t i = 0; i < vec1.size(); ++i)
     {
-        if (vec1[i] != myvec1[i]) {
+        if (vec1[i] != myvec1[i])
+        {
             return false;
         }
     }
     for (size_t i = 0; i < vec2.size(); ++i)
     {
-        if (vec2[i] != myvec2[i]) {
+        if (vec2[i] != myvec2[i])
+        {
             return false;
         }
     }
     return true;
 }
-*/
 
-/*
 bool test_clear(void)
 {
     std::vector<int> vec(3);
@@ -490,26 +613,25 @@ bool test_clear(void)
 
     vec.clear();
     myvec.clear();
-    if (vec.empty() != myvec.empty()) {
+    if (vec.empty() != myvec.empty())
+    {
         return false;
     }
     return true;
 }
-*/
 
-/*
 bool test_get_allocator(void)
 {
     std::allocator<int> alloc;
     std::vector<int> vec(alloc);
     ft::vector<int> myvec(alloc);
 
-    if (vec.get_allocator() != myvec.get_allocator()) {
+    if (vec.get_allocator() != myvec.get_allocator())
+    {
         return false;
     }
     return true;
 }
-*/
 
 void test_iterators(void)
 {
@@ -521,39 +643,40 @@ void test_iterators(void)
 
 void test_capacities(void)
 {
-    //    test_size();
-    //    test_max_size();
-    //    test_resize();
-    //    test_capacity();
-    //    test_empty();
-    //    test_reserve();
+    test(test_size(), "test_size");
+    test(test_max_size(), "test_max_size");
+    test(test_resize(), "test_resize");
+    test(test_capacity(), "test_capacity");
+    test(test_empty(), "test_empty");
+    test(test_reserve(), "test_reserve");
 }
 
 void test_element_access(void)
 {
-    //    test_indexer();
-    //    test_at();
-    //    test_front();
-    //    test_back();
+    test(test_indexer(), "test_indexer");
+    test(test_at(), "test_at");
+    test(test_front(), "test_front");
+    test(test_back(), "test_back");
 }
 
 void test_modifiers(void)
 {
-    //    test_assign();
-    //    test_push_back();
-    //    test_pop_back();
-    //    test_insert();
-    //    test_erase();
-    //    test_swap();
-    //    test_clear();
+    test(test_assign(), "test_assign");
+    test(test_push_back(), "test_push_back");
+    test(test_pop_back(), "test_pop_back");
+    test(test_insert(), "test_insert");
+    test(test_erase(), "test_erase");
+    test(test_swap(), "test_swap");
+    test(test_clear(), "test_clear");
 }
 
 void test_allocator(void)
 {
-    //    test_get_allocator();
+    test(test_get_allocator(), "test_get_allocator");
 }
 
-void test_constructorator(void)
+// TODO 修正
+bool test_constructorator(void)
 {
     ft::vector<char> vec_char;
     ft::vector<signed char> vec_schar;
@@ -565,14 +688,19 @@ void test_constructorator(void)
     ft::vector<long> vec_long;
     ft::vector<unsigned long> vec_ulong;
     ft::vector<std::string> vec_str;
+    return true;
 }
 
 void test_vector(void)
 {
+    test(test_constructorator(), "test_constructorator");
     test_iterators();
     test_capacities();
     test_modifiers();
     test_allocator();
 }
 
-int main(void) { test_vector(); }
+int main(void)
+{
+    test_vector();
+}
