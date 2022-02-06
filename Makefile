@@ -19,9 +19,9 @@ DEPS    := $(addprefix $(DEPDIR)/, $(notdir $(SRCS:.cpp=.d)))
 RM      := rm -rf
 
 .PHONY  : all
-all     : $(OBJDIR) $(DEPDIR) $(NAME)
+all     : $(NAME)
 
-$(NAME) : $(OBJS)
+$(NAME) : $(OBJDIR) $(DEPDIR) $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $(NAME) $(OBJS)
 
 $(DEPDIR):
