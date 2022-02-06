@@ -19,9 +19,8 @@ void view(T e)
 }
 /**********************/
 
-#define SIZE 5
 
-void test(bool result, std::string test_case)
+int test(bool result, std::string test_case)
 {
     if (result == true)
     {
@@ -32,6 +31,9 @@ void test(bool result, std::string test_case)
         std::cout << RED << "[KO]" << RESET;
     }
     std::cout << " : " << YELLOW << test_case << RESET << std::endl;
+
+    if (result == true) return 0;
+    else return 1;
 }
 
 // Iterators
@@ -633,46 +635,63 @@ bool test_get_allocator(void)
     return true;
 }
 
-void test_iterators(void)
+bool test_iterators(void)
 {
-    test(test_iterator(), "test_iterator");
-    test(test_const_iterator(), "test_const_iterator");
-    test(test_reverse_iterator(), "test_reverse_iterator");
-    test(test_const_reverse_iterator(), "test_const_reverse_iterator");
+    int res = 0;
+    res += test(test_iterator(), "test_iterator");
+    res += test(test_const_iterator(), "test_const_iterator");
+    res += test(test_reverse_iterator(), "test_reverse_iterator");
+    res += test(test_const_reverse_iterator(), "test_const_reverse_iterator");
+    return res;
 }
 
-void test_capacities(void)
+bool test_capacities(void)
 {
-    test(test_size(), "test_size");
-    test(test_max_size(), "test_max_size");
-    test(test_resize(), "test_resize");
-    test(test_capacity(), "test_capacity");
-    test(test_empty(), "test_empty");
-    test(test_reserve(), "test_reserve");
+    int res = 0;
+    res += test(test_size(), "test_size");
+//  res += test(test_max_size(), "test_max_size");
+    res += test(test_resize(), "test_resize");
+    res += test(test_capacity(), "test_capacity");
+    res += test(test_empty(), "test_empty");
+    res += test(test_reserve(), "test_reserve");
+    res += test_max_size();
+    return res;
 }
 
-void test_element_access(void)
+bool test_element_access(void)
 {
-    test(test_indexer(), "test_indexer");
-    test(test_at(), "test_at");
-    test(test_front(), "test_front");
-    test(test_back(), "test_back");
+    int res = 0;
+    res += test(test_indexer(), "test_indexer");
+    res += test(test_at(), "test_at");
+    res += test(test_front(), "test_front");
+    res += test(test_back(), "test_back");
+    return res;
 }
 
-void test_modifiers(void)
+bool test_modifiers(void)
 {
-    test(test_assign(), "test_assign");
-    test(test_push_back(), "test_push_back");
-    test(test_pop_back(), "test_pop_back");
-    test(test_insert(), "test_insert");
-    test(test_erase(), "test_erase");
-    test(test_swap(), "test_swap");
-    test(test_clear(), "test_clear");
+    int res = 0;
+//    res += test(test_assign(), "test_assign");
+//    res += test(test_push_back(), "test_push_back");
+//    res += test(test_pop_back(), "test_pop_back");
+//    res += test(test_insert(), "test_insert");
+//    res += test(test_erase(), "test_erase");
+//    res += test(test_swap(), "test_swap");
+    res += test(test_clear(), "test_clear");
+
+    return res;
+// DEBUG
+    test_assign();
+    test_push_back();
+    test_pop_back();
+    test_insert();
+    test_erase();
+    test_swap();
 }
 
-void test_allocator(void)
+bool test_allocator(void)
 {
-    test(test_get_allocator(), "test_get_allocator");
+    return test(test_get_allocator(), "test_get_allocator");
 }
 
 // TODO 修正
@@ -691,16 +710,21 @@ bool test_constructorator(void)
     return true;
 }
 
-void test_vector(void)
+bool test_vector(void)
 {
-    test(test_constructorator(), "test_constructorator");
-    test_iterators();
-    test_capacities();
-    test_modifiers();
-    test_allocator();
+    int res = 0;
+    res += test(test_constructorator(), "test_constructorator");
+    res += test_iterators();
+    res += test_capacities();
+    res += test_modifiers();
+    res += test_allocator();
+    return res;
 }
 
 int main(void)
 {
-    test_vector();
+    int res = 0;
+    res += test_vector();
+
+    return res;
 }
