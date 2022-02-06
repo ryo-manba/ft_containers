@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <memory>
+#include <limits>
 
 #include "iterator.hpp"
 #include "normal_iterator.hpp"
