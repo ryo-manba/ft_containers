@@ -2,8 +2,8 @@
 #define VECTOR_HPP
 
 #include <iostream>
-#include <memory>
 #include <limits>
+#include <memory>
 
 #include "iterator.hpp"
 #include "normal_iterator.hpp"
@@ -267,16 +267,24 @@ public:
 
     void reserve(size_type sz)
     {
+        // TODO: 例外チェック
+        if (sz > max_size())
+        {
+            //            throw length_error("vector::reserve");
+        }
         // すでに指定された要素数以上に予約されているなら何もしない
-        if (sz <= capacity()) return;
+        if (sz <= capacity())
+        {
+            return;
+        }
 
         // 動的メモリー確保をする
         pointer ptr = allocate(sz);
 
         // 古いストレージの情報を保存
-        pointer old_first = first_;
-        pointer old_last  = last_;
-        //    auto old_capacity = capacity();
+        pointer old_first      = first_;
+        pointer old_last       = last_;
+        size_type old_capacity = capacity();
 
         // 新しいストレージに差し替え
         first_         = ptr;
@@ -287,7 +295,6 @@ public:
         for (pointer old_iter = old_first; old_iter != old_last;
              ++old_iter, ++last_)
         {
-            // このコピーの理解にはムーブセマンティクスの理解が必要
             construct(last_, *old_iter);
         }
 
@@ -298,6 +305,7 @@ public:
         {
             destroy(&*riter);
         }
+        alloc_.deallocate(old_first, old_capacity);
     }
 
     void resize(size_type sz)
@@ -341,7 +349,8 @@ public:
     // コンテナが保持できる最大の要素数を返す
     size_type max_size(void) const
     {
-        const size_t diffmax = std::numeric_limits<size_type>::max() / sizeof(value_type); // GCC
+        const size_t diffmax = std::numeric_limits<size_type>::max() /
+                               sizeof(value_type);    // GCC
         const size_t allocmax = std::numeric_limits<difference_type>::max();
 
         return std::min<size_type>(diffmax, allocmax);
@@ -351,15 +360,32 @@ public:
      * コンテナの再代入。
      * (1) : 範囲を代入。
      * (2) : n個の値tを代入。
+     * capacityがnより大きい場合、要素をそのまま埋めるだけ。
+     * capacityがnより小さい場合、新たにallocateし直す。
      */
     void assign(size_type n, const value_type& val)
     {
-        if (n > capacity())
+        size_type cap = capacity();
+
+        if (n > cap)
         {
+            clear();
+            reserve(n);
         }
-        (void)val;
-        return;
+        pointer t = first_;
+        for (size_type i = 0; i < n; ++i)
+        {
+            *t = val;
+            ++t;
+        }
+        last_ = t;
     }
+
+    //    template<class InputIt>
+    //    void assign(InputIt first, InputIt last)
+    //    {
+    //
+    //    }
 
     void insert(const_iterator position, size_type n, const value_type& x)
     {
@@ -412,7 +438,6 @@ protected:
     allocator_type alloc_;
 
     // ヘルパー関数
-
     pointer allocate(size_type n)
     {
         return alloc_.allocate(n);
