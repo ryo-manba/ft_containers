@@ -5,6 +5,15 @@
 #include "vector.hpp"
 
 /************************/
+// leaks
+__attribute__((destructor))
+static void destructor()
+{
+    system("leaks  a.out");
+}
+/************************/
+
+/************************/
 // debug
 #define debug(var)                  \
     do                              \
@@ -436,31 +445,29 @@ bool test_back(void)
 // Modilers
 bool test_assign(void)
 {
-    std::vector<int> vec(5);
-    ft::vector<int> myvec(5);
+    std::vector<int> vec1;
+    ft::vector<int> myvec1;
+    std::vector<int> vec2(5);
+    ft::vector<int> myvec2(5);
 
-    vec.assign(vec.size() - 1, 42);
-    myvec.assign(myvec.size() - 1, 42);
+    // capacity以上
+    vec1.assign(5, 42);
+    myvec1.assign(5, 42);
 
-    if (vec.size() == myvec.size())
-    {
-        return false;
-    }
-    if (vec.capacity() != myvec.capacity())
-    {
-        return false;
-    }
+    // capacity以下
+    vec2.assign(vec2.size(), 42);
+    myvec2.assign(myvec2.size(), 42);
 
-    if (vec.size() == myvec.size())
+    if (vec1.size() != myvec1.size()) return false;
+    if (vec2.size() != myvec2.size()) return false;
+    if (vec1.capacity() != myvec1.capacity()) return false;
+    if (vec2.capacity() != myvec2.capacity()) return false;
+
+    size_t sz = vec1.size();
+    for (size_t i = 0; i < sz; ++i)
     {
-        return false;
-    }
-    for (size_t i = 0; i < vec.size(); ++i)
-    {
-        if (vec[i] != myvec[i])
-        {
-            return false;
-        }
+        if (vec1[i] != myvec1[i]) return false;
+        if (vec2[i] != myvec2[i]) return false;
     }
     return true;
 }
@@ -692,7 +699,7 @@ bool test_element_access(void)
 bool test_modifiers(void)
 {
     int res = 0;
-    //    res += test(test_assign(), "test_assign");
+    res += test(test_assign(), "test_assign");
     //    res += test(test_push_back(), "test_push_back");
     //    res += test(test_pop_back(), "test_pop_back");
     //    res += test(test_insert(), "test_insert");
@@ -702,12 +709,12 @@ bool test_modifiers(void)
 
     return res;
     // DEBUG
-    test_assign();
-    test_push_back();
-    test_pop_back();
-    test_insert();
-    test_erase();
-    test_swap();
+//    test_assign();
+//    test_push_back();
+//    test_pop_back();
+//    test_insert();
+//    test_erase();
+//    test_swap();
 }
 
 bool test_allocator(void)
@@ -715,7 +722,7 @@ bool test_allocator(void)
     return test(test_get_allocator(), "test_get_allocator");
 }
 
-// TODO 修正
+// TODO: 修正
 bool test_constructorator(void)
 {
     ft::vector<char> vec_char;
@@ -748,6 +755,5 @@ int main(void)
 {
     int res = 0;
     res += test_vector();
-
     return res;
 }
