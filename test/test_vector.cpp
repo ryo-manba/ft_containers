@@ -6,16 +6,15 @@
 
 /************************/
 // leaks
-__attribute__((destructor))
-static void destructor()
-{
-    system("leaks  a.out");
-}
+//__attribute__((destructor)) static void destructor()
+//{
+//    system("leaks -q a.out");
+//}
 /************************/
 
 /************************/
-// debug
-#define debug(var)                  \
+// print
+#define print(var)                  \
     do                              \
     {                               \
         std::cout << #var << " : "; \
@@ -26,6 +25,16 @@ void view(T e)
 {
     std::cout << e << std::endl;
 }
+
+#define debug(var) \
+do \
+{ \
+    std::cerr << "-----------------" << "\n" \
+              << "[" << var << "] " << "\n" \
+              << "func: " << __func__ << "\n" \
+              << "line: " << __LINE__ \
+              << std::endl; \
+} while(0)
 /**********************/
 
 #define SIZE 5
@@ -48,6 +57,25 @@ int test(bool result, std::string test_case)
         return 1;
 }
 
+/**
+ * 要素、size(), capacity()を比較する
+ * 完全一致 -> 0
+ * Not完全一致 -> 1
+ */
+template <typename STD, typename FT>
+bool vector_comp(const STD& st, const FT& ft)
+{
+    const size_t sz = st.size();
+    if (st.size() != ft.size()) return 1;
+    if (st.capacity() != ft.capacity()) return 1;
+
+    for (size_t i = 0; i < sz; ++i)
+    {
+        if (st[i] != ft[i]) return 1;
+    }
+    return 0;
+}
+
 // Iterators
 bool test_iterator(void)
 {
@@ -60,23 +88,22 @@ bool test_iterator(void)
     ft::vector<int>::iterator ft_ite   = myvec.end();
 
     std::vector<int> std_ans, ft_ans;
-    size_t std_sz = 0, ft_sz = 0;
 
     for (; std_it != std_ite; ++std_it)
     {
         std_ans.push_back(*std_it);
-        std_sz += 1;
     }
     for (; ft_it != ft_ite; ++ft_it)
     {
         ft_ans.push_back(*ft_it);
-        ft_sz += 1;
     }
-    if (ft_sz != std_sz)
+    if (std_ans.size() != ft_ans.size())
     {
         return false;
     }
-    for (size_t i = 0; i < std_sz; ++i)
+
+    size_t sz = std_ans.size();
+    for (size_t i = 0; i < sz; ++i)
     {
         if (ft_ans[i] != std_ans[i])
         {
@@ -106,18 +133,8 @@ bool test_const_iterator(void)
     {
         ft_ans.push_back(*ft_it);
     }
-    if (ft_ans.size() != std_ans.size())
-    {
-        return false;
-    }
-    size_t sz = std_ans.size();
-    for (size_t i = 0; i < sz; ++i)
-    {
-        if (ft_ans[i] != std_ans[i])
-        {
-            return false;
-        }
-    }
+    if (vector_comp(std_ans, ft_ans)) return false;
+
     return true;
 }
 
@@ -141,18 +158,8 @@ bool test_reverse_iterator(void)
     {
         ft_ans.push_back(*ft_rit);
     }
-    if (std_ans.size() != ft_ans.size())
-    {
-        return false;
-    }
-    size_t sz = std_ans.size();
-    for (size_t i = 0; i < sz; ++i)
-    {
-        if (ft_ans[i] != std_ans[i])
-        {
-            return false;
-        }
-    }
+    if (vector_comp(std_ans, ft_ans)) return false;
+
     return true;
 }
 
@@ -176,18 +183,7 @@ bool test_const_reverse_iterator(void)
     {
         ft_ans.push_back(*ft_rit);
     }
-    if (ft_ans.size() != std_ans.size())
-    {
-        return false;
-    }
-    size_t sz = std_ans.size();
-    for (size_t i = 0; i < sz; ++i)
-    {
-        if (ft_ans[i] != std_ans[i])
-        {
-            return false;
-        }
-    }
+    if (vector_comp(std_ans, ft_ans)) return false;
     return true;
 }
 
@@ -290,23 +286,16 @@ bool test_capacity(void)
 
     vec1.resize(0);
     myvec1.resize(0);
-    if (vec1.capacity() != myvec1.capacity())
-    {
-        return false;
-    }
+    if (vector_comp(vec1, myvec1)) return false;
 
     vec1.resize(10);
     myvec1.resize(10);
-    if (vec1.capacity() != myvec1.capacity())
-    {
-        return false;
-    }
+    if (vector_comp(vec1, myvec1)) return false;
+
     std::vector<int> vec2(5);
     ft::vector<int> myvec2(5);
-    if (vec2.capacity() != myvec2.capacity())
-    {
-        return false;
-    }
+    if (vector_comp(vec2, myvec2)) return false;
+
     return true;
 }
 
@@ -345,22 +334,16 @@ bool test_reserve(void)
 
     vec.reserve(0);
     myvec.reserve(0);
-    if (vec.capacity() != myvec.capacity())
-    {
-        return false;
-    }
+    if (vector_comp(vec, myvec)) return false;
+
     vec.reserve(1);
     myvec.reserve(1);
-    if (vec.capacity() != myvec.capacity())
-    {
-        return false;
-    }
+    if (vector_comp(vec, myvec)) return false;
+
     vec.reserve(10);
     myvec.reserve(10);
-    if (vec.capacity() != myvec.capacity())
-    {
-        return false;
-    }
+    if (vector_comp(vec, myvec)) return false;
+
     return true;
 }
 
@@ -458,70 +441,52 @@ bool test_assign(void)
     vec2.assign(vec2.size(), 42);
     myvec2.assign(myvec2.size(), 42);
 
-    if (vec1.size() != myvec1.size()) return false;
-    if (vec2.size() != myvec2.size()) return false;
-    if (vec1.capacity() != myvec1.capacity()) return false;
-    if (vec2.capacity() != myvec2.capacity()) return false;
-
-    size_t sz = vec1.size();
-    for (size_t i = 0; i < sz; ++i)
-    {
-        if (vec1[i] != myvec1[i]) return false;
-        if (vec2[i] != myvec2[i]) return false;
-    }
+    if (vector_comp(vec1, myvec1)) return false;
+    if (vector_comp(vec2, myvec2)) return false;
     return true;
 }
 
 bool test_push_back(void)
 {
+    const size_t sz = 5;
     std::vector<int> vec;
     ft::vector<int> myvec;
-    for (size_t i = 0; i < 5; ++i)
+    for (size_t i = 0; i < sz; ++i)
     {
         vec.push_back(i);
         myvec.push_back(i);
     }
-    for (size_t i = 0; i < 5; ++i)
-    {
-        if (vec[i] == myvec[i])
-        {
-            return false;
-        }
-    }
+    if (vector_comp(vec, myvec)) return false;
     return true;
 }
 
 bool test_pop_back(void)
 {
-    std::vector<int> vec(5);
-    ft::vector<int> myvec(5);
+    size_t sz = 5;
+    std::vector<int> vec(sz);
+    ft::vector<int> myvec(sz);
 
-    for (size_t i = 0; i < 5; ++i)
+    for (size_t i = 0; i < sz; ++i)
     {
         vec[i]   = i;
         myvec[i] = i;
     }
 
-    for (size_t i = 0; i < 3; ++i)
+    for (size_t i = 0; i < sz - 2; ++i)
     {
         vec.pop_back();
         myvec.pop_back();
     }
-    if (vec.size() != myvec.size())
+    if (vector_comp(vec, myvec)) return false;
+
+    sz = vec.size();
+    for (size_t i = 0; i < sz; ++i)
     {
-        return false;
+        vec.push_back(i);
+        myvec.push_back(i);
     }
-    if (vec.capacity() != myvec.capacity())
-    {
-        return false;
-    }
-    for (size_t i = 0; i < vec.size(); ++i)
-    {
-        if (vec[i] != myvec[i])
-        {
-            return false;
-        }
-    }
+    if (vector_comp(vec, myvec)) return false;
+
     return true;
 }
 
@@ -537,17 +502,8 @@ bool test_insert(void)
     myvec.insert(myvec.begin(), 2, 2);
     myvec.insert(myvec.begin(), 3, 3);
 
-    if (vec.size() != myvec.size())
-    {
-        return false;
-    }
-    for (size_t i = 0; i < vec.size(); ++i)
-    {
-        if (vec[i] != myvec[i])
-        {
-            return false;
-        }
-    }
+    if (vector_comp(vec, myvec)) return false;
+
     return true;
 }
 
@@ -555,43 +511,48 @@ bool test_insert(void)
 //(2) : [first, last)で示される範囲の要素が削除される。
 bool test_erase(void)
 {
-    std::vector<int> vec(5);
-    ft::vector<int> myvec(5);
+    const size_t sz = 5;
+    std::vector<int> vec1(sz);
+    ft::vector<int> myvec1(sz);
 
-    for (size_t i = 0; i < 5; ++i)
+    for (size_t i = 0; i < sz; ++i)
     {
-        vec[i]   = i;
-        myvec[i] = i;
+        vec1[i]   = i;
+        myvec1[i] = i;
     }
-    vec.erase(vec.begin(), vec.begin() + 3);
-    myvec.erase(myvec.begin(), myvec.begin() + 3);
+    std::vector<int>::iterator it;
+    ft::vector<int>::iterator myit;
 
-    if (vec.size() != myvec.size())
+    // 引数1つ
+    for (size_t i = 0; i < sz; ++i)
     {
-        return false;
-    }
-    if (vec.capacity() != myvec.capacity())
-    {
-        return false;
-    }
-    for (size_t i = 0; i < vec.size(); ++i)
-    {
-        if (vec[i] == myvec[i])
-        {
-            return false;
-        }
+        it   = vec1.erase(vec1.begin());
+        myit = myvec1.erase(myvec1.begin());
+
+        if (*it != *myit) return false;
+        if (vector_comp(vec1, myvec1)) return false;
     }
 
-    vec.erase(vec.begin(), vec.end());
-    myvec.erase(myvec.begin(), myvec.end());
-    if (vec.size() != myvec.size())
-    {
-        return false;
+    // 引数2つ
+    std::vector<int> vec2(sz);
+    ft::vector<int> myvec2(sz);
+
+    for (size_t i = 0; i < sz; ++i) {
+        vec2[i] = i;
+        myvec2[i] = i;
     }
-    if (vec.capacity() != myvec.capacity())
-    {
-        return false;
-    }
+    it   = vec2.erase(vec2.begin(), vec2.begin() + 2);
+    myit = myvec2.erase(myvec2.begin(), myvec2.begin() + 2);
+
+    if (*it != *myit) return false;
+    if (vector_comp(vec2, myvec2)) return false;
+
+    it   = vec2.erase(vec2.begin(), vec2.end());
+    myit = myvec2.erase(myvec2.begin(), myvec2.end());
+
+    if (*it != *myit) return false;
+    if (vector_comp(vec2, myvec2)) return false;
+
     return true;
 }
 
@@ -700,21 +661,21 @@ bool test_modifiers(void)
 {
     int res = 0;
     res += test(test_assign(), "test_assign");
-    //    res += test(test_push_back(), "test_push_back");
-    //    res += test(test_pop_back(), "test_pop_back");
+    res += test(test_push_back(), "test_push_back");
+    res += test(test_pop_back(), "test_pop_back");
     //    res += test(test_insert(), "test_insert");
-    //    res += test(test_erase(), "test_erase");
+    res += test(test_erase(), "test_erase");
     //    res += test(test_swap(), "test_swap");
     res += test(test_clear(), "test_clear");
 
     return res;
     // DEBUG
-//    test_assign();
-//    test_push_back();
-//    test_pop_back();
-//    test_insert();
-//    test_erase();
-//    test_swap();
+    //    test_assign();
+    //    test_push_back();
+    //    test_pop_back();
+    //    test_insert();
+    //    test_erase();
+    //    test_swap();
 }
 
 bool test_allocator(void)
