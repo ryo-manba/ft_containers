@@ -10,6 +10,17 @@
 #include "type_traits.hpp"
 #include "utils.hpp"
 
+/**
+ * @fn
+ * ここに関数の説明を書く
+ * @brief 要約説明
+ * @param (引数名) 引数の説明
+ * @param (引数名) 引数の説明
+ * @return 戻り値の説明
+ * @sa 参照すべき関数を書けばリンクが貼れる
+ * @detail 詳細な説明
+ */
+
 namespace ft
 {
 template <typename T, typename Allocator = std::allocator<T> >
@@ -58,6 +69,7 @@ public:
 
         }
         */
+    
 
     template <typename InputIt>
     vector(InputIt first_, InputIt last_, const Allocator& alloc_ = Allocator(),
@@ -387,40 +399,87 @@ public:
     //
     //    }
 
-    void insert(const_iterator position, size_type n, const value_type& x)
+    void insert(const_iterator pos, size_type n, const value_type& x)
     {
-        (void)position;
+        (void)pos;
         (void)n;
         (void)x;
-        //        return position;
     }
-    void insert(const_iterator position, size_type n)
+    void insert(const_iterator pos, size_type n)
     {
-        (void)position;
+        (void)pos;
         (void)n;
     }
-    //    void insert(iterator position, size_type n, const value_type& x)
+    //    void insert(iterator pos, size_type n, const value_type& x)
     //    {
     //        (void)n;
     //        (void)x;
-    ////        return position;
+    ////        return pos;
     //    }
-    iterator erase(iterator position)
+
+
+    /**
+     * @brief pos にある要素を削除する。
+     * @param  削除するiterator
+     * @return 最後に削除された要素に続くイテレータ。
+     */
+    iterator erase(iterator pos)
     {
-        return position;
+        size_type dist = begin() - pos;
+        for (iterator it = pos + 1; it != end(); ++it)
+        {
+            *(it - 1) = *it;
+        }
+
+        // 最後の要素のデストラクタを呼ぶ。
+        --last_;
+        destroy(last_);
+        return begin() + dist;
     }
 
-    iterator erase(iterator position, iterator p)
+/**
+ * @brief [first, last)で示される範囲の要素が削除する。
+ * @return 最後に削除された要素に続くイテレータ。
+ * @detail
+ * first==last の場合、削除せずfirstを返す。
+ * 削除前の last==end() の場合、更新後の end() イテレータが返される。
+ * [first,last) が空の場合、last が返される。
+ */
+
+// a = {1,2,3,4,5};
+// a.erase(a.begin()+1, a.begin()+3);
+//      * * (ここを詰める)
+// a: 1 2 3 4 5 -> 1 4 5
+
+    iterator erase(iterator first, iterator last)
     {
-        (void)position;
-        return p;
+        if (first == last)
+            return first;
+
+        size_type start_idx = first - begin();
+        size_type del_range = last - first;
+
+        // firstの位置からlastの要素を埋めていく
+        while (last < end())
+        {
+            *first = *last;
+            ++first;
+            ++last;
+        }
+        // 削除する要素の先頭を渡す -> 後ろから削除していく
+        destroy_until(rbegin() + del_range);
+        return (begin() + start_idx);
     }
 
-    void swap(vector& x)
+    // vectorの要素を other と入れ替える
+    void swap(vector& other)
     {
-        (void)x;
-        return;
+        ft::swap(first_, other.first_);
+        ft::swap(last_, other.last_);
+        ft::swap(reserved_last_, other.reserved_last_);
+        ft::swap(alloc_, other.alloc_);
     }
+
     allocator_type get_allocator() const
     {
         return alloc_;
@@ -428,7 +487,9 @@ public:
 
     void pop_back()
     {
-        return;
+        pointer tmp = last_;
+        --last_;
+        alloc_.destroy(tmp);
     }
 
 protected:
@@ -459,6 +520,14 @@ protected:
         alloc_.destroy(ptr);
     }
 
+/**
+ * @brief vectorが保持するrbegin()からリバースイテレーターrendまでの要素を破棄する。
+ * @detail
+ * リバースイテレーターを使うので、要素の末尾から先頭に向けて順番に破棄される。
+ * 末尾から先頭に向けて要素を破棄する理由はC++では値の破棄は構築の逆順で行われるという原則があるから。
+ * ポインターを取るために*riterでまずT &を得て、そこに&を適用することでT *を得る。
+ * 破棄できたら有効な要素数を減らすために--lastする。
+ */
     void destroy_until(reverse_iterator rend)
     {
         for (reverse_iterator riter = rbegin(); riter != rend; ++riter, --last_)
