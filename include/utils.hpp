@@ -3,6 +3,14 @@
 
 namespace ft
 {
+template<class T>
+void swap(T& a, T& b)
+{
+    T tmp = a;
+    a = b;
+    b = tmp;
+}
+
 // equal
 // 2つの範囲を等値比較する。
 template <class InputIterator1, class InputIterator2>
