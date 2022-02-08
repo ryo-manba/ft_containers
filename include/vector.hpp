@@ -61,6 +61,7 @@ public:
     {
         resize(count, value);
     }
+
     /*
         template< class InputIt >
         vector( InputIt first, InputIt last,
@@ -282,6 +283,7 @@ public:
         if (sz > max_size())
         {
             //            throw length_error("vector::reserve");
+            throw std::out_of_range("vector::reserve");
         }
         // すでに指定された要素数以上に予約されているなら何もしない
         if (sz <= capacity())

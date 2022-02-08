@@ -26,15 +26,16 @@ void view(T e)
     std::cout << e << std::endl;
 }
 
-#define debug(var) \
-do \
-{ \
-    std::cerr << "-----------------" << "\n" \
-              << "[" << var << "] " << "\n" \
-              << "func: " << __func__ << "\n" \
-              << "line: " << __LINE__ \
-              << std::endl; \
-} while(0)
+#define debug(var)                                      \
+    do                                                  \
+    {                                                   \
+        std::cerr << "-----------------"                \
+                  << "\n"                               \
+                  << "[" << var << "] "                 \
+                  << "\n"                               \
+                  << "func: " << __func__ << "\n"       \
+                  << "line: " << __LINE__ << std::endl; \
+    } while (0)
 /**********************/
 
 #define SIZE 5
@@ -350,37 +351,33 @@ bool test_reserve(void)
 // Element Access
 bool test_indexer(void)
 {
-    std::vector<int> vec;
-    ft::vector<int> myvec;
+    const size_t sz = 5;
+    std::vector<int> vec(sz);
+    ft::vector<int> myvec(sz);
 
-    for (size_t i = 0; i < 5; ++i)
+    for (size_t i = 0; i < sz; ++i)
     {
         vec[i]   = i;
         myvec[i] = i;
     }
-    for (size_t i = 0; i < 5; ++i)
-    {
-        if (vec[i] != myvec[i])
-        {
-            return false;
-        }
-    }
+    if (vector_comp(vec, myvec)) return false;
     return true;
 }
 
 bool test_at(void)
 {
-    std::vector<int> vec;
-    ft::vector<int> myvec;
+    const size_t sz = 5;
+    std::vector<int> vec(sz);
+    ft::vector<int> myvec(sz);
 
-    for (size_t i = 0; i < SIZE; ++i)
+    for (size_t i = 0; i < sz; ++i)
     {
         vec.at(i)   = i;
         myvec.at(i) = i;
     }
-    for (size_t i = 0; i < SIZE; ++i)
+    for (size_t i = 0; i < sz; ++i)
     {
-        if (vec.at(i) == myvec.at(i))
+        if (vec.at(i) != myvec.at(i))
         {
             return false;
         }
@@ -537,8 +534,9 @@ bool test_erase(void)
     std::vector<int> vec2(sz);
     ft::vector<int> myvec2(sz);
 
-    for (size_t i = 0; i < sz; ++i) {
-        vec2[i] = i;
+    for (size_t i = 0; i < sz; ++i)
+    {
+        vec2[i]   = i;
         myvec2[i] = i;
     }
     it   = vec2.erase(vec2.begin(), vec2.begin() + 2);
@@ -663,7 +661,7 @@ bool test_modifiers(void)
     res += test(test_assign(), "test_assign");
     res += test(test_push_back(), "test_push_back");
     res += test(test_pop_back(), "test_pop_back");
-//    res += test(test_insert(), "test_insert");
+    //    res += test(test_insert(), "test_insert");
     res += test(test_erase(), "test_erase");
     res += test(test_swap(), "test_swap");
     res += test(test_clear(), "test_clear");
@@ -724,6 +722,7 @@ bool test_vector(void)
     res += test_iterators();
     res += test_capacities();
     res += test_modifiers();
+    res += test_element_access();
     res += test_allocator();
     return res;
 }

@@ -95,11 +95,16 @@ int main(void)
     //    testInputIterator();
     testIotaIterator();
 }
-/*
+
+
+#include <iterator>
 int main()
 { 
     std::advance
-    std::iterator_traits s
+    std::iterator_traits
     std::reverse_iterator
+    std::random_access_iterator
+    std::vector
+    std::integral_constant
 }
 */

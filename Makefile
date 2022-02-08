@@ -1,6 +1,6 @@
 NAME    := a.out
 CXX     := clang++
-CXXFLAGS:= -Wall -Wextra -Werror -std=c++98 -MMD -MP -pedantic
+CXXFLAGS:= -Wall -Wextra -Werror -std=c++98 -MMD -MP -pedantic -g
 
 # Directories
 #SRCDIR  := ./src
