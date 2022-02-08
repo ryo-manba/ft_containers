@@ -69,7 +69,6 @@ public:
 
         }
         */
-    
 
     template <typename InputIt>
     vector(InputIt first_, InputIt last_, const Allocator& alloc_ = Allocator(),
@@ -417,7 +416,6 @@ public:
     ////        return pos;
     //    }
 
-
     /**
      * @brief pos にある要素を削除する。
      * @param  削除するiterator
@@ -437,24 +435,23 @@ public:
         return begin() + dist;
     }
 
-/**
- * @brief [first, last)で示される範囲の要素が削除する。
- * @return 最後に削除された要素に続くイテレータ。
- * @detail
- * first==last の場合、削除せずfirstを返す。
- * 削除前の last==end() の場合、更新後の end() イテレータが返される。
- * [first,last) が空の場合、last が返される。
- */
+    /**
+     * @brief [first, last)で示される範囲の要素が削除する。
+     * @return 最後に削除された要素に続くイテレータ。
+     * @detail
+     * first==last の場合、削除せずfirstを返す。
+     * 削除前の last==end() の場合、更新後の end() イテレータが返される。
+     * [first,last) が空の場合、last が返される。
+     */
 
-// a = {1,2,3,4,5};
-// a.erase(a.begin()+1, a.begin()+3);
-//      * * (ここを詰める)
-// a: 1 2 3 4 5 -> 1 4 5
+    // a = {1,2,3,4,5};
+    // a.erase(a.begin()+1, a.begin()+3);
+    //      * * (ここを詰める)
+    // a: 1 2 3 4 5 -> 1 4 5
 
     iterator erase(iterator first, iterator last)
     {
-        if (first == last)
-            return first;
+        if (first == last) return first;
 
         size_type start_idx = first - begin();
         size_type del_range = last - first;
@@ -520,14 +517,15 @@ protected:
         alloc_.destroy(ptr);
     }
 
-/**
- * @brief vectorが保持するrbegin()からリバースイテレーターrendまでの要素を破棄する。
- * @detail
- * リバースイテレーターを使うので、要素の末尾から先頭に向けて順番に破棄される。
- * 末尾から先頭に向けて要素を破棄する理由はC++では値の破棄は構築の逆順で行われるという原則があるから。
- * ポインターを取るために*riterでまずT &を得て、そこに&を適用することでT *を得る。
- * 破棄できたら有効な要素数を減らすために--lastする。
- */
+    /**
+     * @brief
+     * vectorが保持するrbegin()からリバースイテレーターrendまでの要素を破棄する。
+     * @detail
+     * リバースイテレーターを使うので、要素の末尾から先頭に向けて順番に破棄される。
+     * 末尾から先頭に向けて要素を破棄する理由はC++では値の破棄は構築の逆順で行われるという原則があるから。
+     * ポインターを取るために*riterでまずT &を得て、そこに&を適用することでT
+     * *を得る。 破棄できたら有効な要素数を減らすために--lastする。
+     */
     void destroy_until(reverse_iterator rend)
     {
         for (reverse_iterator riter = rbegin(); riter != rend; ++riter, --last_)

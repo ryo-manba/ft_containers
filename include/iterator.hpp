@@ -259,7 +259,6 @@ typename iterator_traits<InputIterator>::difference_type distance(
     return n;
 }
 
-
 }    // namespace ft
 
 #endif

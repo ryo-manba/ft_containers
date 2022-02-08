@@ -6,10 +6,10 @@
 
 /************************/
 // leaks
-//__attribute__((destructor)) static void destructor()
-//{
-//    system("leaks -q a.out");
-//}
+__attribute__((destructor)) static void destructor()
+{
+    system("leaks -q a.out");
+}
 /************************/
 
 /************************/
@@ -663,19 +663,14 @@ bool test_modifiers(void)
     res += test(test_assign(), "test_assign");
     res += test(test_push_back(), "test_push_back");
     res += test(test_pop_back(), "test_pop_back");
-    //    res += test(test_insert(), "test_insert");
+//    res += test(test_insert(), "test_insert");
     res += test(test_erase(), "test_erase");
-    //    res += test(test_swap(), "test_swap");
+    res += test(test_swap(), "test_swap");
     res += test(test_clear(), "test_clear");
 
     return res;
     // DEBUG
-    //    test_assign();
-    //    test_push_back();
-    //    test_pop_back();
     //    test_insert();
-    //    test_erase();
-    //    test_swap();
 }
 
 bool test_allocator(void)
@@ -686,25 +681,46 @@ bool test_allocator(void)
 // TODO: 修正
 bool test_constructorator(void)
 {
-    ft::vector<char> vec_char;
-    ft::vector<signed char> vec_schar;
-    ft::vector<wchar_t> vec_wchar;
-    ft::vector<short> vec_short;
-    ft::vector<unsigned short> vec_ushort;
-    ft::vector<int> vec_int;
-    ft::vector<unsigned int> vec_uint;
-    ft::vector<long> vec_long;
-    ft::vector<unsigned long> vec_ulong;
-    ft::vector<std::string> vec_str;
+    ft::vector<char> ft_vec_char;
+    ft::vector<signed char> ft_vec_schar;
+    ft::vector<wchar_t> ft_vec_wchar;
+    ft::vector<short> ft_vec_short;
+    ft::vector<unsigned short> ft_vec_ushort;
+    ft::vector<int> ft_vec_int;
+    ft::vector<unsigned int> ft_vec_uint;
+    ft::vector<long> ft_vec_long;
+    ft::vector<unsigned long> ft_vec_ulong;
+    ft::vector<std::string> ft_vec_str;
+
+    std::vector<char> std_vec_char;
+    std::vector<signed char> std_vec_schar;
+    std::vector<wchar_t> std_vec_wchar;
+    std::vector<short> std_vec_short;
+    std::vector<unsigned short> std_vec_ushort;
+    std::vector<int> std_vec_int;
+    std::vector<unsigned int> std_vec_uint;
+    std::vector<long> std_vec_long;
+    std::vector<unsigned long> std_vec_ulong;
+    std::vector<std::string> std_vec_str;
+
+    if (vector_comp(std_vec_char, ft_vec_char)) return false;
+    if (vector_comp(std_vec_schar, ft_vec_schar)) return false;
+    if (vector_comp(std_vec_wchar, ft_vec_wchar)) return false;
+    if (vector_comp(std_vec_short, ft_vec_short)) return false;
+    if (vector_comp(std_vec_ushort, ft_vec_ushort)) return false;
+    if (vector_comp(std_vec_int, ft_vec_int)) return false;
+    if (vector_comp(std_vec_uint, ft_vec_uint)) return false;
+    if (vector_comp(std_vec_long, ft_vec_long)) return false;
+    if (vector_comp(std_vec_ulong, ft_vec_ulong)) return false;
+    if (vector_comp(std_vec_str, ft_vec_str)) return false;
+
     return true;
 }
 
 bool test_vector(void)
 {
     int res = 0;
-    //    res += test(test_constructorator(), "test_constructorator");
-    test_constructorator();
-
+    res += test(test_constructorator(), "test_constructorator");
     res += test_iterators();
     res += test_capacities();
     res += test_modifiers();
