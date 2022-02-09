@@ -2,41 +2,18 @@
 #include <vector>
 
 #include "Color.hpp"
+#include "debug.hpp"
 #include "vector.hpp"
 
 /************************/
 // leaks
+#ifdef LEAK
 __attribute__((destructor)) static void destructor()
 {
     system("leaks -q a.out");
 }
+#endif
 /************************/
-
-/************************/
-// print
-#define print(var)                  \
-    do                              \
-    {                               \
-        std::cout << #var << " : "; \
-        view(var);                  \
-    } while (0)
-template <typename T>
-void view(T e)
-{
-    std::cout << e << std::endl;
-}
-
-#define debug(var)                                      \
-    do                                                  \
-    {                                                   \
-        std::cerr << "-----------------"                \
-                  << "\n"                               \
-                  << "[" << var << "] "                 \
-                  << "\n"                               \
-                  << "func: " << __func__ << "\n"       \
-                  << "line: " << __LINE__ << std::endl; \
-    } while (0)
-/**********************/
 
 #define SIZE 5
 
@@ -68,7 +45,8 @@ bool vector_comp(const STD& st, const FT& ft)
 {
     const size_t sz = st.size();
     if (st.size() != ft.size()) return 1;
-    if (st.capacity() != ft.capacity()) return 1;
+    // capacityは実装依存なので比較しない
+    //    if (st.capacity() != ft.capacity()) return 1;
 
     for (size_t i = 0; i < sz; ++i)
     {
@@ -287,15 +265,14 @@ bool test_capacity(void)
 
     vec1.resize(0);
     myvec1.resize(0);
-    if (vector_comp(vec1, myvec1)) return false;
-
+    if (vec1.capacity() != myvec1.capacity()) return false;
     vec1.resize(10);
     myvec1.resize(10);
-    if (vector_comp(vec1, myvec1)) return false;
+    if (vec1.capacity() != myvec1.capacity()) return false;
 
     std::vector<int> vec2(5);
     ft::vector<int> myvec2(5);
-    if (vector_comp(vec2, myvec2)) return false;
+    if (vec2.capacity() != myvec2.capacity()) return false;
 
     return true;
 }
@@ -489,17 +466,41 @@ bool test_pop_back(void)
 
 bool test_insert(void)
 {
-    std::vector<int> vec;
-    ft::vector<int> myvec;
+    const size_t sz = 5;
+    std::vector<int> vec1(sz);
+    ft::vector<int> myvec1(sz);
 
-    vec.insert(vec.begin(), 1);
-    vec.insert(vec.begin(), 2, 2);
-    vec.insert(vec.begin(), 3, 3);
-    myvec.insert(myvec.begin(), 1);
-    myvec.insert(myvec.begin(), 2, 2);
-    myvec.insert(myvec.begin(), 3, 3);
+    for (size_t i = 0; i < sz; ++i)
+    {
+        vec1[i]   = i;
+        myvec1[i] = i;
+    }
+    // 要素2つ(it, pos)
+    std::vector<int>::iterator it  = vec1.insert(vec1.begin(), 1);
+    ft::vector<int>::iterator myit = myvec1.insert(myvec1.begin(), 1);
+    if (*it != *myit) return false;
+    if (vector_comp(vec1, myvec1)) return false;
 
-    if (vector_comp(vec, myvec)) return false;
+    std::vector<int> vec2(sz);
+    ft::vector<int> myvec2(sz);
+
+    for (size_t i = 0; i < sz; ++i)
+    {
+        vec2[i]   = i;
+        myvec2[i] = i;
+    }
+    // 要素3つ(it, digit, digit)
+    vec2.insert(vec2.begin() + 2, 2, 2);
+    myvec2.insert(myvec2.begin() + 2, 2, 2);
+    if (vector_comp(vec2, myvec2)) return false;
+
+    std::vector<int> vec3(sz);
+    ft::vector<int> myvec3(sz);
+
+    // 要素3つ(it, other_it, other_it)
+    vec3.insert(vec3.begin(), vec2.begin(), vec2.end());
+    myvec3.insert(myvec3.begin(), vec2.begin(), vec2.end());
+    if (vector_comp(vec3, myvec3)) return false;
 
     return true;
 }
@@ -526,7 +527,10 @@ bool test_erase(void)
         it   = vec1.erase(vec1.begin());
         myit = myvec1.erase(myvec1.begin());
 
-        if (*it != *myit) return false;
+        if (i != sz - 1)
+        {
+            if (*it != *myit) return false;
+        }
         if (vector_comp(vec1, myvec1)) return false;
     }
 
@@ -548,7 +552,6 @@ bool test_erase(void)
     it   = vec2.erase(vec2.begin(), vec2.end());
     myit = myvec2.erase(myvec2.begin(), myvec2.end());
 
-    if (*it != *myit) return false;
     if (vector_comp(vec2, myvec2)) return false;
 
     return true;
@@ -661,14 +664,12 @@ bool test_modifiers(void)
     res += test(test_assign(), "test_assign");
     res += test(test_push_back(), "test_push_back");
     res += test(test_pop_back(), "test_pop_back");
-    //    res += test(test_insert(), "test_insert");
+    res += test(test_insert(), "test_insert");
     res += test(test_erase(), "test_erase");
     res += test(test_swap(), "test_swap");
     res += test(test_clear(), "test_clear");
 
     return res;
-    // DEBUG
-    //    test_insert();
 }
 
 bool test_allocator(void)
