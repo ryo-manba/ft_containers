@@ -5,11 +5,13 @@
 #include <limits>
 #include <memory>
 
+/***********************/
+#include "debug.hpp"
+/***********************/
 #include "iterator.hpp"
 #include "normal_iterator.hpp"
 #include "type_traits.hpp"
 #include "utils.hpp"
-
 /**
  * @fn
  * ここに関数の説明を書く
@@ -93,10 +95,10 @@ public:
         // コピー元の要素をコピー構築
         // destはコピー先
         // [src, last_)はコピー元
-        for (pointer dest = first_, src = other.begin(), last_ = other.end();
+        for (iterator dest = first_, src = other.begin(), last_ = other.end();
              src != last_; ++dest, ++src)
         {
-            construct(dest, *src);
+            construct(dest.base(), *src);
         }
         last_ = first_ + other.size();
     }
@@ -400,23 +402,87 @@ public:
     //
     //    }
 
-    void insert(const_iterator pos, size_type n, const value_type& x)
+    /**
+     * @brief posの前にvalueを挿入する。
+     * @return 挿入された値を指すイテレータ
+     */
+    iterator insert(const_iterator pos, const value_type& value)
     {
-        (void)pos;
-        (void)n;
-        (void)x;
+        size_type insert_idx = pos - begin();
+        vector copy(*this);
+
+        copy[insert_idx] = value;
+        size_type sz     = size();
+        // insert以降の要素を挿入する
+        for (size_type i = insert_idx; i < sz - 1; ++i)
+        {
+            copy[i + 1] = *(begin() + i);
+        }
+        // 最後の要素は push_back に capacity の処理を投げる
+        copy.push_back(*(end() - 1));
+        swap(copy);
+        return begin() + insert_idx;
     }
-    void insert(const_iterator pos, size_type n)
+
+    /**
+     * @brief posの前にvalueをcountの数挿入する。
+     */
+    void insert(const_iterator pos, size_type count, const value_type& value)
     {
-        (void)pos;
-        (void)n;
+        size_type insert_idx = pos - begin();
+        size_type vec_sz     = size();
+        vector vec;
+
+        // insertするところまでコピー
+        for (size_type i = 0; i < insert_idx; ++i)
+        {
+            vec.push_back(*(begin() + i));
+        }
+        // count分 value を埋める
+        for (size_type i = 0; i < count; ++i)
+        {
+            vec.push_back(value);
+        }
+        // insert_pos以降の要素を移す
+        for (size_type i = insert_idx; i < vec_sz; ++i)
+        {
+            vec.push_back(*(begin() + i));
+        }
+        swap(vec);
     }
-    //    void insert(iterator pos, size_type n, const value_type& x)
-    //    {
-    //        (void)n;
-    //        (void)x;
-    ////        return pos;
-    //    }
+
+    /**
+     * @brief posの前に範囲[first, last]の要素を挿入する。
+     * first と last が *this へのイテレータの場合、動作は未定義。
+     * enable_if
+     * 整数型かどうかを判定している。
+     * enable_ifの第2型パラメータはデフォルトがvoidなので::typeはvoidとなる
+     */
+    template <class InputIt>
+    typename ft::enable_if<!ft::is_integral<InputIt>::value>::type insert(
+        iterator pos, InputIt first, InputIt last)
+    {
+        size_type insert_idx = begin() - pos;
+        size_type vec_sz     = size();
+        vector vec;
+
+        // insertするところまでコピー
+        for (size_type i = 0; i < insert_idx; ++i)
+        {
+            vec.push_back(*(begin() + i));
+        }
+        // first ~ lastまで要素を入れていく
+        for (InputIt it = first; it != last; ++it)
+        {
+            vec.push_back(*it);
+        }
+        // insert_pos以降の要素を移す
+        for (size_type i = insert_idx; i < vec_sz; ++i)
+        {
+            vec.push_back(*(begin() + i));
+        }
+        swap(vec);
+    }
 
     /**
      * @brief pos にある要素を削除する。
