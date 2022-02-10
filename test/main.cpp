@@ -23,7 +23,7 @@ int main(void)
 {
     int res = 0;
 
-//    res += test_vector();
+    res += test_vector();
     res += test_stack();
     return res;
 }

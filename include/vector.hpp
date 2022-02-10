@@ -79,8 +79,8 @@ public:
                                   InputIt>::type* = NULL)
         : first_(NULL), last_(NULL), reserved_last_(NULL), alloc_(alloc_)
     {
-        reserve(ft::distance(first_, last_));
-        for (pointer i = first_; i != last_; ++i)
+        reserve(std::distance(first_, last_));
+        for (iterator i = first_; i != last_; ++i)
         {
             push_back(*i);
         }
@@ -149,7 +149,7 @@ public:
                                     dest_iter = begin();
                      src_iter != src_end; ++src_iter, ++dest_iter, ++last_)
                 {
-                    construct(dest_iter, *src_iter);
+                    construct(dest_iter.base(), *src_iter);
                 }
             }
         }

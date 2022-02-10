@@ -598,41 +598,58 @@ bool test_get_allocator(void)
 }
 
 // TODO: 修正
-bool test_constructorator(void)
+bool test_constructor(void)
 {
-    ft::vector<char> ft_vec_char;
-    ft::vector<signed char> ft_vec_schar;
-    ft::vector<wchar_t> ft_vec_wchar;
-    ft::vector<short> ft_vec_short;
-    ft::vector<unsigned short> ft_vec_ushort;
-    ft::vector<int> ft_vec_int;
-    ft::vector<unsigned int> ft_vec_uint;
-    ft::vector<long> ft_vec_long;
-    ft::vector<unsigned long> ft_vec_ulong;
-    ft::vector<std::string> ft_vec_str;
+    const size_t sz = 5;
+    // default constructor
+    std::vector<int> std_vec1;
+    ft::vector<int> ft_vec1;
+    if (vector_comp(std_vec1, ft_vec1)) return false;
 
-    std::vector<char> std_vec_char;
-    std::vector<signed char> std_vec_schar;
-    std::vector<wchar_t> std_vec_wchar;
-    std::vector<short> std_vec_short;
-    std::vector<unsigned short> std_vec_ushort;
-    std::vector<int> std_vec_int;
-    std::vector<unsigned int> std_vec_uint;
-    std::vector<long> std_vec_long;
-    std::vector<unsigned long> std_vec_ulong;
-    std::vector<std::string> std_vec_str;
+    // size指定
+    std::vector<int> std_vec2(sz);
+    ft::vector<int> ft_vec2(sz);
+    if (vector_comp(std_vec2, ft_vec2)) return false;
+    for (size_t i = 0; i < sz; ++i)
+    {
+        std_vec2[i] = i;
+        ft_vec2[i] = i;
+    }
 
-    if (vector_comp(std_vec_char, ft_vec_char)) return false;
-    if (vector_comp(std_vec_schar, ft_vec_schar)) return false;
-    if (vector_comp(std_vec_wchar, ft_vec_wchar)) return false;
-    if (vector_comp(std_vec_short, ft_vec_short)) return false;
-    if (vector_comp(std_vec_ushort, ft_vec_ushort)) return false;
-    if (vector_comp(std_vec_int, ft_vec_int)) return false;
-    if (vector_comp(std_vec_uint, ft_vec_uint)) return false;
-    if (vector_comp(std_vec_long, ft_vec_long)) return false;
-    if (vector_comp(std_vec_ulong, ft_vec_ulong)) return false;
-    if (vector_comp(std_vec_str, ft_vec_str)) return false;
+    // range constructor[first, last]
+    std::vector<int> std_vec3(std_vec2.begin(), std_vec2.end());
+    ft::vector<int> ft_vec3(ft_vec2.begin(), ft_vec2.end());
+    if (vector_comp(std_vec3, ft_vec3)) return false;
 
+    // copy constructer
+    std::vector<int> std_vec4(std_vec1);
+    ft::vector<int> ft_vec4(ft_vec1);
+    if (vector_comp(std_vec4, ft_vec4)) return false;
+
+    // fill constructor
+    std::vector<int> std_vec5(sz, 42);
+    ft::vector<int> ft_vec5(sz, 42);
+    if (vector_comp(std_vec5, ft_vec5)) return false;
+
+    return true;
+}
+
+bool test_operator_equal(void)
+{
+    const size_t sz = 5;
+    // default constructor
+    std::vector<int> std_vec1(sz);
+    ft::vector<int> ft_vec1(sz);
+     for (size_t i = 0; i < sz; ++i)
+    {
+        std_vec1[i] = i;
+        ft_vec1[i] = i;
+    }
+
+    // 代入
+    std::vector<int> std_vec2 = std_vec1;
+    ft::vector<int> ft_vec2 = ft_vec1;
+    if (vector_comp(std_vec2, ft_vec2)) return false;
     return true;
 }
 
@@ -642,7 +659,8 @@ int test_vector(void)
     std::cout << "-----[TEST VECTOR]-----" << std::endl;
 
     // constructer
-    tester.run(test_constructorator(), "test_constructorator");
+    tester.run(test_constructor(), "test_constructor");
+    tester.run(test_operator_equal(), "test_operator_equal");
 
     // Iterators
     tester.run(test_iterator(), "test_iterator");
@@ -650,7 +668,7 @@ int test_vector(void)
     tester.run(test_reverse_iterator(), "test_reverse_iterator");
     tester.run(test_const_reverse_iterator(), "test_const_reverse_iterator");
 
-    // capacitys
+    // capacities;
     tester.run(test_size(), "test_size");
     tester.run(test_max_size(), "test_max_size");
     tester.run(test_resize(), "test_resize");

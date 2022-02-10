@@ -1,6 +1,6 @@
 NAME    := a.out
 CXX     := clang++
-CXXFLAGS:= -Wall -Wextra -Werror -std=c++98 -MMD -MP -pedantic -g -fsanitize=address
+CXXFLAGS:= -Wall -Wextra -Werror -std=c++98 -MMD -MP -pedantic -g
 
 # Directories
 #SRCDIR  := ./src
@@ -51,11 +51,14 @@ re: fclean all
 test: $(NAME)
 	./a.out
 
-debug: CXXFLAGS += -g -fsanitize=address
-debug: re test
+t: $(NAME)
+	./a.out
 
-leak: CXXFLAGS += -DLEAK=1
-leak: re test
+d: CXXFLAGS += -g -fsanitize=address
+d: re test
+
+l: CXXFLAGS += -DLEAK=1
+l: re test
 
 .PHONY: test debug leak
 -include $(DEPS)
