@@ -12,7 +12,9 @@ TESTDIR := ./test
 
 #SRCFILE := main.cpp
 SRCFILE := test_vector.cpp \
-		   tester.cpp
+		   test_stack.cpp \
+		   tester.cpp \
+		   main.cpp
 
 SRCS    := $(addprefix $(SRCDIR)/, $(SRCFILE))
 OBJS    := $(addprefix $(OBJDIR)/, $(notdir $(SRCS:.cpp=.o)))
