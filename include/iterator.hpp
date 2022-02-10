@@ -2,31 +2,10 @@
 #define ITERATOR_HPP
 
 #include <cstddef>
-
+#include <iterator>
 namespace ft
 {
-/** @defgroup iterator_tags Iterator Tags
- * これらは空の型であり、異なるイテレータを区別するために使用されます
- */
-struct input_iterator_tag
-{
-};
-struct output_iterator_tag
-{
-};
-struct forward_iterator_tag : public input_iterator_tag
-{
-};
-struct bidirectional_iterator_tag : public forward_iterator_tag
-{
-};
-struct random_access_iterator_tag : public bidirectional_iterator_tag
-{
-};
-
-
 // iterator_traits
-
 template<typename Iterator>
 struct iterator_traits
 {
@@ -42,7 +21,7 @@ struct iterator_traits
 template <typename _Tp>
 struct iterator_traits<_Tp*>
 {
-    typedef random_access_iterator_tag iterator_category;
+    typedef std::random_access_iterator_tag iterator_category;
     typedef _Tp value_type;
     typedef ptrdiff_t difference_type;
     typedef _Tp* pointer;
@@ -53,7 +32,7 @@ struct iterator_traits<_Tp*>
 template <typename _Tp>
 struct iterator_traits<const _Tp*>
 {
-    typedef random_access_iterator_tag iterator_category;
+    typedef std::random_access_iterator_tag iterator_category;
     typedef _Tp value_type;
     typedef ptrdiff_t difference_type;
     typedef const _Tp* pointer;
@@ -236,7 +215,7 @@ public:
 // stl_iterator_base_func
 // advance( i, n ): n移動する
 template <typename InputIterator, typename Distance>
-void advance(InputIterator& it, Distance n, input_iterator_tag)
+void advance(InputIterator& it, Distance n, std::input_iterator_tag)
 {
     while (n > 0)
     {
@@ -248,7 +227,7 @@ void advance(InputIterator& it, Distance n, input_iterator_tag)
 // distance( first, last ): firstからlastまでの距離
 template <typename InputIterator>
 typename iterator_traits<InputIterator>::difference_type distance(
-    InputIterator first, InputIterator last, input_iterator_tag)
+    InputIterator first, InputIterator last, std::input_iterator_tag)
 {
     typename iterator_traits<InputIterator>::difference_type n = 0;
     while (first != last)

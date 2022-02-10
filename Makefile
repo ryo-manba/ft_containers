@@ -1,6 +1,6 @@
 NAME    := a.out
 CXX     := clang++
-CXXFLAGS:= -Wall -Wextra -Werror -std=c++98 -MMD -MP -pedantic -g
+CXXFLAGS:= -Wall -Wextra -Werror -std=c++98 -MMD -MP -pedantic -g -fsanitize=address
 
 # Directories
 #SRCDIR  := ./src
@@ -8,9 +8,11 @@ SRCDIR  := ./test
 OBJDIR  := ./obj
 DEPDIR  := ./dep
 INCDIR  := ./include
+TESTDIR := ./test
 
 #SRCFILE := main.cpp
-SRCFILE := test_vector.cpp
+SRCFILE := test_vector.cpp \
+		   tester.cpp
 
 SRCS    := $(addprefix $(SRCDIR)/, $(SRCFILE))
 OBJS    := $(addprefix $(OBJDIR)/, $(notdir $(SRCS:.cpp=.o)))
@@ -31,7 +33,7 @@ $(OBJDIR):
 	mkdir -p obj
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
-	$(CXX) $(CXXFLAGS) -I$(INCDIR) -MMD -MP -MF $(DEPDIR)/$(notdir $(<:.cpp=.d)) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -I$(INCDIR) -I$(TESTDIR) -MMD -MP -MF $(DEPDIR)/$(notdir $(<:.cpp=.d)) -c $< -o $@
 
 .PHONY: clean
 clean:
@@ -44,12 +46,14 @@ fclean: clean
 .PHONY: re
 re: fclean all
 
-.PHONY: test
 test: $(NAME)
 	./a.out
 
-.PHONY: debug list
 debug: CXXFLAGS += -g -fsanitize=address
-debug: re
+debug: re test
 
+leak: CXXFLAGS += -DLEAK=1
+leak: re test
+
+.PHONY: test debug leak
 -include $(DEPS)

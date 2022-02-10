@@ -4,6 +4,7 @@
 #include "Color.hpp"
 #include "debug.hpp"
 #include "vector.hpp"
+#include "tester.hpp"
 
 /************************/
 // leaks
@@ -14,26 +15,6 @@ __attribute__((destructor)) static void destructor()
 }
 #endif
 /************************/
-
-#define SIZE 5
-
-int test(bool result, std::string test_case)
-{
-    if (result == true)
-    {
-        std::cout << GREEN << "[OK]" << RESET;
-    }
-    else
-    {
-        std::cout << RED << "[KO]" << RESET;
-    }
-    std::cout << " : " << YELLOW << test_case << RESET << std::endl;
-
-    if (result == true)
-        return 0;
-    else
-        return 1;
-}
 
 /**
  * 要素、size(), capacity()を比較する
@@ -626,57 +607,6 @@ bool test_get_allocator(void)
     return true;
 }
 
-bool test_iterators(void)
-{
-    int res = 0;
-    res += test(test_iterator(), "test_iterator");
-    res += test(test_const_iterator(), "test_const_iterator");
-    res += test(test_reverse_iterator(), "test_reverse_iterator");
-    res += test(test_const_reverse_iterator(), "test_const_reverse_iterator");
-    return res;
-}
-
-bool test_capacities(void)
-{
-    int res = 0;
-    res += test(test_size(), "test_size");
-    res += test(test_max_size(), "test_max_size");
-    res += test(test_resize(), "test_resize");
-    res += test(test_capacity(), "test_capacity");
-    res += test(test_empty(), "test_empty");
-    res += test(test_reserve(), "test_reserve");
-    return res;
-}
-
-bool test_element_access(void)
-{
-    int res = 0;
-    res += test(test_indexer(), "test_indexer");
-    res += test(test_at(), "test_at");
-    res += test(test_front(), "test_front");
-    res += test(test_back(), "test_back");
-    return res;
-}
-
-bool test_modifiers(void)
-{
-    int res = 0;
-    res += test(test_assign(), "test_assign");
-    res += test(test_push_back(), "test_push_back");
-    res += test(test_pop_back(), "test_pop_back");
-    res += test(test_insert(), "test_insert");
-    res += test(test_erase(), "test_erase");
-    res += test(test_swap(), "test_swap");
-    res += test(test_clear(), "test_clear");
-
-    return res;
-}
-
-bool test_allocator(void)
-{
-    return test(test_get_allocator(), "test_get_allocator");
-}
-
 // TODO: 修正
 bool test_constructorator(void)
 {
@@ -718,19 +648,48 @@ bool test_constructorator(void)
 
 bool test_vector(void)
 {
-    int res = 0;
-    res += test(test_constructorator(), "test_constructorator");
-    res += test_iterators();
-    res += test_capacities();
-    res += test_modifiers();
-    res += test_element_access();
-    res += test_allocator();
-    return res;
+    Tester tester;
+    std::cout << "-----[TEST VECTOR]-----" << std::endl;
+
+    // constructer
+    tester.run(test_constructorator(), "test_constructorator");
+
+    // Iterators
+    tester.run(test_iterator(), "test_iterator");
+    tester.run(test_const_iterator(), "test_const_iterator");
+    tester.run(test_reverse_iterator(), "test_reverse_iterator");
+    tester.run(test_const_reverse_iterator(), "test_const_reverse_iterator");
+
+    // capacitys
+    tester.run(test_size(), "test_size");
+    tester.run(test_max_size(), "test_max_size");
+    tester.run(test_resize(), "test_resize");
+    tester.run(test_capacity(), "test_capacity");
+    tester.run(test_empty(), "test_empty");
+    tester.run(test_reserve(), "test_reserve");
+
+    // element_access
+    tester.run(test_indexer(), "test_indexer");
+    tester.run(test_at(), "test_at");
+    tester.run(test_front(), "test_front");
+    tester.run(test_back(), "test_back");
+
+    // modifiers
+    tester.run(test_assign(), "test_assign");
+    tester.run(test_push_back(), "test_push_back");
+    tester.run(test_pop_back(), "test_pop_back");
+    tester.run(test_insert(), "test_insert");
+    tester.run(test_erase(), "test_erase");
+    tester.run(test_swap(), "test_swap");
+    tester.run(test_clear(), "test_clear");
+
+    // allocator
+    tester.run(test_get_allocator(), "test_get_allocator");
+
+    return tester.getRet();
 }
 
 int main(void)
 {
-    int res = 0;
-    res += test_vector();
-    return res;
+    return test_vector();
 }
