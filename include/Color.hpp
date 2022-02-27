@@ -1,7 +1,7 @@
 #ifndef COLOR_HPP
 #define COLOR_HPP
 
-#define RESET             "\033[0m"
+#define RESET           "\033[0m"
 #define BOLD            "\033[1m"
 #define BLACK           "\033[30m"
 #define RED             "\033[31m"

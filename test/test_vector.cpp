@@ -653,6 +653,36 @@ bool test_operator_equal(void)
     return true;
 }
 
+bool test_operator(void)
+{
+    ft::vector<int> ft_vec1;
+    ft::vector<int> ft_vec2;
+    ft::vector<int> ft_vec3;
+
+    for (size_t i = 0; i < 5; ++i)
+    {
+        ft_vec1.push_back(i);
+        ft_vec2.push_back(i);
+        ft_vec3.push_back(i + i);
+    }
+
+    if (!(ft_vec1 == ft_vec2)) return false;
+    if (ft_vec1 != ft_vec2) return false;
+    if (ft_vec1 < ft_vec2) return false;
+    if (!(ft_vec1 <= ft_vec2)) return false;
+    if (ft_vec2 > ft_vec1) return false;
+    if (!(ft_vec1 >= ft_vec2)) return false;
+
+    if (ft_vec1 == ft_vec3) return false;
+    if (!(ft_vec1 != ft_vec3)) return false;
+    if (!(ft_vec1 < ft_vec3)) return false;
+    if (!(ft_vec1 <= ft_vec3)) return false;
+    if (ft_vec1 > ft_vec3) return false;
+    if (ft_vec1 >= ft_vec3) return false;
+
+    return true;
+}
+
 int test_vector(void)
 {
     Tester tester;
@@ -690,6 +720,9 @@ int test_vector(void)
     tester.run(test_erase(), "test_erase");
     tester.run(test_swap(), "test_swap");
     tester.run(test_clear(), "test_clear");
+
+    // operator
+    tester.run(test_operator(), "test_operator");
 
     // allocator
     tester.run(test_get_allocator(), "test_get_allocator");
