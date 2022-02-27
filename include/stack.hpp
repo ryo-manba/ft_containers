@@ -33,22 +33,42 @@ public:
     typedef typename Sequence::size_type size_type;
     typedef Sequence container_type;
 
+template <typename T, typename Seq>
+friend bool operator==(const stack<T, Seq>& lhs,
+                const stack<T, Seq>& rhs);
+
+template <typename T, typename Seq>
+friend bool operator<(const stack<T, Seq>& lhs,
+               const stack<T, Seq>& rhs);
+
 protected:
-    Sequence c_;
+    container_type c_;
 
 public:
     // constoractor
-    explicit stack(const Sequence& c = Sequence()) : c_(c){}
+    explicit stack(const Sequence& c = Sequence()) : c_(c)
+    {
+    }
 
-    stack(const stack& other) : c_(other.c_){}
-    ~stack(){}
+    stack(const stack& other) : c_(other.c_)
+    {
+    }
+
+    const stack<Tp, Sequence>& operator=(const stack<Tp, Sequence>& other)
+    {
+        if (this != &other) c_ = other.c_;
+        return *this;
+    }
+    ~stack()
+    {
+    }
 
     /**
      * @brief Returns true if the %stack is empty.
      */
     bool empty() const
     {
-        return c_.empty;
+        return c_.empty();
     }
 
     /**
@@ -91,46 +111,47 @@ public:
     }
 };
 
-    // operators
-    template <typename Tp, typename Seq>
-    bool operator==(const stack<Tp, Seq>& lhs, const stack<Tp, Seq>& rhs)
-    {
-        return lhs.c_ == rhs.c_;
-    }
+// operators
+template <typename Tp, typename Seq>
+bool operator==(const stack<Tp, Seq>& lhs, const stack<Tp, Seq>& rhs)
+{
+    return lhs.c_ == rhs.c_;
+}
 
-    template <typename Tp, typename Seq>
-    bool operator<(const stack<Tp, Seq>& lhs, const stack<Tp, Seq>& rhs)
-    {
-        return lhs.c_ < rhs.c_;
-    }
+template <typename Tp, typename Seq>
+bool operator<(const stack<Tp, Seq>& lhs, const stack<Tp, Seq>& rhs)
+{
+    return lhs.c_ < rhs.c_;
+}
 
-    // Based on operator==
-    template <typename Tp, typename Seq>
-    bool operator!=(const stack<Tp, Seq>& lhs, const stack<Tp, Seq>& rhs)
-    {
-        return !(lhs.c_ == rhs.c_);
-    }
+// Based on operator==
+template <typename Tp, typename Seq>
+bool operator!=(const stack<Tp, Seq>& lhs, const stack<Tp, Seq>& rhs)
+{
+    return !(lhs == rhs);
+}
 
-    // Based on operator<
-    template <typename Tp, typename Seq>
-    bool operator>(const stack<Tp, Seq>& lhs, const stack<Tp, Seq>& rhs)
-    {
-        return rhs.c_ < lhs.c_;
-    }
+// Based on operator<
+template <typename Tp, typename Seq>
+bool operator>(const stack<Tp, Seq>& lhs, const stack<Tp, Seq>& rhs)
+{
+    return rhs < lhs;
+}
 
-    // Based on operator<
-    template <typename Tp, typename Seq>
-    bool operator<=(const stack<Tp, Seq>& lhs, const stack<Tp, Seq>& rhs)
-    {
-        return !(rhs < lhs);
-    }
+// Based on operator<
+template <typename Tp, typename Seq>
+bool operator<=(const stack<Tp, Seq>& lhs, const stack<Tp, Seq>& rhs)
+{
+    return !(rhs < lhs);
+}
 
-    // Based on operator<
-    template <typename Tp, typename Seq>
-    inline bool operator>=(const stack<Tp, Seq>& lhs, const stack<Tp, Seq>& rhs)
-    {
-        return !(lhs < rhs);
-    }
+// Based on operator<
+template <typename Tp, typename Seq>
+bool operator>=(const stack<Tp, Seq>& lhs, const stack<Tp, Seq>& rhs)
+{
+    return !(lhs < rhs);
+}
+
 }    // namespace ft
 
 #endif
