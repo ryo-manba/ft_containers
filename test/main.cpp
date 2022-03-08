@@ -1,10 +1,10 @@
 #include <iostream>
-#include <vector>
 
 #include "Color.hpp"
 #include "debug.hpp"
 #include "vector.hpp"
 #include "tester.hpp"
+#include "pair.hpp"
 
 /************************/
 // leaks
@@ -18,6 +18,7 @@ __attribute__((destructor)) static void destructor()
 
 int test_vector(void);
 int test_stack(void);
+int test_pair(void);
 
 int main(void)
 {
@@ -25,5 +26,6 @@ int main(void)
 
     res += test_vector();
     res += test_stack();
+    res += test_pair();
     return res;
 }

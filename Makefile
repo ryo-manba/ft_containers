@@ -1,10 +1,10 @@
 NAME    := a.out
 CXX     := clang++
-CXXFLAGS:= -Wall -Wextra -Werror -std=c++98 -MMD -MP -pedantic -g
+CXXFLAGS:= -Wall -Wextra -Werror -std=c++98 -MMD -MP -pedantic -g3
 
 # Directories
-#SRCDIR  := ./src
 SRCDIR  := ./test
+#SRCDIR  := ./
 OBJDIR  := ./obj
 DEPDIR  := ./dep
 INCDIR  := ./include
@@ -13,6 +13,7 @@ TESTDIR := ./test
 #SRCFILE := main.cpp
 SRCFILE := test_vector.cpp \
 		   test_stack.cpp \
+		   test_pair.cpp \
 		   tester.cpp \
 		   main.cpp
 
