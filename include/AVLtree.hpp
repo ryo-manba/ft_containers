@@ -1,15 +1,18 @@
 #ifndef AVLTREE_HPP
 #define AVLTREE_HPP
 
+#include <iostream>
+
 #include "iterator.hpp"
+#include "pair.hpp"
 #include "stack.hpp"
 namespace ft
 {
 
-template <class Val, class NodePtr, class DiffType>
+template <class T>
 class tree_iterator;
 
-template <class Val, class NodePtr, class DiffType>
+template <class T>
 class tree_const_iterator;
 
 template <class Value>
@@ -33,8 +36,8 @@ public:
         : value_(value), parent_(parent), left_(left), right_(right), height_(0)
     {
         // ダミーノードの作成
-        null_node_ = new node_pointer;
-        root_      = null_node_;
+        //        null_node_ = new node_pointer;
+        //        root_      = null_node_;
     }
 
     tree_node(const tree_node& other)
@@ -46,43 +49,8 @@ public:
     {
     }
 
-    virtual ~tree_node(void)
+    ~tree_node(void)
     {
-        ft::stack<node_pointer> sta;
-
-        if (root_ == null_node_)
-        {
-            delete null_node_;
-            return;
-        }
-
-        if (root_->left != null_node_)
-        {
-            sta.push(root_->left_);
-        }
-        if (root_->right != null_node_)
-        {
-            sta.push(root_->right);
-        }
-
-        // BFSのようなイメージで木を辿りながらdeleteしていく
-        while (!sta.empty())
-        {
-            node_pointer front = sta.top();
-            sta.pop();
-
-            if (front->left != null_node_)
-            {
-                sta.push(front->left);
-            }
-            if (front->right != null_node_)
-            {
-                sta.push(front->right);
-            }
-            delete front;
-        }
-        delete null_node_;
-        delete root_;
     }
 
     // getter
@@ -120,16 +88,16 @@ public:
         return mini;
     }
 
-/*
-    4
-   /  \
-  2    5
- / \    \
-1   3    6
+    /*
+        4
+       /  \
+      2    5
+     / \    \
+    1   3    6
 
-- 3 のnextは 4, 4 のprevは 3
-- 5 のnextは 6, 6 のprevは 5
-*/
+    - 3 のnextは 4, 4 のprevは 3
+    - 5 のnextは 6, 6 のprevは 5
+    */
     node_pointer tree_increment(node_pointer node)
     {
         // 右の子の最小ノード
@@ -143,7 +111,7 @@ public:
         while (node == cur->right_)
         {
             node = cur;
-            cur = cur->parent_;
+            cur  = cur->parent_;
         }
         return cur;
     }
@@ -160,7 +128,7 @@ public:
         while (node == cur->left_)
         {
             node = cur;
-            cur = cur->parent_;
+            cur  = cur->parent_;
         }
         return cur;
     }
@@ -171,7 +139,7 @@ class tree_iterator
 {
 public:
     std::bidirectional_iterator_tag iterator_category;
-    typedef T   value_type;
+    typedef T value_type;
     typedef std::ptrdiff_t difference_type;
     typedef value_type& reference;
     typedef value_type* pointer;
@@ -186,11 +154,16 @@ public:
     tree_iterator() : node_(NULL)
     {
     }
-    tree_iterator(node_pointer p): node_(p) {}
-    tree_iterator(const map_iterator& other) : node_(other.node_) {}
+    tree_iterator(node_pointer p) : node_(p)
+    {
+    }
+    tree_iterator(const map_iterator& other) : node_(other.node_)
+    {
+    }
     ~tree_iterator()
 
-    reference operator*() const
+        reference
+        operator*() const
     {
         return node_->value_;
     }
@@ -226,12 +199,14 @@ public:
         return tmp;
     }
 
-    friend bool operator==(const tree_iterator& lhs, const tree_iterator& rhs) const
+    friend bool operator==(const tree_iterator& lhs,
+                           const tree_iterator& rhs) const
     {
         return lhs.node_ == rhs.node_;
     }
 
-    friend bool operator!=(const tree_iterator& lhs, const tree_iterator& rhs) const
+    friend bool operator!=(const tree_iterator& lhs,
+                           const tree_iterator& rhs) const
     {
         return !(lhs.node_ == rhs.node_);
     }
@@ -244,7 +219,7 @@ public:
     typedef std::bidirectional_iterator_tag iterator_category;
     typedef T value_type;
     std::bidirectional_iterator_tag iterator_category;
-    typedef T   value_type;
+    typedef T value_type;
     typedef std::ptrdiff_t difference_type;
     typedef value_type& reference;
     typedef value_type* pointer;
@@ -258,10 +233,18 @@ private:
     node_pointer node_;
 
 public:
-    tree_const_iterator() : node_(NULL) {}
-    tree_const_iterator(node_pointer p) : node_(p) {}
-    tree_const_iterator(const tree_const_iterator& other) : node_(other.node_) {}
-    ~tree_const_iterator() {}
+    tree_const_iterator() : node_(NULL)
+    {
+    }
+    tree_const_iterator(node_pointer p) : node_(p)
+    {
+    }
+    tree_const_iterator(const tree_const_iterator& other) : node_(other.node_)
+    {
+    }
+    ~tree_const_iterator()
+    {
+    }
 
     reference operator*() const
     {
@@ -296,131 +279,185 @@ public:
         return tmp;
     }
 
-    friend bool operator==(const tree_const_iterator& lhs, const tree_const_iterator& rhs)
+    friend bool operator==(const tree_const_iterator& lhs,
+                           const tree_const_iterator& rhs)
     {
         return lhs.node_ == rhs.node_;
     }
 
-    friend bool operator!=(const tree_const_iterator& lhs, const tree_const_iterator& rhs)
+    friend bool operator!=(const tree_const_iterator& lhs,
+                           const tree_const_iterator& rhs)
     {
         return !(lhs.node_ == rhs.node_);
     }
 };
 
-template <typename Key, typename Val, typename Compare,
-          typename Allocator = std::allocator<Val> >
-class avl_tree
+template <class Key, class Val, class Compare,
+          class Allocator = std::allocator<ft::pair<Key, Val> > >
+class tree
 {
 public:
     typedef Key key_type;
     typedef Val value_type;
-    typedef Compare value_compare;
+    typedef Compare key_compare;
     typedef Allocator allocator_type;
+    typedef typename allocator_type::size_type size_type;
+    typedef typename allocator_type::difference_type difference_type;
+    typedef value_type& reference;
+    typedef value_type* pointer;
 
-    typedef Val& reference;
-    typedef Val* pointer;
-    typedef size_t size_type;
-        /**
-         * utility
-         */
-        // 偏りを計算する
-        int calc_bias()
+    typedef tree_node<ft::pair<const key_type, value_type> > node_type;
+    typedef node_type* node_pointer;
+
+private:
+    node_pointer root_;
+    node_pointer null_node_;    // ダミーノード
+    size_type size_;            // マップの要素数
+    key_compare comp_;
+    allocator_type alloc_;
+
+public:
+    explicit tree(const allocator_type& alloc = allocator_type(),
+                  const key_compare& comp     = key_compare())
+        : size_(0), comp_(comp), alloc_(alloc)
+    {
+        null_node_ = create_node();
+        root_      = null_node_;
+    }
+    ~tree(void)
+    {
+        all_clear(root_);
+        delete_node(null_node_);
+    }
+    /**
+     * utility
+     */
+    // 偏りを計算する
+    int calc_bias()
+    {
+        return left_->height_ - right_->height_;
+    }
+    // 木の高さとバイアスを更新する
+    // 木の高さ = 1 + max(左の木の高さ, 右の木の高さ)
+    // バイアス = 左の木の高さ - 右の木の高さ
+    void update_height(void)
+    {
+        if (value_ == NULL)
         {
-            return left_->height_ - right_->height_;
+            height_ = 0;
         }
-        // 木の高さとバイアスを更新する
-        // 木の高さ = 1 + max(左の木の高さ, 右の木の高さ)
-        // バイアス = 左の木の高さ - 右の木の高さ
-        void update_height(void)
+        else
         {
-            if (value_ == NULL)
+            // 常にnull_nodeがあるのでNULLチェックはいらない。
+            size_type left_height  = left_->height_;
+            size_type right_height = right_->height_;
+            height_                = 1 + std::max(left_height, right_height);
+        }
+    }
+
+    // replace(aノード,bノード)
+    // aノードをルートとする部分木をbノードをルートとする部分木に置き換える
+    void replace(node_pointer before, node_pointer after)
+    {
+        node_pointer parent_node = before->Parent;
+
+        // beforeがrootだったらそのままafterをrootにする
+        if (before == root_)
+        {
+            root_ = after;
+        }
+        else if (parent_node->left_ == before)
+        {
+            // beforeが親の左部分木だった場合
+            parent_node->left_ = after;
+        }
+        else
+        {
+            // beforeが親の右部分木だった場合
+            parent_node->right_ = after;
+        }
+        // afterの親を繋ぎ変える
+        after->parent_ = parent_node;
+    }
+
+    /**
+     * search
+     */
+    bool search(pointer data)
+    {
+        // keyを比較する関数かます？
+        node_pointer result = search_node(root_, data);
+
+        // dataが見つからない場合
+        if (result == null_node_)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    node_pointer search_node(node_pointer node, pointer data)
+    {
+        // nodeに要素が存在しない場合
+        if (node == null_node_)
+        {
+            return node;
+        }
+
+        node_pointer tmp = node;
+
+        while (tmp != null_node_)
+        {
+            if (tmp->data == data)
             {
-                height_ = 0;
+                break;
+            }
+
+            // 要素が小さい場合は左を探索する
+            // 比較関数かます?(key_comp)
+            // pairのkey比較
+            if (data < tmp->data)
+            {
+                tmp = tmp->left;
             }
             else
             {
-                // 常にnull_nodeがあるのでNULLチェックはいらない。
-                size_type left_height  = left_->height_;
-                size_type right_height = right_->height_;
-                height_ = 1 + std::max(left_height, right_height);
-                bias_   = calc_bias();
+                // tmp->data
+                tmp = tmp->right;
             }
         }
+        return tmp;
+    }
 
-        // replace(aノード,bノード)
-        // aノードをルートとする部分木をbノードをルートとする部分木に置き換える
-        void replace(node_pointer before, node_pointer after)
-        {
-            node_pointer parent_node = before->Parent;
+private:
+    node_pointer create_node(void)
+    {
+        node_pointer node;
 
-            // beforeがrootだったらそのままafterをrootにする
-            if (before == root_)
-            {
-                root_ = after;
-            }
-            else if (parent_node->left_ == before)
-            {
-                // beforeが親の左部分木だった場合
-                parent_node->left_ = after;
-            }
-            else
-            {
-                // beforeが親の右部分木だった場合
-                parent_node->right_ = after;
-            }
-            // afterの親を繋ぎ変える
-            after->parent_ = parent_node;
-        }
+        node = alloc_.allocate(1);
+        alloc_.construct(node);
+        node->left   = NULL;
+        node->right  = NULL;
+        node->parent = NULL;
+        node->height = 0;
+        return node;
+    }
 
-        /**
-         * search
-         */
-        bool search(pointer data)
-        {
-            // keyを比較する関数かます？
-            node_pointer result = search_node(root_, data);
+    void delete_node(node_pointer node)
+    {
+        alloc_.destroy(node);
+        alloc_.deallocate(node, 1);
+        size_ -= 1;
+    }
 
-            // dataが見つからない場合
-            if (result == null_node_)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        node_pointer search_node(node_pointer node, pointer data)
-        {
-            // nodeに要素が存在しない場合
-            if (node == null_node_)
-            {
-                return node;
-            }
-
-            node_pointer tmp = node;
-
-            while (tmp != null_node_)
-            {
-                if (tmp->data == data)
-                {
-                    break;
-                }
-
-                // 要素が小さい場合は左を探索する
-                // 比較関数かます?(key_comp)
-                // pairのkey比較
-                if (data < tmp->data)
-                {
-                    tmp = tmp->left;
-                }
-                else
-                {
-                    // tmp->data
-                    tmp = tmp->right;
-                }
-            }
-            return tmp;
-        }
-    };
+    void all_clear(node_pointer node)
+    {
+        if (node == NULL)
+            return ;
+        all_clear(node->left);
+        all_clear(node->right);
+        delete_node(node);
+    }
 };
 }    // namespace ft
 #endif
