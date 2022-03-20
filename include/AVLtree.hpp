@@ -516,7 +516,8 @@ public:
     ft::pair<iterator, iterator> equal_range(const key_type& key)
     {
         iterator it1, it2;
-        return ft::pair<it1, it2>;
+        ft::pair<iterator, iterator> p(it1, it2);
+        return p;
     }
 
     // TODO: stub
@@ -524,31 +525,36 @@ public:
         const key_type& key) const
     {
         const_iterator it1, it2;
-        return ft::pair<it1, it2>;
+        ft::pair<const_iterator, const_iterator> p(it1, it2);
+        return p;
     }
 
     // TODO: stub
     iterator lower_bound(const key_type& key)
     {
-        return iterator;
+        iterator it;
+        return it;
     }
 
     // TODO: stub
     const_iterator lower_bound(const key_type& key) const
     {
-        return const_iterator;
+        const_iterator it;
+        return it;
     }
 
     // TODO: stub
     iterator upper_bound(const key_type& key)
     {
-        return iterator;
+        iterator it;
+        return it;
     }
 
     // TODO: stub
     const_iterator upper_bound(const key_type& key) const
     {
-        return const_iterator;
+        const_iterator it;
+        return it;
     }
 
     // Observers

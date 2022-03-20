@@ -5,6 +5,8 @@
 #include "iterator.hpp"
 #include "pair.hpp"
 #include "utils.hpp"
+#include <stdexcept>
+
 
 template <class pointer>
 struct tree_node;
@@ -169,7 +171,7 @@ public:
     {
         iterator it = lower_bound(key);
         if (it == end() || key_comp()(key, (*it).first))
-            throw std::out_of_range;    // TODO: 正しい例外に修正する
+            throw std::out_of_range("at");    // TODO: 正しい例外に修正する
         return (*it).second;
     }
 
@@ -177,7 +179,7 @@ public:
     {
         const_iterator it = lower_bound(key);
         if (it == end() || key_comp()(key, (*it).first))
-            throw std::out_of_range;    // TODO: 正しい例外に修正する
+            throw std::out_of_range("at");    // TODO: 正しい例外に修正する
         return (*it).second;
     }
 
@@ -332,7 +334,7 @@ public:
      * @brief std::map::value_type 型のオブジェクト (キーと値のペア) を、
      * key_comp を用いてペアの第一成分を比較する関数オブジェクトを返します
      */
-    ft::map::value_compare value_comp() const
+    value_compare value_comp() const
     {
         return value_compare(tree_.key_comp());
     }
