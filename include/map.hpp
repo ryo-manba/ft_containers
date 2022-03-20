@@ -183,7 +183,8 @@ public:
 
     // Modifiers
     /**
-     * @brief コンテナからすべての要素を消去する。この呼び出しの後、size()はゼロを返す。
+     * @brief
+     * コンテナからすべての要素を消去する。この呼び出しの後、size()はゼロを返す。
      */
     void clear()
     {
@@ -191,7 +192,8 @@ public:
     }
 
     /**
-     * @brief コンテナに同等のキーを持つ要素がまだない場合、コンテナに要素を挿入する。
+     * @brief
+     * コンテナに同等のキーを持つ要素がまだない場合、コンテナに要素を挿入する。
      * すでにkeyが存在した場合   : false
      * 　　　　　　存在しない場合 : true
      */
@@ -212,7 +214,7 @@ public:
     /**
      * @brief firstからlastの範囲を挿入する
      */
-    template<typename InputIt>
+    template <typename InputIt>
     void insert(InputIt first, InputIt last)
     {
         tree_.insert_range_unique(first, last);
@@ -241,12 +243,102 @@ public:
         tree_.swap(other.tree_);
     }
 
-    // TODO: Lookup以降も作る
+    // Lookup
+    /**
+     * @brief key を持つ要素の数を返す。
+     * このコンテナは重複を許さないので、1か0のどちらかである。
+     */
+    size_type count(const key_type& key) const
+    {
+        if (tree_.find(key) == tree_.end())
+        {
+            return 0;
+        }
+        else
+        {
+            return 1;
+        }
+    }
 
+    /**
+     * @brief keyと同等のkeyを持つ要素へのイテレータを返す。
+     * そのような要素が見つからない場合、end()イテレータが返される。
+     */
+    iterator find(const key_type& key)
+    {
+        return tree_.find(key);
+    }
 
-private:
+    const_iterator find(const key_type& key) const
+    {
+        return tree_.find(key);
+    }
+
+    /**
+     * @brief コンテナ内の与えられたキーを持つすべての要素を含む範囲を返します。
+     * 1つはキーより小さくない最初の要素を指すもの、もう1つはキーより大きい最初の要素を指すものである
+     * 最初のイテレータは lower_bound() で、2 番目のイテレータは upper_bound()
+     * で得ることができる。
+     */
+    ft::pair<iterator, iterator> equal_range(const key_type& key)
+    {
+        return tree_.equal_range(key);
+    }
+
+    ft::pair<const_iterator, const_iterator> equal_range(
+        const key_type& key) const
+    {
+        return tree_.equal_range(key);
+    }
+
+    /**
+     * @brief key以上の最初の要素を指すイテレータを返す。
+     * なかったらend()を返す
+     */
+    iterator lower_bound(const key_type& key)
+    {
+        return tree_.lower_bound(key);
+    }
+
+    const_iterator lower_bound(const key_type& key) const
+    {
+        return tree_.lower_bound(key);
+    }
+
+    /**
+     * @brief key よりも大きい最初の要素を指すイテレータを返す。
+     * なかったらend()を返す
+     */
+    iterator upper_bound(const key_type& key)
+    {
+        return tree_.upper_bound(key);
+    }
+
+    const_iterator upper_bound(const key_type& key) const
+    {
+        return tree_.upper_bound(key);
+    }
+
+    // Observers
+    /**
+     * @brief キーを比較する関数オブジェクトを返します
+     */
+    key_compare key_comp() const
+    {
+        return tree_.key_comp();
+    }
+
+    /**
+     * @brief std::map::value_type 型のオブジェクト (キーと値のペア) を、
+     * key_comp を用いてペアの第一成分を比較する関数オブジェクトを返します
+     */
+    ft::map::value_compare value_comp() const
+    {
+        return value_compare(tree_.key_comp());
+    }
 };
 
+// operator
 template <class Key, class T, class Compare, class Allocator>
 bool operator==(const ft::map<Key, T, Compare, Allocator>& lhs,
                 const ft::map<Key, T, Compare, Allocator>& rhs)
