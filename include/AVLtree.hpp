@@ -186,7 +186,9 @@ public:
     {
     }
 
-    ~tree_iterator(void) {}
+    ~tree_iterator(void)
+    {
+    }
 
     reference operator*() const
     {
@@ -224,14 +226,12 @@ public:
         return tmp;
     }
 
-    friend bool operator==(const tree_iterator& lhs,
-                           const tree_iterator& rhs)
+    friend bool operator==(const tree_iterator& lhs, const tree_iterator& rhs)
     {
         return lhs.node_ == rhs.node_;
     }
 
-    friend bool operator!=(const tree_iterator& lhs,
-                           const tree_iterator& rhs)
+    friend bool operator!=(const tree_iterator& lhs, const tree_iterator& rhs)
     {
         return !(lhs.node_ == rhs.node_);
     }
@@ -316,7 +316,7 @@ public:
 };
 
 template <class Key, class Val, class Compare = std::less<Key>,
-          class Allocator = std::allocator<ft::pair<Key, Val> > >
+          class Allocator = std::allocator<ft::pair<const Key, Val> > >
 class tree
 {
 public:
@@ -338,10 +338,10 @@ public:
     typedef tree_node<value_type> node_type;
     typedef node_type* node_pointer;
 
-
 private:
-    typedef typename allocator_type::template
-            rebind<node_type>::other  node_allocator;
+    typedef typename allocator_type::template rebind<node_type>::other
+        node_allocator;
+
     node_pointer root_;
     node_pointer last_;    // 終端ノード
     size_type size_;       // マップの要素数
@@ -349,9 +349,9 @@ private:
     node_allocator alloc_;
 
 public:
-    explicit tree(const allocator_type& alloc = allocator_type(),
-                  const key_compare& comp     = key_compare())
-        : size_(0), comp_(comp), alloc_(alloc)
+    explicit tree(const key_compare& comp     = key_compare(),
+                  const allocator_type& alloc = allocator_type())
+        : size_(0), comp_(comp), alloc_(node_allocator(alloc))
     {
         last_ = alloc_.allocate(1);
         alloc_.construct(last_);
@@ -359,13 +359,15 @@ public:
         last_->right_  = NULL;
         last_->parent_ = NULL;
         last_->height_ = 0;
-        root_          = last_;
+        //        root_          = last_;
+        root_ = NULL;
     }
     ~tree(void)
     {
         all_clear(root_);
-        if (last_)
-            delete_node(last_);
+        //        root_ = NULL;
+        //        if (last_)
+        //            delete_node(last_);
     }
 
     tree& operator=(const tree& other)
@@ -379,11 +381,17 @@ public:
         alloc_ = other.alloc_;
         for (const_iterator it = other.begin(); it != other.end(); ++it)
         {
-            insert(*it);
+            insert_unique(*it);
         }
         return *this;
     }
 
+    allocator_type get_allocator() const
+    {
+        return alloc_;
+    }
+
+    // iterators
     iterator begin()
     {
         return iterator(root_->min_node(root_));
@@ -401,6 +409,11 @@ public:
         return const_iterator(root_->max_node(root_));
     }
 
+    // Capacity
+    bool empty() const
+    {
+        return size_ == 0;
+    }
     size_type size() const
     {
         return size_;
@@ -413,38 +426,28 @@ public:
                             std::numeric_limits<difference_type>::max()));
     }
 
-    node_pointer search(const value_type& data) const
+    // TODO: stubの実装
+    // Modifiers
+    void clear()
     {
-        return search_node(root_, data);
+        // stub
     }
 
-    // 木の中からkeyがあるか捜索する
-    iterator find(const key_type& key)
+    node_pointer insert_unique(const value_type& data)
     {
-        node_pointer node = find_node(root_, key);
+        root_ = insert_node(root_, data);
 
-        if (node && !comp_(key, node->data_.first)) return iterator(node);
-        return end();
-    }
-
-    const_iterator find(const key_type& key) const
-    {
-        node_pointer node = find_node(root_, key);
-
-            if (node &&
-                !comp_(key, node->data_.first)) return const_iterator(node);
-        return end();
-    }
-
-    node_type* insert(const value_type& data)
-    {
-        root_       = insert_node(root_, data);
-        last_->left = root_;
         if (root_)
         {
             root_->parent_ = last_;
         }
         return search_node(root_, data);
+    }
+
+    template <typename InputIt>
+    void insert_range_unique(InputIt first, InputIt last)
+    {
+        // stub
     }
 
     void erase(value_type data)
@@ -484,95 +487,79 @@ public:
         swap(alloc_, other.alloc_);
     }
 
-    /**
-     * utility
-     */
-    // 偏りを計算する
-//    int calc_bias()
-//    {
-//        return left_->height_ - right_->height_;
-//    }
+    // Lookup
+    size_type count(const key_type& key) const
+    {
+        // stub
+        return 1;
+    }
 
-    // // replace(aノード,bノード)
-    // // aノードをルートとする部分木をbノードをルートとする部分木に置き換える
-    // void replace(node_pointer before, node_pointer after)
-    // {
-    //     node_pointer parent_node = before->Parent;
+    // 木の中からkeyがあるか捜索する
+    iterator find(const key_type& key)
+    {
+        node_pointer node = find_node(root_, key);
 
-    //     // beforeがrootだったらそのままafterをrootにする
-    //     if (before == root_)
-    //     {
-    //         root_ = after;
-    //     }
-    //     else if (parent_node->left_ == before)
-    //     {
-    //         // beforeが親の左部分木だった場合
-    //         parent_node->left_ = after;
-    //     }
-    //     else
-    //     {
-    //         // beforeが親の右部分木だった場合
-    //         parent_node->right_ = after;
-    //     }
-    //     // afterの親を繋ぎ変える
-    //     after->parent_ = parent_node;
-    // }
+        if (node && !comp_(key, node->data_->first)) return iterator(node);
+        return end();
+    }
 
-    // /**
-    //  * search
-    //  */
-    // bool search(pointer data)
-    // {
-    //     // keyを比較する関数かます？
-    //     node_pointer result = search_node(root_, data);
+    const_iterator find(const key_type& key) const
+    {
+        node_pointer node = find_node(root_, key);
 
-    //     // dataが見つからない場合
-    //     if (result == last_)
-    //     {
-    //         return false;
-    //     }
-    //     return true;
-    // }
+        if (node && !comp_(key, node->data_->first))
+            return const_iterator(node);
+        return end();
+    }
 
-    // node_pointer search_node(node_pointer node, value_type& data) const
-    // {
-    //     if (node == NULL)
-    //     {
-    //         return NULL;
-    //     }
-    //     // ノードよりも小さい場合はleftを探す
-    //     if (comp_(data.first, node->data_.first))
-    //         return search_node(node->left, data);
-    //     // ノードよりも大きい場合はrightを探す
-    //     else if (comp_(node->data_.first, data.first))
-    //         return search_node(node->right, data);
-    //     else
-    //         return node;    //　最終的に
+    // TODO:stub
+    ft::pair<iterator, iterator> equal_range(const key_type& key)
+    {
+        iterator it1, it2;
+        return ft::pair<it1, it2>;
+    }
 
-    //     node_pointer tmp = node;
+    // TODO: stub
+    ft::pair<const_iterator, const_iterator> equal_range(
+        const key_type& key) const
+    {
+        const_iterator it1, it2;
+        return ft::pair<it1, it2>;
+    }
 
-    //     while (tmp != last_)
-    //     {
-    //         if (tmp->data == data)
-    //         {
-    //             break;
-    //         }
+    // TODO: stub
+    iterator lower_bound(const key_type& key)
+    {
+        return iterator;
+    }
 
-    //         // 要素が小さい場合は左を探索する
-    //         // 比較関数かます?(key_comp)
-    //         // pairのkey比較
-    //         if (data < tmp->data)
-    //         {
-    //             tmp = tmp->left;
-    //         }
-    //         else
-    //         {
-    //             // tmp->data
-    //             tmp = tmp->right;
-    //         }
-    //     }
-    //     return tmp;
-    // }
+    // TODO: stub
+    const_iterator lower_bound(const key_type& key) const
+    {
+        return const_iterator;
+    }
+
+    // TODO: stub
+    iterator upper_bound(const key_type& key)
+    {
+        return iterator;
+    }
+
+    // TODO: stub
+    const_iterator upper_bound(const key_type& key) const
+    {
+        return const_iterator;
+    }
+
+    // Observers
+    key_compare key_comp() const
+    {
+        return comp_;
+    }
+    key_compare value_comp() const
+    {
+        return comp_;
+    }
 
 private:
     node_pointer create_node(const value_type& data)
@@ -674,7 +661,7 @@ private:
     node_pointer rotate_rl(node_pointer a)
     {
         rotate_right(a->right_);
-         return rotate_left(a);
+        return rotate_left(a);
     }
 
     /**
@@ -697,7 +684,7 @@ private:
         return rotate_right(a);
     }
 
-       // 偏りに応じてバランスを取る
+    // 偏りに応じてバランスを取る
     void balancing(node_pointer node)
     {
         node->update_height();
@@ -722,11 +709,11 @@ private:
     // 再帰的に全てのnodeのバランスを取る
     void rebalancing(node_pointer node)
     {
-        if (node->left_)  rebalancing(node->left_);
+        if (node->left_) rebalancing(node->left_);
         if (node->right_) rebalancing(node->right_);
         balancing(node);
     }
-     /**
+    /**
      * @brief 大小比較して適切な位置にnodeを追加する
      * 偏りに応じて回転させる
      * @param node (NULLになるまでたどっていく)
@@ -741,14 +728,15 @@ private:
             size_ += 1;
             return create_node(data);
         }
-        if (comp_(data.first,
-                  node->data_.first))    // 現nodeよりも挿入したい値が小さい場合
+        if (comp_(
+                data.first,
+                node->data_->first))    // 現nodeよりも挿入したい値が小さい場合
         {
             // 左にたどっていく
             node->left_          = insert_node(node->left_, data);
             node->left_->parent_ = node;
         }
-        else if (comp_(node->data_.first,
+        else if (comp_(node->data_->first,
                        data.first))    // 現nodeよりも挿入したい値が大きい場合
         {
             // 右にたどっていく
@@ -758,25 +746,26 @@ private:
         else
         {
             // すでにkeyが存在した場合
-            node->data_.second = data.second;
+            node->data_->second = data.second;
             return node;
         }
 
         // 木の偏りをもとにバランスを取る
-        node->rebalancing();
+        rebalancing(node);
         return node;
     }
 
     node_pointer erase_node(node_pointer node, value_type data)
     {
-        if (node == NULL) {
+        if (node == NULL)
+        {
             return node;
         }
-        if (comp_(data.first, node->data_.first))
+        if (comp_(data.first, node->data_->first))
         {
             node->left_ = erase_node(node->left_, data);
         }
-        else if (comp_(node->data_.first, data.first))
+        else if (comp_(node->data_->first, data.first))
         {
             node->right_ = erase_node(node->right_, data);
         }
@@ -793,7 +782,7 @@ private:
                     delete_node(node);
                     node = NULL;
                 }
-                else // 子が1つ
+                else    // 子が1つ
                 {
                     node_pointer target = node;
 
@@ -809,35 +798,51 @@ private:
             else
             {
                 node_pointer new_node = get_min_node(node->right_);
-                node_pointer target = node;
+                node_pointer target   = node;
 
                 // 親ノードを新しいノードに設定する
                 if (new_node->parent_->left_ == new_node)
                     new_node->parent_->left_ = NULL;
                 else if (new_node->parent_->right_ == new_node)
                     new_node->parent_->right_ = NULL;
-                
+
                 // 新しいノードのセットアップ
-                if (target->left_)
-                    new_node->left_ = target->left_;
-                if (target->right_)
-                    new_node->right_ = target->right_;
+                if (target->left_) new_node->left_ = target->left_;
+                if (target->right_) new_node->right_ = target->right_;
                 new_node->height_ = target->height;
                 new_node->parent_ = target->parent_;
 
                 // 新しいノードの子ノードのセットアップ
-                if (new_node->left_)
-                    new_node->left_->parent_ = new_node;
-                if (new_node->right_)
-                    new_node->right_->parent_ = new_node;
+                if (new_node->left_) new_node->left_->parent_ = new_node;
+                if (new_node->right_) new_node->right_->parent_ = new_node;
                 delete_node(target);
                 node = new_node;
             }
-            node->rebalancing();
+            rebalancing(node);
             return node;
         }
     }
 
+    node_pointer search(const value_type& data) const
+    {
+        return search_node(root_, data);
+    }
+
+    node_pointer search_node(node_pointer node, const value_type& data) const
+    {
+        if (node == NULL)
+        {
+            return NULL;
+        }
+        // ノードよりも小さい場合はleftを探す
+        if (comp_(data.first, node->data_->first))
+            return search_node(node->left_, data);
+        // ノードよりも大きい場合はrightを探す
+        else if (comp_(node->data_->first, data.first))
+            return search_node(node->right_, data);
+        else
+            return node;    //　最終的に
+    }
 };
 
 }    // namespace ft
