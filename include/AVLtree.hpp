@@ -132,7 +132,7 @@ template <class T>
 class tree_iterator
 {
 public:
-    std::bidirectional_iterator_tag iterator_category;
+    typedef std::bidirectional_iterator_tag iterator_category;
     typedef T value_type;
     typedef std::ptrdiff_t difference_type;
     typedef value_type& reference;
