@@ -53,7 +53,7 @@ public:
     };
 
 private:
-    typedef ft::tree<key_type, value_type, key_compare, allocator_type> tree;
+    typedef ft::tree<key_type, mapped_type, key_compare, allocator_type> tree;
     tree tree_;
 
 public:
@@ -74,14 +74,10 @@ public:
         const allocator_type& alloc = allocator_type())
         : tree_(comp, alloc)
     {
-        while (first != last)
-        {
-            // tree_.insert(first->first, first->second);
-            ++first;
-        }
+        tree_.insert_range_unique(first, last);
     }
 
-    map(const map& other) : tree_(other.tree)
+    map(const map& other) : tree_(other.tree_)
     {
     }
 
@@ -201,7 +197,7 @@ public:
      */
     ft::pair<iterator, bool> insert(const value_type& val)
     {
-        tree_.insert_unique(val);
+        return tree_.insert_unique(val);
     }
 
     /**
