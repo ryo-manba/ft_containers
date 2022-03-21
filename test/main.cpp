@@ -5,6 +5,7 @@
 #include "vector.hpp"
 #include "tester.hpp"
 #include "pair.hpp"
+#include "map.hpp"
 
 /************************/
 // leaks
@@ -19,13 +20,15 @@ __attribute__((destructor)) static void destructor()
 int test_vector(void);
 int test_stack(void);
 int test_pair(void);
+int test_map(void);
 
 int main(void)
 {
     int res = 0;
 
-    res += test_vector();
-    res += test_stack();
-    res += test_pair();
+//    res += test_vector();
+//    res += test_stack();
+//    res += test_pair();
+    res += test_map();
     return res;
 }

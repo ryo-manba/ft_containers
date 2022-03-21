@@ -11,7 +11,8 @@ INCDIR  := ./include
 TESTDIR := ./test
 
 #SRCFILE := main.cpp
-SRCFILE := test_vector.cpp \
+SRCFILE := test_map.cpp \
+		   test_vector.cpp \
 		   test_stack.cpp \
 		   test_pair.cpp \
 		   tester.cpp \
