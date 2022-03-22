@@ -226,6 +226,61 @@ static bool test_const_reverse_iterator(void)
     return true;
 }
 
+static bool test_empty(void)
+{
+    std::map<std::string, int> std_mp1;
+    ft::map<std::string, int> ft_mp1;
+    if (std_mp1.empty() != ft_mp1.empty()) return false;
+
+    std::map<std::string, int> std_mp2 = init_std_map();
+    ft::map<std::string, int> ft_mp2   = init_ft_map();
+    if (std_mp2.empty() != ft_mp2.empty()) return false;
+
+// TODO: clearテスト後に追加する
+//    std_mp2.clear();
+//    ft_mp2.clear();
+//    if (std_mp2.empty() != ft_mp2.empty()) return false;
+    return true;
+}
+
+static bool test_size(void)
+{
+    std::map<std::string, int> std_mp1;
+    ft::map<std::string, int> ft_mp1;
+    if (std_mp1.size() != ft_mp1.size()) return false;
+
+    std::map<std::string, int> std_mp2 = init_std_map();
+    ft::map<std::string, int> ft_mp2   = init_ft_map();
+    if (std_mp2.size() != ft_mp2.size()) return false;
+
+//TODO: insert, eraseテスト後に追加する
+//    std_mp2.insert(std::make_pair("Key", 42));
+//    ft_mp2.insert(ft::make_pair("Key", 42));
+//    if (std_mp2.size() != ft_mp2.size()) return false;
+//    std_mp2.erase("Key");
+//    ft_mp2.erase("Key");
+//    if (std_mp2.size() != ft_mp2.size()) return false;
+
+    return true;
+}
+
+static bool test_max_size(void)
+{
+    std::map<std::string, int> std_mp1;
+    ft::map<std::string, int> ft_mp1;
+    if (std_mp1.max_size() != ft_mp1.max_size()) return false;
+
+    std::map<int, int> std_mp2;
+    ft::map<int, int> ft_mp2 ;
+    if (std_mp2.max_size() != ft_mp2.max_size()) return false;
+
+    std::map<long, char> std_mp3;
+    ft::map<long, char> ft_mp3 ;
+    if (std_mp3.max_size() != ft_mp3.max_size()) return false;
+
+    return true;
+}
+
 int test_map(void)
 {
     Tester tester;
@@ -240,14 +295,12 @@ int test_map(void)
     tester.run(test_const_iterator(), "test_const_iterator");
     tester.run(test_reverse_iterator(), "test_reverse_iterator");
     tester.run(test_const_reverse_iterator(), "test_const_reverse_iterator");
+
+    // capacities;
+    tester.run(test_empty(), "test_empty");
+    tester.run(test_size(), "test_size");
+    tester.run(test_max_size(), "test_max_size");
     /*
-        // capacities;
-        tester.run(test_size(), "test_size");
-        tester.run(test_max_size(), "test_max_size");
-        tester.run(test_resize(), "test_resize");
-        tester.run(test_capacity(), "test_capacity");
-        tester.run(test_empty(), "test_empty");
-        tester.run(test_reserve(), "test_reserve");
 
         // element_access
         tester.run(test_indexer(), "test_indexer");
