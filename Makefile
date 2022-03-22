@@ -56,7 +56,7 @@ test: $(NAME)
 t: $(NAME)
 	./a.out
 
-d: CXXFLAGS += -g -fsanitize=address
+d: CXXFLAGS += -g -fsanitize=address -DDEBUG=1
 d: re test
 
 l: CXXFLAGS += -DLEAK=1
