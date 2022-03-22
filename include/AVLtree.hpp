@@ -522,36 +522,59 @@ public:
         return p;
     }
 
-    // TODO: stub
+    // key以上の値を返す
+    // なかったらendを返す
+    // less<int>()(2, 3) // true
+    // less<int>()(3, 3) // false
     iterator lower_bound(const key_type& key)
     {
-        iterator it;
-        (void)key;
-        return it;
+        for (iterator it = begin(); it != end(); ++it)
+        {
+            if (!comp_(it->first, key))
+            {
+                return it;
+            }
+        }
+        return end();
     }
 
-    // TODO: stub
     const_iterator lower_bound(const key_type& key) const
     {
-        const_iterator it;
-        (void)key;
-        return it;
+        for (const_iterator it = begin(); it != end(); ++it)
+        {
+            if (!comp_(it->first, key))
+            {
+                return it;
+            }
+        }
+        return end();
     }
 
-    // TODO: stub
+    // keyより大きい値を返す
+    // less<int>()(2, 3) // true
+    // less<int>()(3, 3) // false
     iterator upper_bound(const key_type& key)
     {
-        iterator it;
-        (void)key;
-        return it;
+        for (iterator it = begin(); it != end(); ++it)
+        {
+            if (comp_(key, it->first))
+            {
+                return it;
+            }
+        }
+        return end();
     }
 
-    // TODO: stub
     const_iterator upper_bound(const key_type& key) const
     {
-        const_iterator it;
-        (void)key;
-        return it;
+        for (const_iterator it = begin(); it != end(); ++it)
+        {
+            if (comp_(key, it->first))
+            {
+                return it;
+            }
+        }
+        return end();
     }
 
     // Observers
