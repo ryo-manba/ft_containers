@@ -356,6 +356,7 @@ public:
     ~tree(void)
     {
         all_clear(root_);
+        root_ = NULL;
         delete_node(last_);
     }
 
@@ -415,20 +416,28 @@ public:
                             std::numeric_limits<difference_type>::max()));
     }
 
-    // TODO: stubの実装
     // Modifiers
     void clear()
     {
-        // stub
+        all_clear(root_);
+        root_ = NULL; // NULL埋めしないとデストラクターでダブルフリーしちゃう
+        size_ = 0; // clearを呼んだあとはsizeが0になる
+        last_->left_ = NULL;
     }
 
-    node_pointer insert_unique(const value_type& data)
+    // 追加したノードのイテレータと挿入したかを表すbool値
+    ft::pair<iterator, bool> insert_unique(const value_type& data)
     {
+        // 既に要素が存在する場合は挿入しない
+        node_pointer p = search_node(root_, data);
+        if (p) return ft::make_pair(iterator(p), false);
+
         root_ = insert_node(root_, data);
         last_->left_ = root_; // begin()用
         if (root_)
             root_->parent_ = last_;
-        return search_node(root_, data);
+        p = search_node(root_, data);
+        return ft::make_pair(iterator(p), true);
     }
 
     // TODO: stub
@@ -870,11 +879,8 @@ private:
         }
     }
 
-    node_pointer search(const value_type& data) const
-    {
-        return search_node(root_, data);
-    }
-
+    // keyがある : その要素を返す
+    // keyがない : NULL
     node_pointer search_node(node_pointer node, const value_type& data) const
     {
         if (node == NULL)
@@ -888,8 +894,9 @@ private:
         else if (comp_(node->data_.first, data.first))
             return search_node(node->right_, data);
         else
-            return node;    //　最終的に
+            return node;    // keyが見つかった場合
     }
+
 };
 
 }    // namespace ft
