@@ -281,6 +281,113 @@ static bool test_max_size(void)
     return true;
 }
 
+// TODO: insert with hintを作成する
+/*
+static bool test_indexer(void)
+{
+    std::map<std::string, int> std_mp;
+    ft::map<std::string, int> ft_mp;
+
+    std_mp["aaa"] = 1;
+    std_mp["zzz"] = 2;
+    std_mp["abc"] = 3;
+
+    ft_mp["aaa"] = 1;
+    ft_mp["zzz"] = 2;
+    ft_mp["abc"] = 3;
+    if (map_comp(std_mp, ft_mp)) return false;
+
+    if (std_mp["aaa"] != ft_mp["aaa"]) return false;
+    if (std_mp["zzz"] != ft_mp["zzz"]) return false;
+    if (std_mp["abc"] != ft_mp["abc"]) return false;
+
+    return false;
+}
+*/
+
+// TODO: 例外のテスト追加する
+static bool test_at(void)
+{
+    std::map<std::string, int> std_mp = init_std_map();
+    ft::map<std::string, int> ft_mp   = init_ft_map();
+
+    if (std_mp.at("aaa") != ft_mp.at("aaa")) return false;
+
+    std_mp.at("aaa") = 42;
+    ft_mp.at("aaa") = 42;
+    if (map_comp(std_mp, ft_mp)) return false;
+
+    return true;
+}
+
+static bool test_clear(void)
+{
+    std::map<std::string, int> std_mp = init_std_map();
+    ft::map<std::string, int> ft_mp   = init_ft_map();
+
+    std_mp.clear();
+    ft_mp.clear();
+
+    if (std_mp.size() != ft_mp.size()) return false;
+    if (std_mp.empty() != ft_mp.empty()) return false;
+    return true;
+}
+
+static bool test_insert(void)
+{
+    std::map<std::string, int> std_mp;
+    ft::map<std::string, int> ft_mp;
+    std::map<std::string, int>::iterator std_it;
+    ft::map<std::string, int>::iterator ft_it;
+    std::pair<std::map<std::string, int>::iterator, bool> std_p;
+    ft::pair<ft::map<std::string, int>::iterator, bool> ft_p;
+
+    std_p = std_mp.insert(std::make_pair("aaa", 1));
+    ft_p = ft_mp.insert(ft::make_pair("aaa", 1));
+
+    if (std_p.first->first != ft_p.first->first) return false;
+    if (std_p.first->second != ft_p.first->second) return false;
+    if (std_p.second != ft_p.second) return false;
+
+    if (map_comp(std_mp, ft_mp)) return false;
+
+    std_p = std_mp.insert(std::make_pair("zzz", 2));
+    ft_p = ft_mp.insert(ft::make_pair("zzz", 2));
+
+    if (std_p.first->first != ft_p.first->first) return false;
+    if (std_p.first->second != ft_p.first->second) return false;
+    if (std_p.second != ft_p.second) return false;
+
+    std_p = std_mp.insert(std::make_pair("abc", 3));
+    ft_p = ft_mp.insert(ft::make_pair("abc", 3));
+
+    if (std_p.first->first != ft_p.first->first) return false;
+    if (std_p.first->second != ft_p.first->second) return false;
+    if (std_p.second != ft_p.second) return false;
+
+    if (map_comp(std_mp, ft_mp)) return false;
+
+    std_p = std_mp.insert(std::make_pair("abc", 42));
+    ft_p = ft_mp.insert(ft::make_pair("abc", 42));
+    if (std_p.first->first != ft_p.first->first) return false;
+    if (std_p.first->second != ft_p.first->second) return false;
+    if (std_p.second != ft_p.second) return false;
+
+    if (map_comp(std_mp, ft_mp)) return false;
+
+    return true;
+}
+/*
+static bool test_erase(void)
+{
+    return false;
+}
+
+static bool test_swap(void)
+{
+    return false;
+}
+*/
 int test_map(void)
 {
     Tester tester;
@@ -300,23 +407,18 @@ int test_map(void)
     tester.run(test_empty(), "test_empty");
     tester.run(test_size(), "test_size");
     tester.run(test_max_size(), "test_max_size");
+
+    // element_access
+//    tester.run(test_indexer(), "test_indexer");
+    tester.run(test_at(), "test_at");
+
+    // modifiers
+    tester.run(test_clear(), "test_clear");
+    tester.run(test_insert(), "test_insert");
+//    tester.run(test_erase(), "test_erase");
+//    tester.run(test_swap(), "test_swap");
+
     /*
-
-        // element_access
-        tester.run(test_indexer(), "test_indexer");
-        tester.run(test_at(), "test_at");
-        tester.run(test_front(), "test_front");
-        tester.run(test_back(), "test_back");
-
-        // modifiers
-        tester.run(test_assign(), "test_assign");
-        tester.run(test_push_back(), "test_push_back");
-        tester.run(test_pop_back(), "test_pop_back");
-        tester.run(test_insert(), "test_insert");
-        tester.run(test_erase(), "test_erase");
-        tester.run(test_swap(), "test_swap");
-        tester.run(test_clear(), "test_clear");
-
         // operator
         tester.run(test_operator(), "test_operator");
 
