@@ -124,7 +124,7 @@ public:
     }
     const_reverse_iterator rbegin() const
     {
-        return const_reverse_iterator(end());
+        return const_reverse_iterator(end()); 
     }
     reverse_iterator rend()
     {
@@ -371,7 +371,7 @@ template <class Key, class T, class Compare, class Allocator>
 bool operator>(const ft::map<Key, T, Compare, Allocator>& lhs,
                const ft::map<Key, T, Compare, Allocator>& rhs)
 {
-    return rhs > lhs;
+    return rhs < lhs;
 }
 
 template <class Key, class T, class Compare, class Allocator>
@@ -389,8 +389,8 @@ bool operator<=(const ft::map<Key, T, Compare, Allocator>& lhs,
 }
 
 template <class Key, class T, class Compare, class Allocator>
-void swap(const ft::map<Key, T, Compare, Allocator>& lhs,
-          const ft::map<Key, T, Compare, Allocator>& rhs)
+void swap(ft::map<Key, T, Compare, Allocator>& lhs,
+          ft::map<Key, T, Compare, Allocator>& rhs)
 {
     lhs.swap(rhs);
 }
