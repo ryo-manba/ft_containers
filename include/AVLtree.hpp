@@ -346,8 +346,8 @@ public:
     tree(const tree& other)
     {
         init_tree();
-        root_ = NULL;
-        size_ = 0;
+        root_  = NULL;
+        size_  = 0;
         comp_  = other.comp_;
         alloc_ = other.alloc_;
         insert_range_unique(other.begin(), other.end());
@@ -420,8 +420,8 @@ public:
     void clear()
     {
         all_clear(root_);
-        root_ = NULL; // NULL埋めしないとデストラクターでダブルフリーしちゃう
-        size_ = 0; // clearを呼んだあとはsizeが0になる
+        root_        = NULL;    // NULL埋めしないとデストラクターでダブルフリーしちゃう
+        size_        = 0;    // clearを呼んだあとはsizeが0になる
         last_->left_ = NULL;
     }
 
@@ -432,15 +432,80 @@ public:
         node_pointer p = search_node(root_, data);
         if (p) return ft::make_pair(iterator(p), false);
 
-        root_ = insert_node(root_, data);
-        last_->left_ = root_; // begin()用
-        if (root_)
-            root_->parent_ = last_;
+        root_        = insert_node(root_, data);
+        last_->left_ = root_;    // begin()用
+        if (root_) root_->parent_ = last_;
         p = search_node(root_, data);
         return ft::make_pair(iterator(p), true);
     }
 
-    // TODO: stub
+    // hintの親を見て
+    // less<int>()(2, 3) // true
+    // less<int>()(3, 3) // false
+    // TODO:
+    // 現状nodeを追加した後で全てのノードに対してバランスを取る処理を行っている
+    //       追加したノードから親を辿りながらバランスを取るように変更する
+    iterator insert_unique(iterator hint, const value_type& data)
+    {
+        // 挿入ノードとhintの値が同じ場合
+        if (hint.base()->data_.first == data.first)
+        {
+            return hint;
+        }
+
+        bool is_correct_hint = false;
+        if (hint.base()->parent_)
+        {
+            // 親よりも大きいかつ右の子ノード
+            if (comp_(hint.base()->parent_->data_.first,
+                      hint.base()->data_.first) &&
+                tree_is_right_child(hint.base()))
+            {
+                // 挿入ノードがhintの親よりも大きい必要がある
+                if (comp_(hint.base()->parent_->data_.first, data.first))
+                {
+                    is_correct_hint = true;
+                }
+            }
+            // 親よりも小さいかつ左の子ノード
+            else if (comp_(hint.base()->data_.first,
+                           hint.base()->parent_->data_.first) &&
+                     tree_is_left_child(hint.base()))
+            {
+                // 挿入ノードがhintの親よりも小さい必要がある
+                if (comp_(data.first, hint.base()->parent_->data_.first))
+                {
+                    is_correct_hint = true;
+                }
+            }
+        }
+        if (is_correct_hint)
+        {
+            size_ += 1;
+            // hintよりも大きい場合
+            if (comp_(hint.base()->data_.first, data.first) &&
+                (hint.base()->right_ != NULL))
+            {
+                //                root_ = insert_node(hint.base(), data);
+                hint.base()->right_ = create_node(data);
+                root_               = rebalance(root_);
+                return hint.base()->right_;
+            }
+            if (comp_(data.first, hint.base()->data_.first) &&
+                (hint.base()->left_ != NULL))
+            {
+                //                root_ = insert_node(hint.base(), data);
+                hint.base()->left_ = create_node(data);
+                root_ =
+                    rebalance(root_);    // 全てのノードに対してバランスを取る
+                return hint.base()->left_;
+            }
+        }
+        // hintが正しくないのでルートから挿入する
+        root_ = insert_node(root_, data);
+        return search_node(root_, data);
+    }
+
     template <typename InputIt>
     void insert_range_unique(InputIt first, InputIt last)
     {
@@ -769,6 +834,14 @@ private:
         return node;
     }
 
+    node_pointer rebalance(node_pointer node)
+    {
+        if (node->parent_)
+            if (node->right_) return rebalance(node->right_);
+        if (node->left_) return rebalance(node->left_);
+        return balancing(node);
+    }
+
     /**
      * @brief
      * 大小比較して適切な位置にnodeを追加する
@@ -803,7 +876,6 @@ private:
         else
         {
             // すでにkeyが存在した場合
-            node->data_.second = data.second;
             return node;
         }
 
@@ -897,6 +969,14 @@ private:
             return node;    // keyが見つかった場合
     }
 
+    bool tree_is_left_child(node_pointer x)
+    {
+        return x == x->parent_->left_;
+    }
+    bool tree_is_right_child(node_pointer x)
+    {
+        return x == x->parent_->right_;
+    }
 };
 
 }    // namespace ft
