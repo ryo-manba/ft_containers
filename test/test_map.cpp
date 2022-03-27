@@ -30,9 +30,17 @@ bool map_comp(const STD& st, const FT& ft)
                   << "     second : " << (*ft_it).second << std::endl;
         std::cout << "-------------------" << std::endl;
 #endif
-        if ((*st_it).first != (*ft_it).first) return 1;
-        if ((*st_it).second != (*ft_it).second) return 1;
+        if (st_it->first != ft_it->first) return 1;
+        if (st_it->second != ft_it->second) return 1;
     }
+    return 0;
+}
+
+template <class STD, class FT>
+bool pair_comp(const STD& st, const FT& ft)
+{
+    if (st.first != ft.first) return 1;
+    if (st.second != ft.second) return 1;
     return 0;
 }
 
@@ -345,8 +353,7 @@ static bool test_insert(void)
     std_p = std_mp.insert(std::make_pair("aaa", 1));
     ft_p = ft_mp.insert(ft::make_pair("aaa", 1));
 
-    if (std_p.first->first != ft_p.first->first) return false;
-    if (std_p.first->second != ft_p.first->second) return false;
+    if (pair_comp(*(std_p.first), *(ft_p.first))) return false;
     if (std_p.second != ft_p.second) return false;
 
     if (map_comp(std_mp, ft_mp)) return false;
@@ -354,29 +361,63 @@ static bool test_insert(void)
     std_p = std_mp.insert(std::make_pair("zzz", 2));
     ft_p = ft_mp.insert(ft::make_pair("zzz", 2));
 
-    if (std_p.first->first != ft_p.first->first) return false;
-    if (std_p.first->second != ft_p.first->second) return false;
+    if (pair_comp(*(std_p.first), *(ft_p.first))) return false;
     if (std_p.second != ft_p.second) return false;
 
     std_p = std_mp.insert(std::make_pair("abc", 3));
     ft_p = ft_mp.insert(ft::make_pair("abc", 3));
 
-    if (std_p.first->first != ft_p.first->first) return false;
-    if (std_p.first->second != ft_p.first->second) return false;
+    if (pair_comp(*(std_p.first), *(ft_p.first))) return false;
     if (std_p.second != ft_p.second) return false;
 
     if (map_comp(std_mp, ft_mp)) return false;
 
     std_p = std_mp.insert(std::make_pair("abc", 42));
     ft_p = ft_mp.insert(ft::make_pair("abc", 42));
-    if (std_p.first->first != ft_p.first->first) return false;
-    if (std_p.first->second != ft_p.first->second) return false;
+    if (pair_comp(*(std_p.first), *(ft_p.first))) return false;
     if (std_p.second != ft_p.second) return false;
 
     if (map_comp(std_mp, ft_mp)) return false;
-
     return true;
 }
+
+static bool test_insert_with_hint(void)
+{
+    std::map<std::string, int> std_mp = init_std_map();
+    ft::map<std::string, int> ft_mp = init_ft_map();
+    std::map<std::string, int>::iterator std_it;
+    ft::map<std::string, int>::iterator ft_it;
+
+    std_it = std_mp.insert(std_mp.begin(), std::make_pair("zzz", 42));
+    ft_it = ft_mp.insert(ft_mp.begin(), ft::make_pair("zzz", 42));
+    if (pair_comp(*std_it, *ft_it)) return false;
+
+    std_it = std_mp.insert(std_mp.end(), std::make_pair("ZZZ", 42));
+    ft_it = ft_mp.insert(ft_mp.end(), ft::make_pair("ZZZ", 42));
+
+    if (pair_comp(*std_it, *ft_it)) return false;
+    return true;
+}
+
+static bool test_insert_range(void)
+{
+    std::vector<std::pair<std::string, int> > std_vec;
+    std_vec.push_back(std::make_pair("aaa", 1));
+    std_vec.push_back(std::make_pair("zzz", 2));
+    std_vec.push_back(std::make_pair("abc", 3));
+
+    std::vector<ft::pair<std::string, int> > ft_vec;
+    ft_vec.push_back(ft::make_pair("aaa", 1));
+    ft_vec.push_back(ft::make_pair("zzz", 2));
+    ft_vec.push_back(ft::make_pair("abc", 3));
+
+    std::map<std::string, int> std_mp(std_vec.begin(), std_vec.end());
+    ft::map<std::string, int> ft_mp(ft_vec.begin(), ft_vec.end());
+
+    if (map_comp(std_mp, ft_mp)) return false;
+    return true;
+}
+
 /*
 static bool test_erase(void)
 {
@@ -388,6 +429,7 @@ static bool test_swap(void)
     return false;
 }
 */
+
 int test_map(void)
 {
     Tester tester;
@@ -415,6 +457,8 @@ int test_map(void)
     // modifiers
     tester.run(test_clear(), "test_clear");
     tester.run(test_insert(), "test_insert");
+    tester.run(test_insert_with_hint(), "test_insert_with_hint");
+    tester.run(test_insert_range(), "test_insert_range");
 //    tester.run(test_erase(), "test_erase");
 //    tester.run(test_swap(), "test_swap");
 
