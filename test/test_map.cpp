@@ -290,7 +290,6 @@ static bool test_max_size(void)
 }
 
 // TODO: insert with hintを作成する
-/*
 static bool test_indexer(void)
 {
     std::map<std::string, int> std_mp;
@@ -303,15 +302,15 @@ static bool test_indexer(void)
     ft_mp["aaa"] = 1;
     ft_mp["zzz"] = 2;
     ft_mp["abc"] = 3;
+
     if (map_comp(std_mp, ft_mp)) return false;
 
     if (std_mp["aaa"] != ft_mp["aaa"]) return false;
     if (std_mp["zzz"] != ft_mp["zzz"]) return false;
     if (std_mp["abc"] != ft_mp["abc"]) return false;
 
-    return false;
+    return true;
 }
-*/
 
 // TODO: 例外のテスト追加する
 static bool test_at(void)
@@ -418,17 +417,60 @@ static bool test_insert_range(void)
     return true;
 }
 
-/*
 static bool test_erase(void)
 {
-    return false;
+    std::map<std::string, int> std_mp1 = init_std_map();
+    ft::map<std::string, int> ft_mp1 = init_ft_map();
+
+    // void erase( iterator pos );
+    std_mp1.erase(std_mp1.begin());
+    ft_mp1.erase(ft_mp1.begin());
+    if (map_comp(std_mp1, ft_mp1)) return false;
+
+    // void erase( iterator first, iterator last );
+    std_mp1.erase(std_mp1.begin(), std_mp1.end());
+    ft_mp1.erase(ft_mp1.begin(), ft_mp1.end());
+    if (map_comp(std_mp1, ft_mp1)) return false;
+
+    std::map<std::string, int> std_mp2 = init_std_map();
+    ft::map<std::string, int> ft_mp2 = init_ft_map();
+
+    const std::string key1 = "aaa";
+    const std::string key2 = "zzz";
+    const std::string key3 = "abc";
+
+    // size_type erase( const Key& key );
+    // 削除した要素数を返す
+    if (std_mp2.erase(key1) != ft_mp2.erase(key1)) return false;
+    if (map_comp(std_mp2, ft_mp2)) return false;
+
+    if (std_mp2.erase(key2) != ft_mp2.erase(key2)) return false;
+    if (map_comp(std_mp2, ft_mp2)) return false;
+
+    if (std_mp2.erase(key3) != ft_mp2.erase(key3)) return false;
+    if (map_comp(std_mp2, ft_mp2)) return false;
+
+    if (std_mp2.erase("TACOPII") != ft_mp2.erase("TACOPII")) return false;
+    if (map_comp(std_mp2, ft_mp2)) return false;
+
+    return true;
 }
 
 static bool test_swap(void)
 {
-    return false;
+    std::map<std::string, int> std_mp1 = init_std_map();
+    ft::map<std::string, int> ft_mp1 = init_ft_map();
+    std::map<std::string, int> std_mp2;
+    ft::map<std::string, int> ft_mp2;
+
+    std_mp1.swap(std_mp2);
+    ft_mp1.swap(ft_mp2);
+    if (map_comp(std_mp1, ft_mp1)) return false;
+    if (map_comp(std_mp2, ft_mp2)) return false;
+
+    return true;
 }
-*/
+
 
 int test_map(void)
 {
@@ -451,7 +493,7 @@ int test_map(void)
     tester.run(test_max_size(), "test_max_size");
 
     // element_access
-//    tester.run(test_indexer(), "test_indexer");
+    tester.run(test_indexer(), "test_indexer");
     tester.run(test_at(), "test_at");
 
     // modifiers
@@ -459,10 +501,21 @@ int test_map(void)
     tester.run(test_insert(), "test_insert");
     tester.run(test_insert_with_hint(), "test_insert_with_hint");
     tester.run(test_insert_range(), "test_insert_range");
-//    tester.run(test_erase(), "test_erase");
-//    tester.run(test_swap(), "test_swap");
+    tester.run(test_erase(), "test_erase");
+    tester.run(test_swap(), "test_swap");
 
     /*
+        // Lookup
+        tester.run(test_count(), "test_count");
+        tester.run(test_find(), "test_find");
+        tester.run(test_equal_range(), "test_equal_range");
+        tester.run(test_lower_bound(), "test_lower_bound");
+        tester.run(test_upper_bound(), "test_upper_bound");
+
+        // Observers
+        tester.run(test_key_comp(), "test_key_comp");
+        tester.run(test_value_comp(), "test_value_comp");
+
         // operator
         tester.run(test_operator(), "test_operator");
 
