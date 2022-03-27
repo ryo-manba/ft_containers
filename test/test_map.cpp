@@ -438,6 +438,7 @@ static bool test_erase(void)
     const std::string key1 = "aaa";
     const std::string key2 = "zzz";
     const std::string key3 = "abc";
+    const std::string dummy = "TACOPII";
 
     // size_type erase( const Key& key );
     // 削除した要素数を返す
@@ -450,7 +451,7 @@ static bool test_erase(void)
     if (std_mp2.erase(key3) != ft_mp2.erase(key3)) return false;
     if (map_comp(std_mp2, ft_mp2)) return false;
 
-    if (std_mp2.erase("TACOPII") != ft_mp2.erase("TACOPII")) return false;
+    if (std_mp2.erase(dummy) != ft_mp2.erase(dummy)) return false;
     if (map_comp(std_mp2, ft_mp2)) return false;
 
     return true;
@@ -471,6 +472,73 @@ static bool test_swap(void)
     return true;
 }
 
+static bool test_count(void)
+{
+    std::map<std::string, int> std_mp = init_std_map();
+    ft::map<std::string, int> ft_mp = init_ft_map();
+
+    const std::string key1 = "aaa";
+    const std::string key2 = "zzz";
+    const std::string key3 = "abc";
+    const std::string dummy = "TACOPII";
+
+    if (std_mp.count(key1) != ft_mp.count(key1)) return false;
+    if (std_mp.count(key2) != ft_mp.count(key2)) return false;
+    if (std_mp.count(key3) != ft_mp.count(key3)) return false;
+    if (std_mp.count(dummy) != ft_mp.count(dummy)) return false;
+
+    return true;
+}
+
+static bool test_find(void)
+{
+    std::map<std::string, int> std_mp = init_std_map();
+    ft::map<std::string, int> ft_mp = init_ft_map();
+    std::map<std::string, int>::iterator std_it;
+    ft::map<std::string, int>::iterator ft_it;
+    const std::string key1 = "aaa";
+    const std::string dummy = "TACOPII";
+
+    std_it = std_mp.find(key1);
+    ft_it = ft_mp.find(key1);
+    if (pair_comp(*std_it, *ft_it)) return false;
+
+    std_it = std_mp.find(dummy);
+    ft_it = ft_mp.find(dummy);
+    if (std_it != std_mp.end()) return false;
+    if (ft_it != ft_mp.end()) return false;
+
+    const std::map<std::string, int> const_std_mp = init_const_std_map();
+    const ft::map<std::string, int> const_ft_mp = init_const_ft_map();
+
+    std::map<std::string, int>::const_iterator std_cit1 = const_std_mp.find(key1);
+    ft::map<std::string, int>::const_iterator ft_cit1 = const_ft_mp.find(key1);
+    if (pair_comp(*std_cit1, *ft_cit1)) return false;
+
+    std::map<std::string, int>::const_iterator std_cit2 = const_std_mp.find(dummy);
+    ft::map<std::string, int>::const_iterator ft_cit2 = const_ft_mp.find(dummy);
+    if (std_cit2 != const_std_mp.end()) return false;
+    if (ft_cit2 != const_ft_mp.end()) return false;
+
+    return true;
+}
+
+/*
+static bool test_equal_range(void)
+{
+    return false;
+}
+
+static bool test_lower_bound(void)
+{
+    return false;
+}
+
+static bool test_upper_bound(void)
+{
+    return false;
+}
+*/
 
 int test_map(void)
 {
@@ -504,14 +572,14 @@ int test_map(void)
     tester.run(test_erase(), "test_erase");
     tester.run(test_swap(), "test_swap");
 
-    /*
-        // Lookup
-        tester.run(test_count(), "test_count");
-        tester.run(test_find(), "test_find");
-        tester.run(test_equal_range(), "test_equal_range");
-        tester.run(test_lower_bound(), "test_lower_bound");
-        tester.run(test_upper_bound(), "test_upper_bound");
+    // Lookup
+    tester.run(test_count(), "test_count");
+    tester.run(test_find(), "test_find");
+//    tester.run(test_equal_range(), "test_equal_range");
+//    tester.run(test_lower_bound(), "test_lower_bound");
+//    tester.run(test_upper_bound(), "test_upper_bound");
 
+    /*
         // Observers
         tester.run(test_key_comp(), "test_key_comp");
         tester.run(test_value_comp(), "test_value_comp");
