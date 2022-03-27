@@ -20,6 +20,7 @@ template <class Pair>
 struct tree_node
 {
     typedef tree_node* node_pointer;
+
     Pair data_;
     node_pointer parent_;
     node_pointer left_;
@@ -532,10 +533,10 @@ public:
 
     void erase(iterator first, iterator last)
     {
-        for (; first != last; ++first) erase(*first);
+        while (first != last) erase(first++);
     }
 
-    int erase_unique(const key_type& key)
+    size_type erase_unique(const key_type& key)
     {
         iterator it = find(key);
         if (it == end()) return 0;
@@ -545,11 +546,11 @@ public:
 
     void swap(tree& other)
     {
-        swap(root_, other.root_);
-        swap(last_, other.last_);
-        swap(size_, other.size_);
-        swap(comp_, other.comp_);
-        swap(alloc_, other.alloc_);
+        std::swap(root_, other.root_);
+        std::swap(last_, other.last_);
+        std::swap(size_, other.size_);
+        std::swap(comp_, other.comp_);
+        std::swap(alloc_, other.alloc_);
     }
 
     // Lookup
@@ -563,15 +564,18 @@ public:
     // 木の中からkeyがあるか捜索する
     iterator find(const key_type& key)
     {
-        node_pointer node = find_node(root_, key);
+        node_pointer node = search_node(root_, ft::make_pair(key, mapped_type()));
 
-        if (node && !comp_(key, node->data_.first)) return iterator(node);
+        if (node) // && !comp_(key, node->data_.first))
+        {
+            return iterator(node);
+        }
         return end();
     }
 
     const_iterator find(const key_type& key) const
     {
-        node_pointer node = find_node(root_, key);
+        node_pointer node = search_node(root_, ft::make_pair(key, mapped_type()));
 
         if (node && !comp_(key, node->data_.first)) return const_iterator(node);
         return end();
@@ -883,39 +887,50 @@ private:
         return balancing(node);
     }
 
+    // less<int>()(2, 3) // true
+    // less<int>()(3, 3) // false
     node_pointer erase_node(node_pointer node, value_type data)
     {
         if (node == NULL)
         {
             return node;
         }
+        // 現在地よりもdataが小さい場合
         if (comp_(data.first, node->data_.first))
         {
             node->left_ = erase_node(node->left_, data);
         }
+        // 現在地よりもdataが大きい場合
         else if (comp_(node->data_.first, data.first))
         {
             node->right_ = erase_node(node->right_, data);
         }
+        // 削除するノード
         else
         {
-            // 単体のnode
             if ((node->left_ == NULL) || (node->right_ == NULL))
             {
                 node_pointer child = node->left_ ? node->left_ : node->right_;
 
-                // 子がない
+                // 葉っぱの場合は削除するだけ
                 if (child == NULL)
                 {
                     delete_node(node);
                     node = NULL;
                 }
-                else    // 子が1つ
+                else    // 子が1つのときは入れ替えるだけ
                 {
+//                    debug(1);
+//                    print(node->data_.first);
+//                    print(child->data_.first);
+//                    std::swap(&(node->data_), &(child->data_));
+//                    delete_node(child);
+
                     node_pointer target = node;
 
+                    // つなぎ替える
                     child->parent_ = target->parent_;
-                    if (target->parent->right_ == target)
+                    if (target->parent_->right_ == target)
                         target->parent_->right_ = child;
                     else if (target->parent_->left_ == target)
                         target->parent_->left_ = child;
@@ -923,32 +938,33 @@ private:
                     node = child;
                 }
             }
-            else
+            else // 子供が2つあるノード
             {
-                node_pointer new_node = get_min_node(node->right_);
+                // 左側の部分木のノードの最大ノード
+                node_pointer left_child_max = node->left_->get_max_node(node->left_);
                 node_pointer target   = node;
 
                 // 親ノードを新しいノードに設定する
-                if (new_node->parent_->left_ == new_node)
-                    new_node->parent_->left_ = NULL;
-                else if (new_node->parent_->right_ == new_node)
-                    new_node->parent_->right_ = NULL;
+                if (left_child_max->parent_->left_ == left_child_max)
+                    left_child_max->parent_->left_ = NULL;
+                else if (left_child_max->parent_->right_ == left_child_max)
+                    left_child_max->parent_->right_ = NULL;
 
-                // 新しいノードのセットアップ
-                if (target->left_) new_node->left_ = target->left_;
-                if (target->right_) new_node->right_ = target->right_;
-                new_node->height_ = target->height;
-                new_node->parent_ = target->parent_;
+                // 削除ノードの子を新しいノードに付け替える
+                if (target->left_) left_child_max->left_ = target->left_;
+                if (target->right_) left_child_max->right_ = target->right_;
+                left_child_max->height_ = target->height_;
+                left_child_max->parent_ = target->parent_;
 
-                // 新しいノードの子ノードのセットアップ
-                if (new_node->left_) new_node->left_->parent_ = new_node;
-                if (new_node->right_) new_node->right_->parent_ = new_node;
+                // 新しいノードの子ノードの親を設定する
+                if (left_child_max->left_) left_child_max->left_->parent_ = left_child_max;
+                if (left_child_max->right_) left_child_max->right_->parent_ = left_child_max;
                 delete_node(target);
-                node = new_node;
+                node = left_child_max;
             }
-            balancing(node);
-            return node;
         }
+        if (node) balancing(node);
+        return node;
     }
 
     // keyがある : その要素を返す
