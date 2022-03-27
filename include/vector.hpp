@@ -74,15 +74,15 @@ public:
         */
 
     template <typename InputIt>
-    vector(InputIt first_, InputIt last_, const Allocator& alloc_ = Allocator(),
+    vector(InputIt first, InputIt last, const Allocator& alloc_ = Allocator(),
            typename ft::enable_if<!ft::is_integral<InputIt>::value,
                                   InputIt>::type* = NULL)
         : first_(NULL), last_(NULL), reserved_last_(NULL), alloc_(alloc_)
     {
-        reserve(std::distance(first_, last_));
-        for (iterator i = first_; i != last_; ++i)
+        reserve(std::distance(first, last));
+        for (iterator it = first; it != last; ++it)
         {
-            push_back(*i);
+            push_back(*it);
         }
     }
 
@@ -95,8 +95,9 @@ public:
         // コピー元の要素をコピー構築
         // destはコピー先
         // [src, last_)はコピー元
-        for (iterator dest = first_, src = other.begin(), last_ = other.end();
-             src != last_; ++dest, ++src)
+        // FIXME: dest = first_がおかしそう
+        for (iterator dest = first_, src = other.begin(), last = other.end();
+             src != last; ++dest, ++src)
         {
             construct(dest.base(), *src);
         }
@@ -539,10 +540,10 @@ public:
     // vectorの要素を other と入れ替える
     void swap(vector& other)
     {
-        ft::swap(first_, other.first_);
-        ft::swap(last_, other.last_);
-        ft::swap(reserved_last_, other.reserved_last_);
-        ft::swap(alloc_, other.alloc_);
+        std::swap(first_, other.first_);
+        std::swap(last_, other.last_);
+        std::swap(reserved_last_, other.reserved_last_);
+        std::swap(alloc_, other.alloc_);
     }
 
     allocator_type get_allocator() const
