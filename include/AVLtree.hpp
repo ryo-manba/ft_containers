@@ -245,10 +245,12 @@ public:
     tree_const_iterator(node_pointer p) : node_(p)
     {
     }
+    tree_const_iterator(const tree_iterator& other) : node_(other.base())
+    {
+    }
     tree_const_iterator(const tree_const_iterator& other) : node_(other.base())
     {
     }
-
     ~tree_const_iterator()
     {
     }
@@ -580,23 +582,21 @@ public:
         return end();
     }
 
-    // TODO:stub
     ft::pair<iterator, iterator> equal_range(const key_type& key)
     {
-        iterator it1, it2;
-        ft::pair<iterator, iterator> p(it1, it2);
-        (void)key;
-        return p;
+        iterator it1 = lower_bound(key);
+        iterator it2 = upper_bound(key);
+
+        return ft::make_pair(it1, it2);
     }
 
-    // TODO: stub
     ft::pair<const_iterator, const_iterator> equal_range(
         const key_type& key) const
     {
-        const_iterator it1, it2;
-        ft::pair<const_iterator, const_iterator> p(it1, it2);
-        (void)key;
-        return p;
+        const_iterator it1 = lower_bound(key);
+        const_iterator it2 = upper_bound(key);
+
+        return ft::make_pair(it1, it2);
     }
 
     // key以上の値を返す
