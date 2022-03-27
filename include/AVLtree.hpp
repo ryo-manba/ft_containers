@@ -554,10 +554,9 @@ public:
     }
 
     // Lookup
-    // TODO:stub
     size_type count(const key_type& key) const
     {
-        (void)key;
+        if (find(key) == end()) return 0;
         return 1;
     }
 

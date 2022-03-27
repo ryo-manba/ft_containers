@@ -262,14 +262,7 @@ public:
      */
     size_type count(const key_type& key) const
     {
-        if (tree_.find(key) == tree_.end())
-        {
-            return 0;
-        }
-        else
-        {
-            return 1;
-        }
+        return tree_.count(key);
     }
 
     /**
