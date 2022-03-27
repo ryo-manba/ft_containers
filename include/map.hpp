@@ -162,8 +162,13 @@ public:
     {
         iterator it = lower_bound(key);
         // __i->first is greater than or equivalent to key.
+        ft::pair<iterator, bool> p;
         if (it == end() || key_comp()(key, (*it).first))
-            it = insert(it, value_type(key, mapped_type()));
+        {
+            p = insert(value_type(key, mapped_type()));
+//            it = insert(it, value_type(key, mapped_type()));
+            it = p.first;
+        }
         return (*it).second;
     }
 
@@ -239,9 +244,10 @@ public:
         return tree_.erase(first, last);
     }
 
+    // 削除された要素の数を返す(1 or 0)
     size_type erase(const key_type& key)
     {
-        return tree_.erase(key);
+        return tree_.erase_unique(key);
     }
 
     void swap(map& other)
