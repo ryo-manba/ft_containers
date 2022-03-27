@@ -523,22 +523,214 @@ static bool test_find(void)
     return true;
 }
 
-/*
 static bool test_equal_range(void)
 {
-    return false;
+    std::map<std::string, int> std_mp = init_std_map();
+    ft::map<std::string, int> ft_mp = init_ft_map();
+    typedef std::map<std::string, int>::iterator st_iterator;
+    typedef ft::map<std::string, int>::iterator ft_iterator;
+
+    std::pair<st_iterator, st_iterator> std_p;
+    ft::pair<ft_iterator, ft_iterator> ft_p;
+
+    const std::string key1 = "aaa";
+    const std::string key2 = "zzz";
+    const std::string key3 = "abc";
+    const std::string dummy = "TACOPII";
+
+    // コンテナ内の与えられたキーを持つすべての要素を含む範囲を返します。
+    // 1つはキーより小さくない最初の要素を指すもの、もう1つはキーより大きい最初の要素を指すものである
+    // keyより小さくない要素がない場合、過去の終了（end()を参照）イテレータが最初の要素として返されます。
+    // 同様に、keyより大きい要素がない場合、past-the-endイテレータが2番目の要素として返される。
+    std_p = std_mp.equal_range(key1);
+    ft_p = ft_mp.equal_range(key1);
+
+    if (std_p.first != std_mp.lower_bound(key1)) return false;
+    if (std_p.second != std_mp.upper_bound(key1)) return false;
+    if (ft_p.first != ft_mp.lower_bound(key1)) return false;
+    if (ft_p.second != ft_mp.upper_bound(key1)) return false;
+
+    std_p = std_mp.equal_range(key2);
+    ft_p = ft_mp.equal_range(key2);
+
+    if (std_p.first != std_mp.lower_bound(key2)) return false;
+    if (std_p.second != std_mp.upper_bound(key2)) return false;
+    if (ft_p.first != ft_mp.lower_bound(key2)) return false;
+    if (ft_p.second != ft_mp.upper_bound(key2)) return false;
+
+    std_p = std_mp.equal_range(key3);
+    ft_p = ft_mp.equal_range(key3);
+
+    if (std_p.first != std_mp.lower_bound(key3)) return false;
+    if (std_p.second != std_mp.upper_bound(key3)) return false;
+    if (ft_p.first != ft_mp.lower_bound(key3)) return false;
+    if (ft_p.second != ft_mp.upper_bound(key3)) return false;
+
+    std_p = std_mp.equal_range(dummy);
+    ft_p = ft_mp.equal_range(dummy);
+
+    if (std_p.first != std_mp.lower_bound(dummy)) return false;
+    if (std_p.second != std_mp.upper_bound(dummy)) return false;
+    if (ft_p.first != ft_mp.lower_bound(dummy)) return false;
+    if (ft_p.second != ft_mp.upper_bound(dummy)) return false;
+
+    return true;
+}
+
+static bool test_equal_range_const(void)
+{
+    const std::map<std::string, int> std_mp = init_std_map();
+    const ft::map<std::string, int> ft_mp = init_ft_map();
+    typedef std::map<std::string, int>::const_iterator st_iterator;
+    typedef ft::map<std::string, int>::const_iterator ft_iterator;
+
+    std::pair<st_iterator, st_iterator> std_p;
+    ft::pair<ft_iterator, ft_iterator> ft_p;
+
+    const std::string key1 = "aaa";
+    const std::string key2 = "zzz";
+    const std::string key3 = "abc";
+    const std::string dummy = "TACOPII";
+
+    std_p = std_mp.equal_range(key1);
+    ft_p = ft_mp.equal_range(key1);
+
+    if (std_p.first != std_mp.lower_bound(key1)) return false;
+    if (std_p.second != std_mp.upper_bound(key1)) return false;
+    if (ft_p.first != ft_mp.lower_bound(key1)) return false;
+    if (ft_p.second != ft_mp.upper_bound(key1)) return false;
+
+    std_p = std_mp.equal_range(key2);
+    ft_p = ft_mp.equal_range(key2);
+
+    if (std_p.first != std_mp.lower_bound(key2)) return false;
+    if (std_p.second != std_mp.upper_bound(key2)) return false;
+    if (ft_p.first != ft_mp.lower_bound(key2)) return false;
+    if (ft_p.second != ft_mp.upper_bound(key2)) return false;
+
+    std_p = std_mp.equal_range(key3);
+    ft_p = ft_mp.equal_range(key3);
+
+    if (std_p.first != std_mp.lower_bound(key3)) return false;
+    if (std_p.second != std_mp.upper_bound(key3)) return false;
+    if (ft_p.first != ft_mp.lower_bound(key3)) return false;
+    if (ft_p.second != ft_mp.upper_bound(key3)) return false;
+
+    std_p = std_mp.equal_range(dummy);
+    ft_p = ft_mp.equal_range(dummy);
+
+    if (std_p.first != std_mp.lower_bound(dummy)) return false;
+    if (std_p.second != std_mp.upper_bound(dummy)) return false;
+    if (ft_p.first != ft_mp.lower_bound(dummy)) return false;
+    if (ft_p.second != ft_mp.upper_bound(dummy)) return false;
+
+    return true;
 }
 
 static bool test_lower_bound(void)
 {
-    return false;
+    std::map<std::string, int> std_mp = init_std_map();
+    ft::map<std::string, int> ft_mp = init_ft_map();
+    std::map<std::string, int>::iterator std_it;
+    ft::map<std::string, int>::iterator ft_it;
+
+    const std::string key1 = "aaa";
+    const std::string dummy = "zzzzz";
+
+    std_it = std_mp.lower_bound(key1);
+    ft_it = ft_mp.lower_bound(key1);
+    if (pair_comp(*std_it, *ft_it)) return false;
+
+    std_it = std_mp.lower_bound("xxx");
+    ft_it = ft_mp.lower_bound("xxx");
+    if (pair_comp(*std_it, *ft_it)) return false;
+
+    std_it = std_mp.lower_bound(dummy);
+    ft_it = ft_mp.lower_bound(dummy);
+    if (std_it != std_mp.end()) return false;
+    if (ft_it != ft_mp.end()) return false;
+
+    return true;
+}
+
+static bool test_lower_bound_const(void)
+{
+    std::map<std::string, int> std_mp = init_std_map();
+    ft::map<std::string, int> ft_mp = init_ft_map();
+    typedef std::map<std::string, int>::const_iterator st_const_iterator;
+    typedef ft::map<std::string, int>::const_iterator ft_const_iterator;
+
+    const std::string key1 = "aaa";
+    const std::string dummy = "zzzzz";
+
+    st_const_iterator std_cit1 = std_mp.lower_bound(key1);
+    ft_const_iterator ft_cit1 = ft_mp.lower_bound(key1);
+    if (pair_comp(*std_cit1, *ft_cit1)) return false;
+
+    st_const_iterator std_cit2 = std_mp.lower_bound("xxx");
+    ft_const_iterator ft_cit2 = ft_mp.lower_bound("xxx");
+    if (pair_comp(*std_cit2, *ft_cit2)) return false;
+
+    st_const_iterator std_cit3 = std_mp.lower_bound(dummy);
+    ft_const_iterator ft_cit3 = ft_mp.lower_bound(dummy);
+    if (std_cit3 != std_mp.end()) return false;
+    if (ft_cit3 != ft_mp.end()) return false;
+
+    return true;
 }
 
 static bool test_upper_bound(void)
 {
-    return false;
+    std::map<std::string, int> std_mp = init_std_map();
+    ft::map<std::string, int> ft_mp = init_ft_map();
+    std::map<std::string, int>::iterator std_it;
+    ft::map<std::string, int>::iterator ft_it;
+
+    const std::string key1 = "aaa";
+    const std::string key2 = "zzz";
+
+    std_it = std_mp.upper_bound(key1);
+    ft_it = ft_mp.upper_bound(key1);
+    if (pair_comp(*std_it, *ft_it)) return false;
+
+    std_it = std_mp.upper_bound("xxx");
+    ft_it = ft_mp.upper_bound("xxx");
+    if (pair_comp(*std_it, *ft_it)) return false;
+
+    std_it = std_mp.upper_bound(key2);
+    ft_it = ft_mp.upper_bound(key2);
+    if (std_it != std_mp.end()) return false;
+    if (ft_it != ft_mp.end()) return false;
+
+    return true;
 }
-*/
+
+static bool test_upper_bound_const(void)
+{
+    std::map<std::string, int> std_mp = init_std_map();
+    ft::map<std::string, int> ft_mp = init_ft_map();
+    typedef std::map<std::string, int>::const_iterator st_const_iterator;
+    typedef ft::map<std::string, int>::const_iterator ft_const_iterator;
+
+    const std::string key1 = "aaa";
+    const std::string key2 = "zzz";
+
+    st_const_iterator std_cit1 = std_mp.upper_bound(key1);
+    ft_const_iterator ft_cit1 = ft_mp.upper_bound(key1);
+    if (pair_comp(*std_cit1, *ft_cit1)) return false;
+
+    st_const_iterator std_cit2 = std_mp.upper_bound("xxx");
+    ft_const_iterator ft_cit2 = ft_mp.upper_bound("xxx");
+    if (pair_comp(*std_cit2, *ft_cit2)) return false;
+
+    st_const_iterator std_cit3 = std_mp.upper_bound(key2);
+    ft_const_iterator ft_cit3 = ft_mp.upper_bound(key2);
+    if (std_cit3 != std_mp.end()) return false;
+    if (ft_cit3 != ft_mp.end()) return false;
+
+    return true;
+}
+
 
 int test_map(void)
 {
@@ -575,9 +767,12 @@ int test_map(void)
     // Lookup
     tester.run(test_count(), "test_count");
     tester.run(test_find(), "test_find");
-//    tester.run(test_equal_range(), "test_equal_range");
-//    tester.run(test_lower_bound(), "test_lower_bound");
-//    tester.run(test_upper_bound(), "test_upper_bound");
+    tester.run(test_equal_range(), "test_equal_range");
+    tester.run(test_equal_range_const(), "test_equal_range_const");
+    tester.run(test_lower_bound(), "test_lower_bound");
+    tester.run(test_lower_bound_const(), "test_lower_bound_const");
+    tester.run(test_upper_bound(), "test_upper_bound");
+    tester.run(test_upper_bound_const(), "test_upper_bound_const");
 
     /*
         // Observers
