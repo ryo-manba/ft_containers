@@ -731,6 +731,47 @@ static bool test_upper_bound_const(void)
     return true;
 }
 
+static bool test_key_comp(void)
+{
+    std::map<int, int, std::less<int> > std_mp1;
+    ft::map<int, int, std::less<int> > ft_mp1;
+
+    if (std_mp1.key_comp()(1,2) != ft_mp1.key_comp()(1,2)) return false;
+    if (std_mp1.key_comp()(2,2) != ft_mp1.key_comp()(2,2)) return false;
+    if (std_mp1.key_comp()(3,2) != ft_mp1.key_comp()(3,2)) return false;
+
+    std::map<int, int, std::greater<int> > std_mp2;
+    ft::map<int, int, std::greater<int> > ft_mp2;
+    if (std_mp2.key_comp()(1,2) != ft_mp2.key_comp()(1,2)) return false;
+    if (std_mp2.key_comp()(2,2) != ft_mp2.key_comp()(2,2)) return false;
+    if (std_mp2.key_comp()(3,2) != ft_mp2.key_comp()(3,2)) return false;
+
+    return true;
+}
+
+static bool test_value_comp(void)
+{
+    std::map<int, int, std::less<int> > std_mp1;
+    ft::map<int, int, std::less<int> > ft_mp1;
+
+    std::pair<int,int> std_p1(1, 1);
+    std::pair<int,int> std_p2(2, 2);
+    std::pair<int,int> std_p3(3, 3);
+    ft::pair<int,int> ft_p1(1, 1);
+    ft::pair<int,int> ft_p2(2, 2);
+    ft::pair<int,int> ft_p3(3, 3);
+    if (std_mp1.value_comp()(std_p1,std_p2) != ft_mp1.value_comp()(ft_p1,ft_p2)) return false;
+    if (std_mp1.value_comp()(std_p2,std_p2) != ft_mp1.value_comp()(ft_p2,ft_p2)) return false;
+    if (std_mp1.value_comp()(std_p3,std_p2) != ft_mp1.value_comp()(ft_p3,ft_p2)) return false;
+
+    std::map<int, int, std::greater<int> > std_mp2;
+    ft::map<int, int, std::greater<int> > ft_mp2;
+    if (std_mp2.value_comp()(std_p1,std_p2) != ft_mp2.value_comp()(ft_p1,ft_p2)) return false;
+    if (std_mp2.value_comp()(std_p2,std_p2) != ft_mp2.value_comp()(ft_p2,ft_p2)) return false;
+    if (std_mp2.value_comp()(std_p3,std_p2) != ft_mp2.value_comp()(ft_p3,ft_p2)) return false;
+
+    return true;
+}
 
 int test_map(void)
 {
@@ -774,11 +815,11 @@ int test_map(void)
     tester.run(test_upper_bound(), "test_upper_bound");
     tester.run(test_upper_bound_const(), "test_upper_bound_const");
 
-    /*
-        // Observers
-        tester.run(test_key_comp(), "test_key_comp");
-        tester.run(test_value_comp(), "test_value_comp");
+    // Observers
+    tester.run(test_key_comp(), "test_key_comp");
+    tester.run(test_value_comp(), "test_value_comp");
 
+    /*
         // operator
         tester.run(test_operator(), "test_operator");
 
