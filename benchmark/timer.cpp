@@ -1,8 +1,17 @@
 #include "timer.hpp"
 
-Timer::Timer(void) {}
+Timer::Timer(const std::string& test_case)
+ : test_case_(test_case)
+{
+    start_time_ = clock();
+}
 Timer::Timer(const Timer& other){ static_cast<void>(other); }
-Timer::~Timer(void){}
+Timer::~Timer(void)
+{
+    std::cout << std::setw(25) <<  std::left << test_case_;
+    clock_t end_time = clock();
+    std::cout << static_cast<double>(end_time - start_time_) / CLOCKS_PER_SEC * 1000 << " ms" << std::endl;
+}
 
 void Timer::run(void (*func)(void), const std::string& func_name) const
 {

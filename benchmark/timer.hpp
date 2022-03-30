@@ -9,12 +9,14 @@
 class Timer
 {
 public:
-    Timer(void);
+    Timer(const std::string& test_case);
     Timer(const Timer& other);
     ~Timer(void);
 
     void run(void (*func)(void), const std::string& func_name) const;
 private:
+    clock_t start_time_;
+    std::string test_case_;
 };
 
 #endif
