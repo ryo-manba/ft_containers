@@ -3,8 +3,8 @@
 
 #include "Color.hpp"
 #include "debug.hpp"
-#include "vector.hpp"
 #include "tester.hpp"
+#include "vector.hpp"
 
 /**
  * 要素、size()
@@ -305,8 +305,8 @@ bool test_indexer(void)
 
     for (size_t i = 0; i < sz; ++i)
     {
-        std_vec[i]   = i;
-        ft_vec[i] = i;
+        std_vec[i] = i;
+        ft_vec[i]  = i;
     }
     if (vector_comp(std_vec, ft_vec)) return false;
     return true;
@@ -320,8 +320,8 @@ bool test_at(void)
 
     for (size_t i = 0; i < sz; ++i)
     {
-        std_vec.at(i)   = i;
-        ft_vec.at(i) = i;
+        std_vec.at(i) = i;
+        ft_vec.at(i)  = i;
     }
     for (size_t i = 0; i < sz; ++i)
     {
@@ -342,8 +342,8 @@ bool test_front(void)
     {
         return false;
     }
-    std_vec.front()   = 5;
-    ft_vec.front() = 5;
+    std_vec.front() = 5;
+    ft_vec.front()  = 5;
 
     if (std_vec.front() != ft_vec.front())
     {
@@ -361,12 +361,22 @@ bool test_back(void)
     {
         return false;
     }
-    std_vec.back()   = 5;
-    ft_vec.back() = 5;
+    std_vec.back() = 5;
+    ft_vec.back()  = 5;
     if (std_vec.back() != ft_vec.back())
     {
         return false;
     }
+    return true;
+}
+
+bool test_data(void)
+{
+    std::vector<int> std_vec(5);
+    std::vector<int> ft_vec(5);
+
+    if (std_vec.data() != &std_vec[0]) return false;
+    if (ft_vec.data() != &ft_vec[0]) return false;
     return true;
 }
 
@@ -413,8 +423,8 @@ bool test_pop_back(void)
 
     for (size_t i = 0; i < sz; ++i)
     {
-        std_vec[i]   = i;
-        ft_vec[i] = i;
+        std_vec[i] = i;
+        ft_vec[i]  = i;
     }
 
     for (size_t i = 0; i < sz - 2; ++i)
@@ -613,7 +623,7 @@ bool test_constructor(void)
     for (size_t i = 0; i < sz; ++i)
     {
         std_vec2[i] = i;
-        ft_vec2[i] = i;
+        ft_vec2[i]  = i;
     }
 
     // range constructor[first, last]
@@ -640,15 +650,15 @@ bool test_operator_equal(void)
     // default constructor
     std::vector<int> std_vec1(sz);
     ft::vector<int> ft_vec1(sz);
-     for (size_t i = 0; i < sz; ++i)
+    for (size_t i = 0; i < sz; ++i)
     {
         std_vec1[i] = i;
-        ft_vec1[i] = i;
+        ft_vec1[i]  = i;
     }
 
     // 代入
     std::vector<int> std_vec2 = std_vec1;
-    ft::vector<int> ft_vec2 = ft_vec1;
+    ft::vector<int> ft_vec2   = ft_vec1;
     if (vector_comp(std_vec2, ft_vec2)) return false;
     return true;
 }
@@ -711,6 +721,7 @@ int test_vector(void)
     tester.run(test_at(), "test_at");
     tester.run(test_front(), "test_front");
     tester.run(test_back(), "test_back");
+    tester.run(test_data(), "test_data");
 
     // modifiers
     tester.run(test_assign(), "test_assign");
