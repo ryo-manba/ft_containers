@@ -10,7 +10,7 @@
 #define NAMESPACE std
 #endif
 
-const int loops = 1e5;
+const int loops = 1e3;
 
 void init_vector(NAMESPACE::vector<int> &v)
 {
@@ -126,7 +126,6 @@ void bm_resize(void)
     }
 }
 
-
 void bm_capacity(void)
 {
     NAMESPACE::vector<int> v(loops);
@@ -208,6 +207,91 @@ void bm_back(void)
     }
 }
 
+void bm_assign(void)
+{
+    NAMESPACE::vector<int> v(loops);
+    init_vector(v);
+
+    Timer t("assign");
+    for (int i = 0; i < loops; i++)
+    {
+        v.assign(i, i);
+    }
+}
+
+void bm_push_back(void)
+{
+    NAMESPACE::vector<int> v;
+
+    Timer t("push_back");
+    for (int i = 0; i < loops; i++)
+    {
+        v.push_back(i);
+    }
+}
+
+void bm_pop_back(void)
+{
+    NAMESPACE::vector<int> v(loops);
+    init_vector(v);
+
+    Timer t("pop_back");
+    for (int i = 0; i < loops; i++)
+    {
+        v.pop_back();
+    }
+}
+
+// TODO: 20倍以上
+void bm_insert(void)
+{
+    NAMESPACE::vector<int> v;
+
+    Timer t("insert");
+    for (int i = 0; i < loops; i++)
+    {
+        v.insert(v.begin(), i);
+    }
+}
+
+// TODO: 20倍以上
+void bm_erase(void)
+{
+    NAMESPACE::vector<int> v(loops);
+    init_vector(v);
+
+    Timer t("erase");
+    for (int i = 0; i < loops; i++)
+    {
+        v.erase(v.begin());
+    }
+}
+
+void bm_swap(void)
+{
+    NAMESPACE::vector<int> v1(loops);
+    NAMESPACE::vector<int> v2;
+    init_vector(v1);
+
+    Timer t("swap");
+    for (int i = 0; i < loops; i++)
+    {
+        v1.swap(v2);
+    }
+}
+
+void bm_clear(void)
+{
+    NAMESPACE::vector<int> v(loops);
+    init_vector(v);
+
+    Timer t("clear");
+    for (int i = 0; i < loops; i++)
+    {
+        //        v.clear();
+    }
+}
+
 void print_title(void)
 {
 #ifdef FT
@@ -220,7 +304,6 @@ void print_title(void)
 int test_vector(void)
 {
     print_title();
-
     // constructer
     bm_constructor();
     bm_operator_equal();
@@ -234,7 +317,7 @@ int test_vector(void)
     // capacities;
     bm_size();
     bm_max_size();
-    bm_resize();
+    bm_resize();    // TODO: 20倍以上
     bm_capacity();
     bm_empty();
     bm_reserve();
@@ -245,17 +328,15 @@ int test_vector(void)
     bm_front();
     bm_back();
 
+    // modifiers
+    bm_assign();
+    bm_push_back();
+    bm_pop_back();
+    bm_insert();
+    bm_erase();    // TODO: 20倍以上
+    bm_swap();     // TODO: 20倍以上
+    bm_clear();
     /*
-
-        // modifiers
-        timer.run(bm_assign(), "bm_assign");
-        timer.run(bm_push_back(), "bm_push_back");
-        timer.run(bm_pop_back(), "bm_pop_back");
-        timer.run(bm_insert(), "bm_insert");
-        timer.run(bm_erase(), "bm_erase");
-        timer.run(bm_swap(), "bm_swap");
-        timer.run(bm_clear(), "bm_clear");
-
         // operator
         timer.run(bm_operator(), "bm_operator");
 
