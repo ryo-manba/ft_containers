@@ -92,6 +92,122 @@ void bm_const_reverse_iterator(void)
     }
 }
 
+void bm_size(void)
+{
+    NAMESPACE::vector<int> v(loops);
+
+    Timer t("size");
+    for (int i = 0; i < loops; i++)
+    {
+        v.size();
+    }
+}
+
+void bm_max_size(void)
+{
+    NAMESPACE::vector<int> v;
+
+    Timer t("max_size");
+    for (int i = 0; i < loops; i++)
+    {
+        v.max_size();
+    }
+}
+
+// TODO: 20倍以上かかる
+void bm_resize(void)
+{
+    NAMESPACE::vector<int> v;
+
+    Timer t("resize");
+    for (int i = 0; i < 1000; i++)
+    {
+        v.resize(i);
+    }
+}
+
+
+void bm_capacity(void)
+{
+    NAMESPACE::vector<int> v(loops);
+    init_vector(v);
+
+    Timer t("capacity");
+    for (int i = 0; i < loops; i++)
+    {
+        v.capacity();
+    }
+}
+void bm_empty(void)
+{
+    NAMESPACE::vector<int> v;
+
+    Timer t("empty");
+    for (int i = 0; i < loops; i++)
+    {
+        v.empty();
+    }
+}
+
+void bm_reserve(void)
+{
+    NAMESPACE::vector<int> v;
+
+    Timer t("reserve");
+    for (int i = 0; i < loops; i++)
+    {
+        v.reserve(i);
+    }
+}
+
+void bm_indexer(void)
+{
+    NAMESPACE::vector<int> v(loops);
+    init_vector(v);
+
+    Timer t("indexer");
+    for (int i = 0; i < loops; i++)
+    {
+        v[i] = i;
+    }
+}
+
+void bm_at(void)
+{
+    NAMESPACE::vector<int> v(loops);
+    init_vector(v);
+
+    Timer t("at");
+    for (int i = 0; i < loops; i++)
+    {
+        v.at(i) = i;
+    }
+}
+
+void bm_front(void)
+{
+    NAMESPACE::vector<int> v(loops);
+    init_vector(v);
+
+    Timer t("front");
+    for (int i = 0; i < loops; i++)
+    {
+        v.front() = i;
+    }
+}
+
+void bm_back(void)
+{
+    NAMESPACE::vector<int> v(loops);
+    init_vector(v);
+
+    Timer t("back");
+    for (int i = 0; i < loops; i++)
+    {
+        v.back() = i;
+    }
+}
+
 void print_title(void)
 {
 #ifdef FT
@@ -109,26 +225,27 @@ int test_vector(void)
     bm_constructor();
     bm_operator_equal();
 
-    // Iterators
+    // iterators
     bm_iterator();
     bm_const_iterator();
     bm_reverse_iterator();
     bm_const_reverse_iterator();
 
-    /*
-        // capacities;
-        timer.run(bm_size(), "bm_size");
-        timer.run(bm_max_size(), "bm_max_size");
-        timer.run(bm_resize(), "bm_resize");
-        timer.run(bm_capacity(), "bm_capacity");
-        timer.run(bm_empty(), "bm_empty");
-        timer.run(bm_reserve(), "bm_reserve");
+    // capacities;
+    bm_size();
+    bm_max_size();
+    bm_resize();
+    bm_capacity();
+    bm_empty();
+    bm_reserve();
 
-        // element_access
-        timer.run(bm_indexer(), "bm_indexer");
-        timer.run(bm_at(), "bm_at");
-        timer.run(bm_front(), "bm_front");
-        timer.run(bm_back(), "bm_back");
+    // element_access
+    bm_indexer();
+    bm_at();
+    bm_front();
+    bm_back();
+
+    /*
 
         // modifiers
         timer.run(bm_assign(), "bm_assign");
