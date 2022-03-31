@@ -288,7 +288,37 @@ void bm_clear(void)
     Timer t("clear");
     for (int i = 0; i < loops; i++)
     {
-        //        v.clear();
+        v.clear();
+    }
+}
+
+void bm_operator(void)
+{
+    NAMESPACE::vector<int> v1(loops);
+    NAMESPACE::vector<int> v2(loops);
+    init_vector(v1);
+    init_vector(v2);
+
+    Timer t("operator");
+    for (int i = 0; i < loops; i++)
+    {
+        static_cast<void>(v1 == v2);
+        static_cast<void>(v1 != v2);
+        static_cast<void>(v1 > v2);
+        static_cast<void>(v1 >= v2);
+        static_cast<void>(v1 < v2);
+        static_cast<void>(v1 <= v2);
+    }
+}
+
+void bm_get_allocator(void)
+{
+    NAMESPACE::vector<int> v;
+
+    Timer t("get_allocator");
+    for (int i = 0; i < loops; i++)
+    {
+        v.get_allocator();
     }
 }
 
@@ -304,6 +334,7 @@ void print_title(void)
 int test_vector(void)
 {
     print_title();
+
     // constructer
     bm_constructor();
     bm_operator_equal();
@@ -336,13 +367,13 @@ int test_vector(void)
     bm_erase();    // TODO: 20倍以上
     bm_swap();     // TODO: 20倍以上
     bm_clear();
-    /*
-        // operator
-        timer.run(bm_operator(), "bm_operator");
 
-        // allocator
-        timer.run(bm_get_allocator(), "bm_get_allocator");
-    */
+    // operator
+    bm_operator();
+
+    // allocator
+    bm_get_allocator();
+
     return 0;
 }
 
