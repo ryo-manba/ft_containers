@@ -410,18 +410,21 @@ public:
     iterator insert(const_iterator pos, const value_type& value)
     {
         size_type insert_idx = pos - begin();
-        vector copy(*this);
+        vector vec;
 
-        copy[insert_idx] = value;
-        size_type sz     = size();
-        // insert以降の要素を挿入する
-        for (size_type i = insert_idx; i < sz - 1; ++i)
+        size_type vec_sz     = size();
+        // insertするところまでコピー
+        for (size_type i = 0; i < insert_idx; ++i)
         {
-            copy[i + 1] = *(begin() + i);
+            vec.push_back(*(begin() + i));
         }
-        // 最後の要素は push_back に capacity の処理を投げる
-        copy.push_back(*(end() - 1));
-        swap(copy);
+        vec.push_back(value);
+        // insert_pos以降の要素を移す
+        for (size_type i = insert_idx; i < vec_sz; ++i)
+        {
+            vec.push_back(*(begin() + i));
+        }
+        swap(vec);
         return begin() + insert_idx;
     }
 
