@@ -207,6 +207,18 @@ void bm_back(void)
     }
 }
 
+void bm_data(void)
+{
+    NAMESPACE::vector<int> v(loops);
+    init_vector(v);
+
+    Timer t("data");
+    for (int i = 0; i < loops; i++)
+    {
+        v.data();
+    }
+}
+
 void bm_assign(void)
 {
     NAMESPACE::vector<int> v(loops);
@@ -358,6 +370,7 @@ int test_vector(void)
     bm_at();
     bm_front();
     bm_back();
+    bm_data();
 
     // modifiers
     bm_assign();
