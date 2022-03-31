@@ -29,8 +29,9 @@ OBJS_STL   := $(addprefix $(OBJDIR_STL)/, $(notdir $(SRCS:.cpp=.o)))
 
 RM      := rm -rf
 
-LOG_STL := benchmark_ft.log
-LOG_FT  := benchmark_stl.log
+LOG_STL  := benchmark_stl.log
+LOG_FT   := benchmark_ft.log
+LOG_DIFF := benchmark_diff.log
 
 .PHONY  : all
 all     : $(NAME_STL) $(NAME_FT)
@@ -56,7 +57,7 @@ $(OBJDIR_FT)/%.o: %.cpp
 .PHONY: clean
 clean:
 	$(RM) $(OBJDIR_FT) $(OBJDIR_STL)
-	$(RM) $(LOG_FT) $(LOG_STL)
+	$(RM) $(LOG_FT) $(LOG_STL) $(LOG_DIFF)
 
 .PHONY: fclean
 fclean: clean
@@ -68,7 +69,7 @@ re: fclean all
 test: all
 	./bm_ft  > $(LOG_FT)
 	./bm_stl > $(LOG_STL)
-	diff -y $(LOG_FT) $(LOG_STL)
+	diff -y $(LOG_FT) $(LOG_STL) > $(LOG_DIFF) || ./show_diff.sh
 
 t: test
 
