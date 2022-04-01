@@ -31,7 +31,7 @@ static void init_vector(NAMESPACE::vector<int> &v)
 
 static void bm_constructor(void)
 {
-    Timer t("constructor");
+    Timer t("vector::constructor");
     for (int i = 0; i < loops; i++)
     {
         NAMESPACE::vector<int> v;
@@ -43,7 +43,7 @@ static void bm_operator_equal(void)
     NAMESPACE::vector<int> v1;
     NAMESPACE::vector<int> v2;
 
-    Timer t("operator_equal");
+    Timer t("vector::operator_equal");
     for (int i = 0; i < loops; i++)
     {
         v1 = v2;
@@ -55,7 +55,7 @@ static void bm_iterator(void)
     NAMESPACE::vector<int> v(loops);
     init_vector(v);
 
-    Timer t("iterator");
+    Timer t("vector::iterator");
     for (NAMESPACE::vector<int>::iterator it = v.begin(); it != v.end(); it++)
     {
         static_cast<void>(it);
@@ -67,7 +67,7 @@ static void bm_const_iterator(void)
     NAMESPACE::vector<int> v(loops);
     init_vector(v);
 
-    Timer t("const_iterator");
+    Timer t("vector::const_iterator");
     for (NAMESPACE::vector<int>::const_iterator it = v.begin(); it != v.end();
          it++)
     {
@@ -80,7 +80,7 @@ static void bm_reverse_iterator(void)
     NAMESPACE::vector<int> v(loops);
     init_vector(v);
 
-    Timer t("reverse_iterator");
+    Timer t("vector::reverse_iterator");
     for (NAMESPACE::vector<int>::reverse_iterator rit = v.rbegin();
          rit != v.rend(); rit++)
     {
@@ -93,7 +93,7 @@ static void bm_const_reverse_iterator(void)
     NAMESPACE::vector<int> v(loops);
     init_vector(v);
 
-    Timer t("const_reverse_iterator");
+    Timer t("vector::const_reverse_iterator");
     for (NAMESPACE::vector<int>::const_reverse_iterator rit = v.rbegin();
          rit != v.rend(); rit++)
     {
@@ -105,7 +105,7 @@ static void bm_size(void)
 {
     NAMESPACE::vector<int> v(loops);
 
-    Timer t("size");
+    Timer t("vector::size");
     for (int i = 0; i < loops; i++)
     {
         v.size();
@@ -116,7 +116,7 @@ static void bm_max_size(void)
 {
     NAMESPACE::vector<int> v;
 
-    Timer t("max_size");
+    Timer t("vector::max_size");
     for (int i = 0; i < loops; i++)
     {
         v.max_size();
@@ -128,7 +128,7 @@ static void bm_resize(void)
 {
     NAMESPACE::vector<int> v;
 
-    Timer t("resize");
+    Timer t("vector::resize");
     for (int i = 0; i < loops; i++)
     {
         v.resize(i);
@@ -140,7 +140,7 @@ static void bm_capacity(void)
     NAMESPACE::vector<int> v(loops);
     init_vector(v);
 
-    Timer t("capacity");
+    Timer t("vector::capacity");
     for (int i = 0; i < loops; i++)
     {
         v.capacity();
@@ -150,7 +150,7 @@ static void bm_empty(void)
 {
     NAMESPACE::vector<int> v;
 
-    Timer t("empty");
+    Timer t("vector::empty");
     for (int i = 0; i < loops; i++)
     {
         v.empty();
@@ -161,7 +161,7 @@ static void bm_reserve(void)
 {
     NAMESPACE::vector<int> v;
 
-    Timer t("reserve");
+    Timer t("vector::reserve");
     for (int i = 0; i < loops; i++)
     {
         v.reserve(i);
@@ -173,7 +173,7 @@ static void bm_indexer(void)
     NAMESPACE::vector<int> v(loops);
     init_vector(v);
 
-    Timer t("indexer");
+    Timer t("vector::indexer");
     for (int i = 0; i < loops; i++)
     {
         v[i] = i;
@@ -185,7 +185,7 @@ static void bm_at(void)
     NAMESPACE::vector<int> v(loops);
     init_vector(v);
 
-    Timer t("at");
+    Timer t("vector::at");
     for (int i = 0; i < loops; i++)
     {
         v.at(i) = i;
@@ -197,7 +197,7 @@ static void bm_front(void)
     NAMESPACE::vector<int> v(loops);
     init_vector(v);
 
-    Timer t("front");
+    Timer t("vector::front");
     for (int i = 0; i < loops; i++)
     {
         v.front() = i;
@@ -209,7 +209,7 @@ static void bm_back(void)
     NAMESPACE::vector<int> v(loops);
     init_vector(v);
 
-    Timer t("back");
+    Timer t("vector::back");
     for (int i = 0; i < loops; i++)
     {
         v.back() = i;
@@ -221,7 +221,7 @@ static void bm_data(void)
     NAMESPACE::vector<int> v(loops);
     init_vector(v);
 
-    Timer t("data");
+    Timer t("vector::data");
     for (int i = 0; i < loops; i++)
     {
         v.data();
@@ -233,7 +233,7 @@ static void bm_assign(void)
     NAMESPACE::vector<int> v(loops);
     init_vector(v);
 
-    Timer t("assign");
+    Timer t("vector::assign");
     for (int i = 0; i < loops; i++)
     {
         v.assign(i, i);
@@ -244,7 +244,7 @@ static void bm_push_back(void)
 {
     NAMESPACE::vector<int> v;
 
-    Timer t("push_back");
+    Timer t("vector::push_back");
     for (int i = 0; i < loops; i++)
     {
         v.push_back(i);
@@ -256,7 +256,7 @@ static void bm_pop_back(void)
     NAMESPACE::vector<int> v(loops);
     init_vector(v);
 
-    Timer t("pop_back");
+    Timer t("vector::pop_back");
     for (int i = 0; i < loops; i++)
     {
         v.pop_back();
@@ -268,7 +268,7 @@ static void bm_insert(void)
 {
     NAMESPACE::vector<int> v;
 
-    Timer t("insert");
+    Timer t("vector::insert");
     for (int i = 0; i < loops; i++)
     {
         v.insert(v.begin(), i);
@@ -281,7 +281,7 @@ static void bm_erase(void)
     NAMESPACE::vector<int> v(loops);
     init_vector(v);
 
-    Timer t("erase");
+    Timer t("vector::erase");
     for (int i = 0; i < loops; i++)
     {
         v.erase(v.begin());
@@ -294,7 +294,7 @@ static void bm_swap(void)
     NAMESPACE::vector<int> v2;
     init_vector(v1);
 
-    Timer t("swap");
+    Timer t("vector::swap");
     for (int i = 0; i < loops; i++)
     {
         v1.swap(v2);
@@ -306,7 +306,7 @@ static void bm_clear(void)
     NAMESPACE::vector<int> v(loops);
     init_vector(v);
 
-    Timer t("clear");
+    Timer t("vector::clear");
     for (int i = 0; i < loops; i++)
     {
         v.clear();
@@ -320,7 +320,7 @@ static void bm_operator(void)
     init_vector(v1);
     init_vector(v2);
 
-    Timer t("operator");
+    Timer t("vector::operator");
     for (int i = 0; i < loops; i++)
     {
         static_cast<void>(v1 == v2);
@@ -336,7 +336,7 @@ static void bm_get_allocator(void)
 {
     NAMESPACE::vector<int> v;
 
-    Timer t("get_allocator");
+    Timer t("vector::get_allocator");
     for (int i = 0; i < loops; i++)
     {
         v.get_allocator();
