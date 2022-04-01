@@ -31,7 +31,7 @@ void init_stack(NAMESPACE::stack<int> &sta)
 
 static void bm_constructor(void)
 {
-    Timer t("constructor");
+    Timer t("stack::constructor");
     for (int i = 0; i < loops; i++)
     {
         NAMESPACE::stack<int> sta;
@@ -43,7 +43,7 @@ static void bm_operator_equal(void)
     NAMESPACE::stack<int> sta1;
     NAMESPACE::stack<int> sta2;
 
-    Timer t("operator_equal");
+    Timer t("stack::operator_equal");
     for (int i = 0; i < loops; i++)
     {
         sta1 = sta2;
@@ -55,7 +55,7 @@ static void bm_size(void)
     NAMESPACE::stack<int> sta;
     init_stack(sta);
 
-    Timer t("size");
+    Timer t("stack::size");
     for (int i = 0; i < loops; i++)
     {
         sta.size();
@@ -66,7 +66,7 @@ static void bm_empty(void)
 {
     NAMESPACE::stack<int> sta;
 
-    Timer t("empty");
+    Timer t("stack::empty");
     for (int i = 0; i < loops; i++)
     {
         sta.empty();
@@ -78,7 +78,7 @@ static void bm_top(void)
     NAMESPACE::stack<int> sta;
     init_stack(sta);
 
-    Timer t("top");
+    Timer t("stack::top");
     for (int i = 0; i < loops; i++)
     {
         sta.top() = i;
@@ -89,7 +89,7 @@ static void bm_push(void)
 {
     NAMESPACE::stack<int> sta;
 
-    Timer t("push");
+    Timer t("stack::push");
     for (int i = 0; i < loops; i++)
     {
         sta.push(i);
@@ -101,7 +101,7 @@ static void bm_pop(void)
     NAMESPACE::stack<int> sta;
     init_stack(sta);
 
-    Timer t("pop");
+    Timer t("stack::pop");
     for (int i = 0; i < loops; i++)
     {
         sta.pop();
@@ -115,7 +115,7 @@ static void bm_operator(void)
     init_stack(sta1);
     init_stack(sta2);
 
-    Timer t("operator");
+    Timer t("stack::operator");
     for (int i = 0; i < loops; i++)
     {
         static_cast<void>(sta1 == sta2);
