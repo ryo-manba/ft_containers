@@ -13,8 +13,9 @@ INCDIR     := ../include
 INC := -I$(INCDIR)
 
 SRCFILE := timer.cpp\
-           bm_vector.cpp 
-#           bm_vector.cpp
+           bm_stack.cpp \
+           bm_vector.cpp \
+           main.cpp
 
 #SRCFILE := test_map.cpp \
 		   test_vector.cpp \
