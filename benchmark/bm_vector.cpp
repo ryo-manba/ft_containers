@@ -10,9 +10,18 @@
 #define NAMESPACE std
 #endif
 
-const int loops = 1e3;
+const int loops = 1000;
 
-void init_vector(NAMESPACE::vector<int> &v)
+static void print_title(void)
+{
+#ifdef FT
+    std::cout << "===== BENCHMARK VECTOR FT =====" << std::endl;
+#else
+    std::cout << "===== BENCHMARK VECTOR STL =====" << std::endl;
+#endif
+}
+
+static void init_vector(NAMESPACE::vector<int> &v)
 {
     for (int i = 0; i < loops; i++)
     {
@@ -20,7 +29,7 @@ void init_vector(NAMESPACE::vector<int> &v)
     }
 }
 
-void bm_constructor(void)
+static void bm_constructor(void)
 {
     Timer t("constructor");
     for (int i = 0; i < loops; i++)
@@ -29,7 +38,7 @@ void bm_constructor(void)
     }
 }
 
-void bm_operator_equal(void)
+static void bm_operator_equal(void)
 {
     NAMESPACE::vector<int> v1;
     NAMESPACE::vector<int> v2;
@@ -41,7 +50,7 @@ void bm_operator_equal(void)
     }
 }
 
-void bm_iterator(void)
+static void bm_iterator(void)
 {
     NAMESPACE::vector<int> v(loops);
     init_vector(v);
@@ -53,7 +62,7 @@ void bm_iterator(void)
     }
 }
 
-void bm_const_iterator(void)
+static void bm_const_iterator(void)
 {
     NAMESPACE::vector<int> v(loops);
     init_vector(v);
@@ -66,7 +75,7 @@ void bm_const_iterator(void)
     }
 }
 
-void bm_reverse_iterator(void)
+static void bm_reverse_iterator(void)
 {
     NAMESPACE::vector<int> v(loops);
     init_vector(v);
@@ -79,7 +88,7 @@ void bm_reverse_iterator(void)
     }
 }
 
-void bm_const_reverse_iterator(void)
+static void bm_const_reverse_iterator(void)
 {
     NAMESPACE::vector<int> v(loops);
     init_vector(v);
@@ -92,7 +101,7 @@ void bm_const_reverse_iterator(void)
     }
 }
 
-void bm_size(void)
+static void bm_size(void)
 {
     NAMESPACE::vector<int> v(loops);
 
@@ -103,7 +112,7 @@ void bm_size(void)
     }
 }
 
-void bm_max_size(void)
+static void bm_max_size(void)
 {
     NAMESPACE::vector<int> v;
 
@@ -115,18 +124,18 @@ void bm_max_size(void)
 }
 
 // TODO: 20倍以上かかる
-void bm_resize(void)
+static void bm_resize(void)
 {
     NAMESPACE::vector<int> v;
 
     Timer t("resize");
-    for (int i = 0; i < 1000; i++)
+    for (int i = 0; i < loops; i++)
     {
         v.resize(i);
     }
 }
 
-void bm_capacity(void)
+static void bm_capacity(void)
 {
     NAMESPACE::vector<int> v(loops);
     init_vector(v);
@@ -137,7 +146,7 @@ void bm_capacity(void)
         v.capacity();
     }
 }
-void bm_empty(void)
+static void bm_empty(void)
 {
     NAMESPACE::vector<int> v;
 
@@ -148,7 +157,7 @@ void bm_empty(void)
     }
 }
 
-void bm_reserve(void)
+static void bm_reserve(void)
 {
     NAMESPACE::vector<int> v;
 
@@ -159,7 +168,7 @@ void bm_reserve(void)
     }
 }
 
-void bm_indexer(void)
+static void bm_indexer(void)
 {
     NAMESPACE::vector<int> v(loops);
     init_vector(v);
@@ -171,7 +180,7 @@ void bm_indexer(void)
     }
 }
 
-void bm_at(void)
+static void bm_at(void)
 {
     NAMESPACE::vector<int> v(loops);
     init_vector(v);
@@ -183,7 +192,7 @@ void bm_at(void)
     }
 }
 
-void bm_front(void)
+static void bm_front(void)
 {
     NAMESPACE::vector<int> v(loops);
     init_vector(v);
@@ -195,7 +204,7 @@ void bm_front(void)
     }
 }
 
-void bm_back(void)
+static void bm_back(void)
 {
     NAMESPACE::vector<int> v(loops);
     init_vector(v);
@@ -207,7 +216,7 @@ void bm_back(void)
     }
 }
 
-void bm_data(void)
+static void bm_data(void)
 {
     NAMESPACE::vector<int> v(loops);
     init_vector(v);
@@ -219,7 +228,7 @@ void bm_data(void)
     }
 }
 
-void bm_assign(void)
+static void bm_assign(void)
 {
     NAMESPACE::vector<int> v(loops);
     init_vector(v);
@@ -231,7 +240,7 @@ void bm_assign(void)
     }
 }
 
-void bm_push_back(void)
+static void bm_push_back(void)
 {
     NAMESPACE::vector<int> v;
 
@@ -242,7 +251,7 @@ void bm_push_back(void)
     }
 }
 
-void bm_pop_back(void)
+static void bm_pop_back(void)
 {
     NAMESPACE::vector<int> v(loops);
     init_vector(v);
@@ -255,7 +264,7 @@ void bm_pop_back(void)
 }
 
 // TODO: 20倍以上
-void bm_insert(void)
+static void bm_insert(void)
 {
     NAMESPACE::vector<int> v;
 
@@ -267,7 +276,7 @@ void bm_insert(void)
 }
 
 // TODO: 20倍以上
-void bm_erase(void)
+static void bm_erase(void)
 {
     NAMESPACE::vector<int> v(loops);
     init_vector(v);
@@ -279,7 +288,7 @@ void bm_erase(void)
     }
 }
 
-void bm_swap(void)
+static void bm_swap(void)
 {
     NAMESPACE::vector<int> v1(loops);
     NAMESPACE::vector<int> v2;
@@ -292,7 +301,7 @@ void bm_swap(void)
     }
 }
 
-void bm_clear(void)
+static void bm_clear(void)
 {
     NAMESPACE::vector<int> v(loops);
     init_vector(v);
@@ -304,7 +313,7 @@ void bm_clear(void)
     }
 }
 
-void bm_operator(void)
+static void bm_operator(void)
 {
     NAMESPACE::vector<int> v1(loops);
     NAMESPACE::vector<int> v2(loops);
@@ -323,7 +332,7 @@ void bm_operator(void)
     }
 }
 
-void bm_get_allocator(void)
+static void bm_get_allocator(void)
 {
     NAMESPACE::vector<int> v;
 
@@ -334,20 +343,10 @@ void bm_get_allocator(void)
     }
 }
 
-void print_title(void)
-{
-#ifdef FT
-    std::cout << "===== BENCHMARK VECTOR FT =====" << std::endl;
-#else
-    std::cout << "===== BENCHMARK VECTOR STL =====" << std::endl;
-#endif
-}
-
-int test_vector(void)
+void bm_vector(void)
 {
     print_title();
 
-    // constructer
     bm_constructor();
     bm_operator_equal();
 
@@ -386,11 +385,4 @@ int test_vector(void)
 
     // allocator
     bm_get_allocator();
-
-    return 0;
-}
-
-int main(void)
-{
-    test_vector();
 }
