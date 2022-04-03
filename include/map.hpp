@@ -87,7 +87,9 @@ public:
         {
             return *this;
         }
-        tree_ = other.tree_;
+        tree_.clear();
+        tree_.value_comp() = other.tree_.value_comp();
+        insert(other.begin(), other.end());
         return *this;
     }
 
