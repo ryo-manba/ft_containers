@@ -19,6 +19,6 @@ awk '{
             }
         }
         printf "%s[%s] ",color, ans
-        printf "%s%6.2fx\033[m : %s %s\n", RESET, diff, YELLOW, $1
+        printf "%s%6.2fx\033[m : %s%s\n", RESET, diff, YELLOW, $1
     }
 }' benchmark_diff.log

@@ -15,14 +15,8 @@ INC := -I$(INCDIR)
 SRCFILE := timer.cpp\
            bm_stack.cpp \
            bm_vector.cpp \
+           bm_map.cpp \
            main.cpp
-
-#SRCFILE := test_map.cpp \
-		   test_vector.cpp \
-		   test_stack.cpp \
-		   test_pair.cpp \
-		   tester.cpp \
-		   main.cpp
 
 SRCS       := $(addprefix $(SRCDIR)/, $(SRCFILE))
 OBJS_FT    := $(addprefix $(OBJDIR_FT)/,  $(notdir $(SRCS:.cpp=.o)))
