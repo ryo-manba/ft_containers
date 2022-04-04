@@ -28,9 +28,9 @@ struct tree_node
     long height_;
 
 public:
-    tree_node(node_pointer parent = NULL, node_pointer left_ = NULL,
-              node_pointer right_ = NULL)
-        : parent_(parent), left_(left_), right_(right_), height_(0)
+    tree_node(node_pointer parent = NULL, node_pointer left = NULL,
+              node_pointer right = NULL)
+        : parent_(parent), left_(left), right_(right), height_(0)
     {
     }
     tree_node(Pair p)
@@ -565,9 +565,10 @@ public:
     // 木の中からkeyがあるか捜索する
     iterator find(const key_type& key)
     {
-        node_pointer node = search_node(root_, ft::make_pair(key, mapped_type()));
+        node_pointer node =
+            search_node(root_, ft::make_pair(key, mapped_type()));
 
-        if (node) // && !comp_(key, node->data_.first))
+        if (node)    // && !comp_(key, node->data_.first))
         {
             return iterator(node);
         }
@@ -576,7 +577,8 @@ public:
 
     const_iterator find(const key_type& key) const
     {
-        node_pointer node = search_node(root_, ft::make_pair(key, mapped_type()));
+        node_pointer node =
+            search_node(root_, ft::make_pair(key, mapped_type()));
 
         if (node && !comp_(key, node->data_.first)) return const_iterator(node);
         return end();
@@ -605,26 +607,42 @@ public:
     // less<int>()(3, 3) // false
     iterator lower_bound(const key_type& key)
     {
-        for (iterator it = begin(); it != end(); ++it)
+        node_pointer res = last_;
+        node_pointer cur = root_;
+
+        while (cur != NULL)
         {
-            if (!comp_(it->first, key))
+            // 左に進んでいく間の値をキャッシュしておく
+            // 右に進み始めたらNULLまで進めてキャッシュを返す
+            if (!comp_(cur->data_.first, key))
             {
-                return it;
+                res = cur;
+                cur = cur->left_;
             }
+            else
+                cur = cur->right_;
         }
-        return end();
+        return iterator(res);
     }
 
     const_iterator lower_bound(const key_type& key) const
     {
-        for (const_iterator it = begin(); it != end(); ++it)
+        node_pointer res = last_;
+        node_pointer cur = root_;
+
+        while (cur != NULL)
         {
-            if (!comp_(it->first, key))
+            // 左に進んでいく間の値をキャッシュしておく
+            // 右に進み始めたらNULLまで進めてキャッシュを返す
+            if (!comp_(cur->data_.first, key))
             {
-                return it;
+                res = cur;
+                cur = cur->left_;
             }
+            else
+                cur = cur->right_;
         }
-        return end();
+        return iterator(res);
     }
 
     // keyより大きい値を返す
@@ -632,26 +650,42 @@ public:
     // less<int>()(3, 3) // false
     iterator upper_bound(const key_type& key)
     {
-        for (iterator it = begin(); it != end(); ++it)
+        node_pointer res = last_;
+        node_pointer cur = root_;
+
+        while (cur != NULL)
         {
-            if (comp_(key, it->first))
+            // 右に進んでいく間の値をキャッシュしておく
+            // 左に進み始めたらNULLまで進めてキャッシュを返す
+            if (comp_(key, cur->data_.first))
             {
-                return it;
+                res = cur;
+                cur = cur->left_;
             }
+            else
+                cur = cur->right_;
         }
-        return end();
+        return iterator(res);
     }
 
     const_iterator upper_bound(const key_type& key) const
     {
-        for (const_iterator it = begin(); it != end(); ++it)
+        node_pointer res = last_;
+        node_pointer cur = root_;
+
+        while (cur != NULL)
         {
-            if (comp_(key, it->first))
+            // 右に進んでいく間の値をキャッシュしておく
+            // 左に進み始めたらNULLまで進めてキャッシュを返す
+            if (comp_(key, cur->data_.first))
             {
-                return it;
+                res = cur;
+                cur = cur->right_;
             }
+            else
+                cur = cur->left_;
         }
-        return end();
+        return iterator(res);
     }
 
     // Observers
@@ -919,11 +953,11 @@ private:
                 }
                 else    // 子が1つのときは入れ替えるだけ
                 {
-//                    debug(1);
-//                    print(node->data_.first);
-//                    print(child->data_.first);
-//                    std::swap(&(node->data_), &(child->data_));
-//                    delete_node(child);
+                    //                    debug(1);
+                    //                    print(node->data_.first);
+                    //                    print(child->data_.first);
+                    //                    std::swap(&(node->data_),
+                    //                    &(child->data_)); delete_node(child);
 
                     node_pointer target = node;
 
@@ -937,11 +971,12 @@ private:
                     node = child;
                 }
             }
-            else // 子供が2つあるノード
+            else    // 子供が2つあるノード
             {
                 // 左側の部分木のノードの最大ノード
-                node_pointer left_child_max = node->left_->get_max_node(node->left_);
-                node_pointer target   = node;
+                node_pointer left_child_max =
+                    node->left_->get_max_node(node->left_);
+                node_pointer target = node;
 
                 // 親ノードを新しいノードに設定する
                 if (left_child_max->parent_->left_ == left_child_max)
@@ -956,8 +991,10 @@ private:
                 left_child_max->parent_ = target->parent_;
 
                 // 新しいノードの子ノードの親を設定する
-                if (left_child_max->left_) left_child_max->left_->parent_ = left_child_max;
-                if (left_child_max->right_) left_child_max->right_->parent_ = left_child_max;
+                if (left_child_max->left_)
+                    left_child_max->left_->parent_ = left_child_max;
+                if (left_child_max->right_)
+                    left_child_max->right_->parent_ = left_child_max;
                 delete_node(target);
                 node = left_child_max;
             }
