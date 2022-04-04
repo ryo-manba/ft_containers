@@ -1,8 +1,10 @@
 #include <iostream>
 #include <map>
+#include <utility>
 
 #include "map.hpp"
 #include "timer.hpp"
+#include "vector.hpp"
 
 #ifdef FT
 #define NAMESPACE ft
@@ -122,7 +124,7 @@ static void bm_indexer(void)
 {
     NAMESPACE::map<int, int> mp;
     Timer t("map::indexer");
-    
+
     for (int i = 0; i < loops; i++)
     {
         mp[i] = i;
@@ -144,133 +146,166 @@ static void bm_at(void)
 // capacities
 static void bm_empty(void)
 {
+    NAMESPACE::map<int, int> mp;
     Timer t("map::empty");
 
     for (int i = 0; i < loops; i++)
     {
+        mp.empty();
     }
 }
 
 static void bm_size(void)
 {
+    NAMESPACE::map<int, int> mp;
     Timer t("map::size");
 
     for (int i = 0; i < loops; i++)
     {
+        mp.size();
     }
 }
 
 static void bm_max_size(void)
 {
+    NAMESPACE::map<int, int> mp;
     Timer t("map::max_size");
 
     for (int i = 0; i < loops; i++)
     {
+        mp.max_size();
     }
 }
 
 // modifiers
-
 static void bm_clear(void)
 {
+    NAMESPACE::map<int, int> mp;
     Timer t("map::clear");
 
     for (int i = 0; i < loops; i++)
     {
+        mp.clear();
     }
 }
 
 static void bm_insert(void)
 {
-    Timer t("map::insert");
+    NAMESPACE::map<int, int> mp;
+    NAMESPACE::pair<int, int> p(42, 42);
 
+    Timer t("map::insert");
     for (int i = 0; i < loops; i++)
     {
+        mp.insert(p);
     }
 }
 
 static void bm_erase(void)
 {
-    Timer t("map::erase");
+    NAMESPACE::map<int, int> mp;
+    init_map(mp);
 
+    Timer t("map::erase");
     for (int i = 0; i < loops; i++)
     {
+        mp.erase(i);
     }
 }
 
 static void bm_swap(void)
 {
-    Timer t("map::swap");
+    NAMESPACE::map<int, int> mp1;
+    NAMESPACE::map<int, int> mp2;
+    init_map(mp1);
 
+    Timer t("map::swap");
     for (int i = 0; i < loops; i++)
     {
+        mp1.swap(mp2);
     }
 }
 
 // lookup
-
 static void bm_count(void)
 {
+    NAMESPACE::map<int, int> mp;
     Timer t("map::count");
 
     for (int i = 0; i < loops; i++)
     {
+        mp.count(i);
     }
 }
 
 static void bm_find(void)
 {
-    Timer t("map::find");
+    NAMESPACE::map<int, int> mp;
+    init_map(mp);
 
+    Timer t("map::find");
     for (int i = 0; i < loops; i++)
     {
+        mp.find(i);
     }
 }
 
 static void bm_equal_range(void)
 {
-    Timer t("map::equal_range");
+    NAMESPACE::map<int, int> mp;
+    init_map(mp);
 
+    Timer t("map::equal_range");
     for (int i = 0; i < loops; i++)
     {
+        mp.equal_range(i);
     }
 }
 
 static void bm_lower_bound(void)
 {
-    Timer t("map::lower_bound");
+    NAMESPACE::map<int, int> mp;
+    init_map(mp);
 
+    Timer t("map::lower_bound");
     for (int i = 0; i < loops; i++)
     {
+        mp.lower_bound(i);
     }
 }
 
 static void bm_upper_bound(void)
 {
-    Timer t("map::upper_bound");
+    NAMESPACE::map<int, int> mp;
+    init_map(mp);
 
+    Timer t("map::upper_bound");
     for (int i = 0; i < loops; i++)
     {
+        mp.upper_bound(i);
     }
 }
 
 // observers
-
 static void bm_key_comp(void)
 {
+    NAMESPACE::map<int, int> mp;
     Timer t("map::key_comp");
 
     for (int i = 0; i < loops; i++)
     {
+        mp.key_comp();
     }
 }
 
 static void bm_value_comp(void)
 {
+    NAMESPACE::map<int, int> mp;
     Timer t("map::value_comp");
 
     for (int i = 0; i < loops; i++)
     {
+        mp.value_comp();
     }
 }
 
@@ -278,19 +313,35 @@ static void bm_value_comp(void)
 
 static void bm_operator(void)
 {
-    Timer t("map::operator");
+    NAMESPACE::map<int, int> mp1;
+    NAMESPACE::map<int, int> mp2;
+    init_map(mp1);
+    init_map(mp2);
 
+    Timer t("map::operator");
     for (int i = 0; i < loops; i++)
     {
+        static_cast<void>(mp1 == mp2);
+        static_cast<void>(mp1 != mp2);
+        static_cast<void>(mp1 > mp2);
+        static_cast<void>(mp1 >= mp2);
+        static_cast<void>(mp1 < mp2);
+        static_cast<void>(mp1 <= mp2);
     }
+    std::map<int, int> mp;
 }
 
 static void bm_std_swap(void)
 {
-    Timer t("map::std_swap");
+    NAMESPACE::map<int, int> mp1;
+    NAMESPACE::map<int, int> mp2;
+    init_map(mp1);
+    init_map(mp2);
 
+    Timer t("map::std_swap");
     for (int i = 0; i < loops; i++)
     {
+        std::swap(mp1, mp2);
     }
 }
 
