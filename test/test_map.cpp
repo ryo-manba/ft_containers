@@ -839,7 +839,7 @@ static bool test_get_allocator(void)
     return true;
 }
 
-static bool test_non_member_swap(void)
+static bool test_std_swap(void)
 {
     std::map<std::string, int> std_mp1 = init_std_map();
     ft::map<std::string, int> ft_mp1   = init_ft_map();
@@ -855,7 +855,7 @@ static bool test_non_member_swap(void)
     ft::map<std::string, int>::iterator ft_it2   = ft_mp2.begin();
 
     std::swap(std_mp1, std_mp2);
-    ft::swap(ft_mp1, ft_mp2);
+    std::swap(ft_mp1, ft_mp2);
 
     if (map_comp(std_mp1, ft_mp1)) return false;
     if (map_comp(std_mp2, ft_mp2)) return false;
@@ -921,7 +921,7 @@ int test_map(void)
     tester.run(test_get_allocator(), "test_get_allocator");
 
     // Non member
-    tester.run(test_non_member_swap(), "test_non_member_swap");
+    tester.run(test_std_swap(), "test_std_swap");
 
     return tester.getRet();
 }
