@@ -1,12 +1,12 @@
 #ifndef MAP_HPP
 #define MAP_HPP
 
+#include <stdexcept>
+
 #include "AVLtree.hpp"
 #include "iterator.hpp"
 #include "pair.hpp"
 #include "utils.hpp"
-#include <stdexcept>
-
 
 template <class pointer>
 struct tree_node;
@@ -126,7 +126,7 @@ public:
     }
     const_reverse_iterator rbegin() const
     {
-        return const_reverse_iterator(end()); 
+        return const_reverse_iterator(end());
     }
     reverse_iterator rend()
     {
@@ -168,7 +168,7 @@ public:
         if (it == end() || key_comp()(key, (*it).first))
         {
             p = insert(value_type(key, mapped_type()));
-//            it = insert(it, value_type(key, mapped_type()));
+            //            it = insert(it, value_type(key, mapped_type()));
             it = p.first;
         }
         return (*it).second;
@@ -389,13 +389,16 @@ bool operator<=(const ft::map<Key, T, Compare, Allocator>& lhs,
 {
     return !(rhs < lhs);
 }
+}    // namespace ft
 
+namespace std
+{
 template <class Key, class T, class Compare, class Allocator>
 void swap(ft::map<Key, T, Compare, Allocator>& lhs,
           ft::map<Key, T, Compare, Allocator>& rhs)
 {
     lhs.swap(rhs);
 }
+}    // namespace std
 
-}    // namespace ft
 #endif
