@@ -118,27 +118,30 @@ static void bm_const_reverse_iterator(void)
     }
 }
 
-// TODO:　ここから
 static void bm_indexer(void)
 {
+    NAMESPACE::map<int, int> mp;
     Timer t("map::indexer");
-
+    
     for (int i = 0; i < loops; i++)
     {
+        mp[i] = i;
     }
 }
 
 static void bm_at(void)
 {
-    Timer t("map::at");
+    NAMESPACE::map<int, int> mp;
+    init_map(mp);
 
+    Timer t("map::at");
     for (int i = 0; i < loops; i++)
     {
+        mp.at(i) = i;
     }
 }
 
-// capacities;
-
+// capacities
 static void bm_empty(void)
 {
     Timer t("map::empty");
