@@ -199,13 +199,12 @@ bool test_resize(void)
     std::vector<int> std_vec;
     ft::vector<int> ft_vec;
 
-    std_vec.resize(0);
-    ft_vec.resize(0);
-    if (vector_comp(std_vec, ft_vec)) return false;
-
-    std_vec.resize(10);
-    ft_vec.resize(10);
-    if (vector_comp(std_vec, ft_vec)) return false;
+    for (int i = 0; i < 10; i++)
+    {
+        std_vec.resize(i);
+        ft_vec.resize(i);
+        if (vector_comp(std_vec, ft_vec)) return false;
+    }
 
     std_vec.resize(15, 42);
     ft_vec.resize(15, 42);
@@ -218,15 +217,27 @@ bool test_resize(void)
     return true;
 }
 
+// 直接比較した場合の結果がローカルとGitHub Actionsで異なる
+// capacityの初期値や増加率などの値は仕様で定められていない
 bool test_capacity(void)
 {
     std::vector<int> std_vec1;
     ft::vector<int> ft_vec1;
-    if (std_vec1.capacity() != ft_vec1.capacity()) return false;
+//    if (std_vec1.capacity() != ft_vec1.capacity()) return false;
+    if (std_vec1.capacity() < 0) return false;
+    if (ft_vec1.capacity() < 0) return false;
 
-    std::vector<int> std_vec2(5);
-    ft::vector<int> ft_vec2(5);
-    if (std_vec2.capacity() != ft_vec2.capacity()) return false;
+    std::vector<int> std_vec2(256);
+    ft::vector<int> ft_vec2(256);
+//    if (std_vec2.capacity() != ft_vec2.capacity()) return false;
+    if (std_vec2.capacity() < 256) return false;
+    if (ft_vec2.capacity() < 256) return false;
+
+    std::vector<int> std_vec3(1024);
+    ft::vector<int> ft_vec3(1024);
+//    if (std_vec3.capacity() != ft_vec3.capacity()) return false;
+    if (std_vec3.capacity() < 1024) return false;
+    if (ft_vec3.capacity() < 1024) return false;
 
     return true;
 }
