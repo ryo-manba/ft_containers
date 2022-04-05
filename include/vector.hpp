@@ -324,41 +324,24 @@ public:
         alloc_.deallocate(old_first, old_capacity);
     }
 
-    void resize(size_type sz)
+    /**
+     * コンテナのサイズを変更し、count 個の要素を含むようにする。
+     * 現在のサイズが count より大きい場合、コンテナは最初の count 要素まで縮小される。
+     * 現在のサイズが count より小さい場合。
+     * 1. デフォルトで挿入されている要素が追加で挿入される
+     * 2. value のコピーを追加する。
+     */
+    void resize(size_type sz, value_type val = value_type())
     {
         // 現在の要素数より少ない
         if (sz < size())
         {
-            size_type diff = size() - sz;
-            destroy_until(rbegin() + diff);
-            last_ = first_ + sz;
+            erase(begin() + sz, end());
         }
         // 現在の要素数より大きい
         else if (sz > size())
         {
-            reserve(sz);
-            for (; last_ != reserved_last_; ++last_)
-            {
-                construct(last_);
-            }
-        }
-    }
-
-    void resize(size_type sz, const_reference value)
-    {
-        if (sz < size())
-        {
-            size_type diff = size() - sz;
-            destroy_until(rbegin() + diff);
-            last_ = first_ + sz;
-        }
-        else if (sz > size())
-        {
-            reserve(sz);
-            for (; last_ != reserved_last_; ++last_)
-            {
-                construct(last_, value);    // ここが引数valueに変更されている
-            }
+            insert(end(), sz - size(), val);
         }
     }
 
@@ -436,6 +419,8 @@ public:
         size_type insert_idx = pos - begin();
         size_type vec_sz     = size();
         vector vec;
+
+        reserve(vec_sz + count);
 
         // insertするところまでコピー
         for (size_type i = 0; i < insert_idx; ++i)
