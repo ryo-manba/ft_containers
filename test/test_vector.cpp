@@ -358,18 +358,21 @@ bool test_assign(void)
 {
     std::vector<int> std_vec1;
     ft::vector<int> ft_vec1;
-    std::vector<int> std_vec2(5);
-    ft::vector<int> ft_vec2(5);
+    std::vector<int> std_vec2(10);
+    ft::vector<int> ft_vec2(10);
 
     // capacity以上
     std_vec1.assign(5, 42);
     ft_vec1.assign(5, 42);
+    if (vector_comp(std_vec1, ft_vec1)) return false;
 
     // capacity以下
     std_vec2.assign(std_vec2.size(), 42);
     ft_vec2.assign(ft_vec2.size(), 42);
+    if (vector_comp(std_vec2, ft_vec2)) return false;
 
-    if (vector_comp(std_vec1, ft_vec1)) return false;
+    std_vec1.assign(std_vec2.begin(), std_vec2.end());
+    ft_vec1.assign(ft_vec2.begin(), ft_vec2.end());
     if (vector_comp(std_vec2, ft_vec2)) return false;
 
     return true;
@@ -432,21 +435,20 @@ bool test_insert(void)
 
     std::vector<int> std_vec2(sz);
     ft::vector<int> ft_vec2(sz);
-
     for (size_t i = 0; i < sz; ++i)
     {
         std_vec2[i] = i;
         ft_vec2[i]  = i;
     }
-    // 要素3つ(it, digit, digit)
-    std_vec2.insert(std_vec2.begin() + 2, 2, 2);
-    ft_vec2.insert(ft_vec2.begin() + 2, 2, 2);
+    // 要素3つ(it, count, value)
+    std_vec2.insert(std_vec2.begin() + 2, 2, 42);
+    ft_vec2.insert(ft_vec2.begin() + 2, 2, 42);
     if (vector_comp(std_vec2, ft_vec2)) return false;
 
     std::vector<int> std_vec3(sz);
     ft::vector<int> ft_vec3(sz);
 
-    // 要素3つ(it, other_it, other_it)
+    // 要素3つ(it, first, last)
     std_vec3.insert(std_vec3.begin(), std_vec2.begin(), std_vec2.end());
     ft_vec3.insert(ft_vec3.begin(), std_vec2.begin(), std_vec2.end());
     if (vector_comp(std_vec3, ft_vec3)) return false;

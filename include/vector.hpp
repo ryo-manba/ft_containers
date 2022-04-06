@@ -380,11 +380,12 @@ public:
         last_ = t;
     }
 
-    //    template<class InputIt>
-    //    void assign(InputIt first, InputIt last)
-    //    {
-    //
-    //    }
+    template<class InputIt>
+    void assign(InputIt first, InputIt last)
+    {
+        clear();
+        insert(begin(), first, last);
+    }
 
     /**
      * @brief posの前にvalueを挿入する。
