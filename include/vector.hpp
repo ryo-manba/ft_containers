@@ -326,8 +326,8 @@ public:
 
     /**
      * コンテナのサイズを変更し、count 個の要素を含むようにする。
-     * 現在のサイズが count より大きい場合、コンテナは最初の count 要素まで縮小される。
-     * 現在のサイズが count より小さい場合。
+     * 現在のサイズが count より大きい場合、コンテナは最初の count
+     * 要素まで縮小される。 現在のサイズが count より小さい場合。
      * 1. デフォルトで挿入されている要素が追加で挿入される
      * 2. value のコピーを追加する。
      */
@@ -390,54 +390,65 @@ public:
      * @brief posの前にvalueを挿入する。
      * @return 挿入された値を指すイテレータ
      */
+
+    /**
+     * [example]
+     * a b c
+     * a と b の間に [x y] を挿入する
+     * - a はそのまま
+     * - b c をmemmove
+     * a     b c
+     * - a と　b の間に挿入する
+     * a x y b c
+     */
     iterator insert(const_iterator pos, const value_type& value)
     {
-        size_type insert_idx = pos - begin();
-        vector vec;
-
-        size_type vec_sz     = size();
-        // insertするところまでコピー
-        for (size_type i = 0; i < insert_idx; ++i)
-        {
-            vec.push_back(*(begin() + i));
-        }
-        vec.push_back(value);
-        // insert_pos以降の要素を移す
-        for (size_type i = insert_idx; i < vec_sz; ++i)
-        {
-            vec.push_back(*(begin() + i));
-        }
-        swap(vec);
-        return begin() + insert_idx;
+        difference_type offset = std::distance(begin(), pos);
+        insert(pos, 1, value);
+        return begin() + offset;
     }
 
     /**
      * @brief posの前にvalueをcountの数挿入する。
+     * offset: 先頭から挿入するまでの位置
      */
     void insert(const_iterator pos, size_type count, const value_type& value)
     {
-        size_type insert_idx = pos - begin();
-        size_type vec_sz     = size();
-        vector vec;
+        if (count == 0) return;
 
-        reserve(vec_sz + count);
+        // offset: 先頭から挿入するまでの位置
+        difference_type offset = std::distance(begin(), pos);
+        size_type new_size     = size() + count;
+        size_type c            = capacity();
 
-        // insertするところまでコピー
-        for (size_type i = 0; i < insert_idx; ++i)
+        // 予約メモリーが足りなければ拡張
+        while (c < new_size)
         {
-            vec.push_back(*(begin() + i));
+            if (c == 0)
+                c = 1;
+            else
+                c *= 2;
         }
-        // count分 value を埋める
-        for (size_type i = 0; i < count; ++i)
+        reserve(c);
+
+        // 追加で確保した要素のコンストラクタを呼ぶ
+        for (; last_ != first_ + new_size; ++last_) construct(last_);
+
+        iterator ite = last_ - 1;
+
+        // endから要素を挿入する先頭(pos + count - 1)までmemmoveする
+        iterator move_end_pos = begin() + offset + count - 1;
+        for (; ite != move_end_pos; --ite)
         {
-            vec.push_back(value);
+            *ite = *(ite - count);
         }
-        // insert_pos以降の要素を移す
-        for (size_type i = insert_idx; i < vec_sz; ++i)
+
+        // insertのスタート地点まで要素を挿入する
+        iterator start_pos = begin() + offset - 1;
+        for (; ite != start_pos; --ite)
         {
-            vec.push_back(*(begin() + i));
+            *ite = value;
         }
-        swap(vec);
     }
 
     /**
@@ -451,26 +462,37 @@ public:
     typename ft::enable_if<!ft::is_integral<InputIt>::value>::type insert(
         iterator pos, InputIt first, InputIt last)
     {
-        size_type insert_idx = begin() - pos;
-        size_type vec_sz     = size();
-        vector vec;
+        size_type offset = std::distance(begin(), pos);
+        size_type count  = std::distance(first, last);
+        if (count == 0) return;
+        size_type new_size = size() + count;
+        size_type c            = capacity();
 
-        // insertするところまでコピー
-        for (size_type i = 0; i < insert_idx; ++i)
+        // 予約メモリーが足りなければ拡張
+        while (c < new_size)
         {
-            vec.push_back(*(begin() + i));
+            if (c == 0)
+                c = 1;
+            else
+                c *= 2;
         }
-        // first ~ lastまで要素を入れていく
-        for (InputIt it = first; it != last; ++it)
+        reserve(c);
+        // 追加で確保した要素のコンストラクタを呼ぶ
+        for (; last_ != first_ + new_size; ++last_) construct(last_);
+
+        iterator ite = end() - 1;
+        // endから要素を挿入する先頭(pos + count - 1)までmemmoveする
+        iterator end_pos = begin() + offset + count - 1;
+        for (; ite > end_pos; --ite)
         {
-            vec.push_back(*it);
+            *ite = *(ite - count);
         }
-        // insert_pos以降の要素を移す
-        for (size_type i = insert_idx; i < vec_sz; ++i)
+
+        // 要素を挿入する
+        for (size_type i = 0; i < count; i++, ++first)
         {
-            vec.push_back(*(begin() + i));
+            *(first_ + offset + i) = *first;
         }
-        swap(vec);
     }
 
     /**
@@ -480,7 +502,7 @@ public:
      */
     iterator erase(iterator pos)
     {
-        size_type dist = begin() - pos;
+        size_type dist = std::distance(begin(), pos);
         for (iterator it = pos + 1; it != end(); ++it)
         {
             *(it - 1) = *it;
@@ -505,7 +527,6 @@ public:
     // a.erase(a.begin()+1, a.begin()+3);
     //      * * (ここを詰める)
     // a: 1 2 3 4 5 -> 1 4 5
-
     iterator erase(iterator first, iterator last)
     {
         if (first == last) return first;
@@ -592,44 +613,40 @@ protected:
     }
 };
 
-template<class Tp, class Alloc>
-bool operator==(const vector<Tp, Alloc>& lhs,
-                const vector<Tp, Alloc>& rhs)
+template <class Tp, class Alloc>
+bool operator==(const vector<Tp, Alloc>& lhs, const vector<Tp, Alloc>& rhs)
 {
-    return lhs.size() == rhs.size() && ft::equal(lhs.begin(), lhs.end(), rhs.begin());
+    return lhs.size() == rhs.size() &&
+           ft::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
-template<class Tp, class Alloc>
-bool operator!=(const vector<Tp, Alloc>& lhs,
-                const vector<Tp, Alloc>& rhs)
+template <class Tp, class Alloc>
+bool operator!=(const vector<Tp, Alloc>& lhs, const vector<Tp, Alloc>& rhs)
 {
     return !(lhs == rhs);
 }
 
-template<class Tp, class Alloc>
-bool operator< (const vector<Tp, Alloc>& lhs,
-                const vector<Tp, Alloc>& rhs)
+template <class Tp, class Alloc>
+bool operator<(const vector<Tp, Alloc>& lhs, const vector<Tp, Alloc>& rhs)
 {
-    return ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+    return ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(),
+                                       rhs.end());
 }
 
-template<class Tp, class Alloc>
-bool operator> (const vector<Tp, Alloc>& lhs,
-                const vector<Tp, Alloc>& rhs)
+template <class Tp, class Alloc>
+bool operator>(const vector<Tp, Alloc>& lhs, const vector<Tp, Alloc>& rhs)
 {
     return rhs < lhs;
 }
 
-template<class Tp, class Alloc>
-bool operator>= (const vector<Tp, Alloc>& lhs,
-                const vector<Tp, Alloc>& rhs)
+template <class Tp, class Alloc>
+bool operator>=(const vector<Tp, Alloc>& lhs, const vector<Tp, Alloc>& rhs)
 {
     return !(lhs < rhs);
 }
 
-template<class Tp, class Alloc>
-bool operator<= (const vector<Tp, Alloc>& lhs,
-                const vector<Tp, Alloc>& rhs)
+template <class Tp, class Alloc>
+bool operator<=(const vector<Tp, Alloc>& lhs, const vector<Tp, Alloc>& rhs)
 {
     return !(rhs < lhs);
 }

@@ -263,7 +263,7 @@ static void bm_pop_back(void)
     }
 }
 
-// TODO: 20倍以上
+// beginへのinsertはstlの場合にmoveを利用しているので20倍は実現できない。
 static void bm_insert(void)
 {
     NAMESPACE::vector<int> v;
@@ -271,7 +271,7 @@ static void bm_insert(void)
     Timer t("vector::insert");
     for (int i = 0; i < loops; i++)
     {
-        v.insert(v.begin(), i);
+        v.insert(v.end(), i);
     }
 }
 
