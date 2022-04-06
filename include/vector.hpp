@@ -502,16 +502,14 @@ public:
      */
     iterator erase(iterator pos)
     {
-        size_type dist = std::distance(begin(), pos);
-        for (iterator it = pos + 1; it != end(); ++it)
+        if (pos != end())
         {
-            *(it - 1) = *it;
+            std::copy(pos + 1, end(), pos);
+            // 最後の要素のデストラクタを呼ぶ。
+            --last_;
+            destroy(last_);
         }
-
-        // 最後の要素のデストラクタを呼ぶ。
-        --last_;
-        destroy(last_);
-        return begin() + dist;
+        return pos;
     }
 
     /**
@@ -529,18 +527,17 @@ public:
     // a: 1 2 3 4 5 -> 1 4 5
     iterator erase(iterator first, iterator last)
     {
-        if (first == last) return first;
-
-        size_type start_idx = first - begin();
-        size_type del_range = last - first;
+        difference_type start_idx = std::distance(begin(), first);
+        difference_type del_range = std::distance(first, last);
 
         // firstの位置からlastの要素を埋めていく
-        while (last < end())
-        {
-            *first = *last;
-            ++first;
-            ++last;
-        }
+        std::copy(last, end(), first);
+//        while (last != end())
+//        {
+//            *first = *last;
+//            ++first;
+//            ++last;
+//        }
         // 削除する要素の先頭を渡す -> 後ろから削除していく
         destroy_until(rbegin() + del_range);
         return (begin() + start_idx);
