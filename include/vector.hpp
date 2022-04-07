@@ -369,7 +369,11 @@ public:
         if (n > cap)
         {
             clear();
-            reserve(n);
+            while (cap < n)
+            {
+                cap *= 2;
+            }
+            reserve(cap);
         }
         pointer t = first_;
         for (size_type i = 0; i < n; ++i)
@@ -380,7 +384,7 @@ public:
         last_ = t;
     }
 
-    template<class InputIt>
+    template <class InputIt>
     void assign(InputIt first, InputIt last)
     {
         clear();
@@ -467,7 +471,7 @@ public:
         size_type count  = std::distance(first, last);
         if (count == 0) return;
         size_type new_size = size() + count;
-        size_type c            = capacity();
+        size_type c        = capacity();
 
         // 予約メモリーが足りなければ拡張
         while (c < new_size)
@@ -533,12 +537,12 @@ public:
 
         // firstの位置からlastの要素を埋めていく
         std::copy(last, end(), first);
-//        while (last != end())
-//        {
-//            *first = *last;
-//            ++first;
-//            ++last;
-//        }
+        //        while (last != end())
+        //        {
+        //            *first = *last;
+        //            ++first;
+        //            ++last;
+        //        }
         // 削除する要素の先頭を渡す -> 後ろから削除していく
         destroy_until(rbegin() + del_range);
         return (begin() + start_idx);
@@ -647,6 +651,12 @@ template <class Tp, class Alloc>
 bool operator<=(const vector<Tp, Alloc>& lhs, const vector<Tp, Alloc>& rhs)
 {
     return !(rhs < lhs);
+}
+
+template <class Tp, class Alloc>
+void swap(ft::vector<Tp, Alloc>& x, ft::vector<Tp, Alloc>& y)
+{
+    x.swap(y);
 }
 
 }    // namespace ft
