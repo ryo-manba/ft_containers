@@ -214,7 +214,7 @@ static bool test_operator(void)
 
 int test_stack(void)
 {
-    std::cout << "-----[TEST STACK]-----" << std::endl;
+    std::cout << "==========[TEST STACK]==========" << std::endl;
     Tester tester;
 
     // Member functions

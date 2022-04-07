@@ -629,7 +629,7 @@ bool test_std_swap(void)
 int test_vector(void)
 {
     Tester tester;
-    std::cout << "=======[TEST VECTOR]=======" << std::endl;
+    std::cout << "==========[TEST VECTOR]==========" << std::endl;
 
     // Member functions
     tester.run(test_constructor(), "test_constructor");
