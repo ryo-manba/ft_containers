@@ -1,11 +1,12 @@
-#include <utility>
+#include <iostream>
 #include <string>
 #include <tuple>
-#include <iostream>
+#include <utility>
+
 #include "pair.hpp"
 #include "tester.hpp"
 
-template<typename STD, typename FT>
+template <typename STD, typename FT>
 int pair_comp(const STD& st, const FT& ft)
 {
     if (st.first != ft.first) return 1;
@@ -35,7 +36,7 @@ static bool test_operator_equal(void)
     ft::pair<int, int> ft_p1(42, -42);
 
     std::pair<int, int> std_p2 = std_p1;
-    ft::pair<int, int> ft_p2 = ft_p1;
+    ft::pair<int, int> ft_p2   = ft_p1;
     if (pair_comp(std_p2, ft_p2)) return false;
     return true;
 }
@@ -75,7 +76,7 @@ static bool test_make_pair(void)
     for (int i = 0; i < 5; ++i)
     {
         std_p = std::make_pair(i, i);
-        ft_p = ft::make_pair(i, i);
+        ft_p  = ft::make_pair(i, i);
         if (pair_comp(std_p, ft_p)) return false;
     }
     return true;
@@ -84,7 +85,7 @@ static bool test_make_pair(void)
 int test_pair(void)
 {
     Tester tester;
-    std::cout << "-----[TEST PAIR]-----" << std::endl;
+    std::cout << "==========[TEST PAIR]==========" << std::endl;
 
     tester.run(test_constructor(), "test_constructor");
     tester.run(test_operator_equal(), "test_operator_equal");
