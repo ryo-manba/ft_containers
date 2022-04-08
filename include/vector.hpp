@@ -64,21 +64,16 @@ public:
         resize(count, value);
     }
 
-    /*
-        template< class InputIt >
-        vector( InputIt first, InputIt last,
-            const Allocator& alloc = Allocator() )
-        {
 
-        }
-        */
-
+// TODO: InputIteratorとそれ以外で処理を分ける
+// ForwardIteratorで処理を分ける
     template <typename InputIt>
     vector(InputIt first, InputIt last, const Allocator& alloc_ = Allocator(),
            typename ft::enable_if<!ft::is_integral<InputIt>::value,
                                   InputIt>::type* = NULL)
         : first_(NULL), last_(NULL), reserved_last_(NULL), alloc_(alloc_)
     {
+        // InputItは使えない
         reserve(std::distance(first, last));
         for (iterator it = first; it != last; ++it)
         {
@@ -95,7 +90,6 @@ public:
         // コピー元の要素をコピー構築
         // destはコピー先
         // [src, last_)はコピー元
-        // FIXME: dest = first_がおかしそう
         for (iterator dest = first_, src = other.begin(), last = other.end();
              src != last; ++dest, ++src)
         {
@@ -115,7 +109,6 @@ public:
 
     vector& operator=(const vector& r)
     {
-        // 自分自身への代入なら何もしない
         if (this == &r) return *this;
 
         // 要素数が同じ
@@ -194,27 +187,26 @@ public:
     }
 
     // 要素アクセス
-    reference operator[](size_type i)
+    reference operator[](size_type pos)
     {
-        return first_[i];
+        return first_[pos];
     }
-    const_reference operator[](size_type i) const
+    const_reference operator[](size_type pos) const
     {
-        return first_[i];
-    }
-
-    reference at(size_type i)
-    {
-        if (i >= size()) throw std::out_of_range("index is out of range.");
-        return first_[i];
-    }
-    const_reference at(size_type i) const
-    {
-        if (i >= size()) throw std::out_of_range("index is out of range.");
-        return first_[i];
+        return first_[pos];
     }
 
-    // DEBUG
+    reference at(size_type pos)
+    {
+        if (pos >= size()) throw std::out_of_range("vector");
+        return first_[pos];
+    }
+    const_reference at(size_type pos) const
+    {
+        if (pos >= size()) throw std::out_of_range("vector");
+        return first_[pos];
+    }
+
     reference front()
     {
         return *first_;
@@ -264,7 +256,7 @@ public:
     }
     const_reverse_iterator rbegin() const
     {
-        return reverse_iterator(end());
+        return const_reverse_iterator(end());
     }
     reverse_iterator rend()
     {
@@ -272,7 +264,7 @@ public:
     }
     const_reverse_iterator rend() const
     {
-        return reverse_iterator(begin());
+        return const_reverse_iterator(begin());
     }
 
     void clear()
