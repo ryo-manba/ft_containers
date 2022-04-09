@@ -157,7 +157,7 @@ static bool test_at(void)
     return true;
 }
 
-static bool test_indexer(void)
+static bool test_operator_at(void)
 {
     std::map<std::string, int> std_mp;
     ft::map<std::string, int> ft_mp;
@@ -801,7 +801,7 @@ static bool test_value_comp(void)
     return true;
 }
 
-static bool test_operator(void)
+static bool test_operator_cmp(void)
 {
     std::map<std::string, int> std_mp1 = create_std_map();
     ft::map<std::string, int> ft_mp1   = create_ft_map();
@@ -875,7 +875,7 @@ int test_map(void)
 
     // Element access
     tester.run(test_at(), "test_at");
-    tester.run(test_indexer(), "test_indexer");
+    tester.run(test_operator_at(), "test_operator_at");
 
     // Iterators
     tester.run(test_iterator(), "test_iterator");
@@ -911,7 +911,7 @@ int test_map(void)
     tester.run(test_value_comp(), "test_value_comp");
 
     // Non-member functions
-    tester.run(test_operator(), "test_operator");
+    tester.run(test_operator_cmp(), "test_operator_cmp");
     tester.run(test_std_swap(), "test_std_swap");
 
     return tester.getRet();

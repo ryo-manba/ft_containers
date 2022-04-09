@@ -180,7 +180,7 @@ static bool test_pop(void)
     return true;
 }
 
-static bool test_operator(void)
+static bool test_operator_cmp(void)
 {
     std::deque<int> deq;
     ft::vector<int> vec;
@@ -233,6 +233,6 @@ int test_stack(void)
     tester.run(test_pop(), "test_pop");
 
     // Non-member functions
-    tester.run(test_operator(), "test_operator");
+    tester.run(test_operator_cmp(), "test_operator_cmp");
     return tester.getRet();
 }

@@ -108,14 +108,14 @@ static void bm_pop(void)
     }
 }
 
-static void bm_operator(void)
+static void bm_operator_cmp(void)
 {
     NAMESPACE::stack<int> sta1;
     NAMESPACE::stack<int> sta2;
     init_stack(sta1);
     init_stack(sta2);
 
-    Timer t("stack::operator");
+    Timer t("stackoperator_cmp");
     for (int i = 0; i < loops; i++)
     {
         static_cast<void>(sta1 == sta2);
@@ -134,17 +134,17 @@ void bm_stack(void)
     bm_constructor();
     bm_operator_equal();
 
-    // capacities;
+    // Capacity
     bm_size();
     bm_empty();
 
-    // element_access
+    // Element access
     bm_top();
 
-    // modifiers
+    // Modifiers
     bm_push();
     bm_pop();
 
-    // operator
-    bm_operator();
+    // Non-member functions
+    bm_operator_cmp();
 }

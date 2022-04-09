@@ -41,7 +41,7 @@ static bool test_operator_equal(void)
     return true;
 }
 
-static bool test_operator(void)
+static bool test_operator_cmp(void)
 {
     ft::pair<int, int> ft_p1(42, 42);
     ft::pair<int, int> ft_p2(42, -42);
@@ -89,7 +89,7 @@ int test_pair(void)
 
     tester.run(test_constructor(), "test_constructor");
     tester.run(test_operator_equal(), "test_operator_equal");
-    tester.run(test_operator(), "test_operator");
+    tester.run(test_operator_cmp(), "test_operator_cmp");
     tester.run(test_make_pair(), "test_make_pair");
     return tester.getRet();
 }

@@ -10,7 +10,7 @@
 #define NAMESPACE std
 #endif
 
-const int loops = 1000;
+const int loops = 10000;
 
 static void print_title(void)
 {
@@ -168,12 +168,12 @@ static void bm_reserve(void)
     }
 }
 
-static void bm_indexer(void)
+static void bm_operator_at(void)
 {
     NAMESPACE::vector<int> v(loops);
     init_vector(v);
 
-    Timer t("vector::indexer");
+    Timer t("vector::operator_at");
     for (int i = 0; i < loops; i++)
     {
         v[i] = i;
@@ -230,8 +230,7 @@ static void bm_data(void)
 
 static void bm_assign(void)
 {
-    NAMESPACE::vector<int> v(loops);
-    init_vector(v);
+    NAMESPACE::vector<int> v;
 
     Timer t("vector::assign");
     for (int i = 0; i < loops; i++)
@@ -275,7 +274,6 @@ static void bm_insert(void)
     }
 }
 
-// TODO: 20倍以上
 static void bm_erase(void)
 {
     NAMESPACE::vector<int> v(loops);
@@ -284,7 +282,7 @@ static void bm_erase(void)
     Timer t("vector::erase");
     for (int i = 0; i < loops; i++)
     {
-        v.erase(v.begin());
+        v.erase(v.end() - 1);
     }
 }
 
@@ -313,14 +311,14 @@ static void bm_clear(void)
     }
 }
 
-static void bm_operator(void)
+static void bm_operator_cmp(void)
 {
     NAMESPACE::vector<int> v1(loops);
     NAMESPACE::vector<int> v2(loops);
     init_vector(v1);
     init_vector(v2);
 
-    Timer t("vector::operator");
+    Timer t("vectoroperator_cmp");
     for (int i = 0; i < loops; i++)
     {
         static_cast<void>(v1 == v2);
@@ -359,13 +357,13 @@ void bm_vector(void)
     // capacities;
     bm_size();
     bm_max_size();
-    bm_resize();    // TODO: 20倍以上
+    bm_resize();
     bm_capacity();
     bm_empty();
     bm_reserve();
 
     // element_access
-    bm_indexer();
+    bm_operator_at();
     bm_at();
     bm_front();
     bm_back();
@@ -376,12 +374,12 @@ void bm_vector(void)
     bm_push_back();
     bm_pop_back();
     bm_insert();
-    bm_erase();    // TODO: 20倍以上
-    bm_swap();     // TODO: 20倍以上
+    bm_erase();
+    bm_swap();
     bm_clear();
 
-    // operator
-    bm_operator();
+    // Non-member functions
+    bm_operator_cmp();
 
     // allocator
     bm_get_allocator();

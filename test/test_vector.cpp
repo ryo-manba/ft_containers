@@ -147,7 +147,7 @@ bool test_at(void)
     return true;
 }
 
-bool test_indexer(void)
+bool test_operator_at(void)
 {
     std::vector<int> std_vec(sz);
     ft::vector<int> ft_vec(sz);
@@ -275,10 +275,13 @@ bool test_reverse_iterator(void)
 
 bool test_const_reverse_iterator(void)
 {
-    std::vector<int> std_vec(sz);
-    ft::vector<int> ft_vec(sz);
-    init_vector(std_vec);
-    init_vector(ft_vec);
+    std::vector<int> std_v(sz);
+    ft::vector<int> ft_v(sz);
+    init_vector(std_v);
+    init_vector(ft_v);
+
+    const std::vector<int> std_vec(std_v);
+    const ft::vector<int> ft_vec(ft_v);
 
     std::vector<int>::const_reverse_iterator std_rit  = std_vec.rbegin();
     std::vector<int>::const_reverse_iterator std_rite = std_vec.rend();
@@ -463,6 +466,13 @@ bool test_insert(void)
     return true;
 }
 
+// bool test_insert_input_it(void)
+// {
+//     std::stringstream ssl;
+//     ssl << 1 << endl 2 << endl << 3;
+
+// }
+
 //(1) : positionが指す要素が削除される。
 //(2) : [first, last)で示される範囲の要素が削除される。
 bool test_erase(void)
@@ -476,12 +486,15 @@ bool test_erase(void)
     ft::vector<int>::iterator ft_it;
 
     // 引数1つ
-    for (size_t i = 0; i < sz; ++i)
+    for (size_t i = 1; i <= sz; i++)
     {
         std_it = std_vec1.erase(std_vec1.begin());
         ft_it  = ft_vec1.erase(ft_vec1.begin());
 
-        if (*std_it != *ft_it) return false;
+        if (i != sz)
+        {
+            if (*std_it != *ft_it) return false;
+        }
         if (vector_comp(std_vec1, ft_vec1)) return false;
     }
 
@@ -578,7 +591,7 @@ bool test_swap(void)
 }
 
 // Non-member functions
-bool test_operator(void)
+bool test_operator_cmp(void)
 {
     std::vector<int> std_vec1(sz, 1);
     std::vector<int> std_vec2(sz, 1);
@@ -639,7 +652,7 @@ int test_vector(void)
 
     // Element access
     tester.run(test_at(), "test_at");
-    tester.run(test_indexer(), "test_indexer");
+    tester.run(test_operator_at(), "test_operator_at");
     tester.run(test_front(), "test_front");
     tester.run(test_back(), "test_back");
     tester.run(test_data(), "test_data");
@@ -667,7 +680,7 @@ int test_vector(void)
     tester.run(test_swap(), "test_swap");
 
     // Non-member functions
-    tester.run(test_operator(), "test_operator");
+    tester.run(test_operator_cmp(), "test_operator_cmp");
     tester.run(test_std_swap(), "test_std_swap");
 
     return tester.getRet();

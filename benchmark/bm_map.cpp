@@ -120,10 +120,10 @@ static void bm_const_reverse_iterator(void)
     }
 }
 
-static void bm_indexer(void)
+static void bm_operator_at(void)
 {
     NAMESPACE::map<int, int> mp;
-    Timer t("map::indexer");
+    Timer t("map::operator_at");
 
     for (int i = 0; i < loops; i++)
     {
@@ -311,14 +311,14 @@ static void bm_value_comp(void)
 
 // non-member functions
 
-static void bm_operator(void)
+static void bm_operator_cmp(void)
 {
     NAMESPACE::map<int, int> mp1;
     NAMESPACE::map<int, int> mp2;
     init_map(mp1);
     init_map(mp2);
 
-    Timer t("map::operator");
+    Timer t("mapoperator_cmp");
     for (int i = 0; i < loops; i++)
     {
         static_cast<void>(mp1 == mp2);
@@ -360,7 +360,7 @@ void bm_map(void)
     bm_const_reverse_iterator();
 
     // element_access
-    bm_indexer();
+    bm_operator_at();
     bm_at();
 
     // capacities;
@@ -386,6 +386,6 @@ void bm_map(void)
     bm_value_comp();
 
     // non-member functions
-    bm_operator();
+    bm_operator_cmp();
     bm_std_swap();
 }
