@@ -633,7 +633,7 @@ protected:
     pointer reserved_last_;
     allocator_type alloc_;
 
-    // ヘルパー関数
+    /// helper method
     pointer allocate(size_type n)
     {
         return alloc_.allocate(n);
@@ -672,6 +672,8 @@ protected:
         }
     }
 };
+
+/// Non-member functions
 
 template <class Tp, class Alloc>
 bool operator==(const vector<Tp, Alloc>& lhs, const vector<Tp, Alloc>& rhs)
@@ -712,9 +714,9 @@ bool operator<=(const vector<Tp, Alloc>& lhs, const vector<Tp, Alloc>& rhs)
 }
 
 template <class Tp, class Alloc>
-void swap(ft::vector<Tp, Alloc>& x, ft::vector<Tp, Alloc>& y)
+void swap(ft::vector<Tp, Alloc>& lhs, ft::vector<Tp, Alloc>& rhs)
 {
-    x.swap(y);
+    lhs.swap(rhs);
 }
 
 }    // namespace ft
