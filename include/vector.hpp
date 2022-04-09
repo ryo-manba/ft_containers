@@ -217,7 +217,7 @@ public:
 
     /**
      * @brief 要求された要素への参照を返す
-     * 存在しない要素へのアクセスは未定義動作になる
+     * 存在しない要素へのアクセスは未定義の動作になる
      */
     reference operator[](size_type pos)
     {
@@ -230,7 +230,7 @@ public:
 
     /**
      * @brief コンテナの最初の要素への参照を返す
-     * 空のコンテナで呼び出した場合は未定義動作になる
+     * 空のコンテナで呼び出した場合は未定義の動作になる
      */
     reference front()
     {
@@ -243,7 +243,7 @@ public:
 
     /**
      * @brief コンテナ内の最後の要素への参照を返す
-     * 空のコンテナで呼び出した場合は未定義動作になる
+     * 空のコンテナで呼び出した場合は未定義の動作になる
      */
     reference back()
     {
@@ -266,6 +266,62 @@ public:
     const_pointer data() const
     {
         return first_;
+    }
+
+    /// Iterators
+
+    /**
+     * @brief 最初の要素へのイテレータを返す
+     * 空の場合に返されるイテレータは end() と等しくなる
+     */
+    iterator begin()
+    {
+        return first_;
+    }
+    const_iterator begin() const
+    {
+        return first_;
+    }
+
+    /**
+     * @brief 最後の要素に続く要素へのイテレータを返す
+     * この要素はプレースホルダとして動作し、これにアクセスしようとすると未定義の動作になる
+     */
+    iterator end()
+    {
+        return last_;
+    }
+    const_iterator end() const
+    {
+        return last_;
+    }
+
+    /**
+     * @brief
+     * 反転したベクトルの最初の要素への反転イテレータを返す(非反転ベクトルの最後の要素に相当する)
+     * ベクトルが空の場合、返されるイテレータは rend() と等しくなる
+     */
+    reverse_iterator rbegin()
+    {
+        return reverse_iterator(end());
+    }
+    const_reverse_iterator rbegin() const
+    {
+        return const_reverse_iterator(end());
+    }
+
+    /**
+     * @brief
+     * 反転したベクトルの最後の要素に続く要素への反転イテレータを返す(非反転ベクトルの最初の要素の前にある要素に相当する)
+     * この要素はプレースホルダとして動作し、これにアクセスしようとすると未定義の動作となる
+     */
+    reverse_iterator rend()
+    {
+        return reverse_iterator(begin());
+    }
+    const_reverse_iterator rend() const
+    {
+        return const_reverse_iterator(begin());
     }
 
     void push_back(const_reference value)
@@ -302,40 +358,6 @@ public:
     size_type capacity() const
     {
         return reserved_last_ - first_;
-    }
-
-    // イテレーターアクセス
-    iterator begin()
-    {
-        return first_;
-    }
-    const_iterator begin() const
-    {
-        return first_;
-    }
-    iterator end()
-    {
-        return last_;
-    }
-    const_iterator end() const
-    {
-        return last_;
-    }
-    reverse_iterator rbegin()
-    {
-        return reverse_iterator(end());
-    }
-    const_reverse_iterator rbegin() const
-    {
-        return const_reverse_iterator(end());
-    }
-    reverse_iterator rend()
-    {
-        return reverse_iterator(begin());
-    }
-    const_reverse_iterator rend() const
-    {
-        return const_reverse_iterator(begin());
     }
 
     void clear()
