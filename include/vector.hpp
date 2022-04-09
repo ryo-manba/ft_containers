@@ -197,6 +197,77 @@ public:
         return alloc_;
     }
 
+    /// Element access
+
+    /**
+     * @brief 指定された位置 pos にある要素への参照を、境界チェック付きで返す
+     * pos がコンテナの範囲内にない場合、std::out_of_range
+     * 型の例外がスローされる
+     */
+    reference at(size_type pos)
+    {
+        if (pos >= size()) throw std::out_of_range("vector");
+        return first_[pos];
+    }
+    const_reference at(size_type pos) const
+    {
+        if (pos >= size()) throw std::out_of_range("vector");
+        return first_[pos];
+    }
+
+    /**
+     * @brief 要求された要素への参照を返す
+     * 存在しない要素へのアクセスは未定義動作になる
+     */
+    reference operator[](size_type pos)
+    {
+        return first_[pos];
+    }
+    const_reference operator[](size_type pos) const
+    {
+        return first_[pos];
+    }
+
+    /**
+     * @brief コンテナの最初の要素への参照を返す
+     * 空のコンテナで呼び出した場合は未定義動作になる
+     */
+    reference front()
+    {
+        return *first_;
+    }
+    const_reference front() const
+    {
+        return *first_;
+    }
+
+    /**
+     * @brief コンテナ内の最後の要素への参照を返す
+     * 空のコンテナで呼び出した場合は未定義動作になる
+     */
+    reference back()
+    {
+        return *(last_ - 1);
+    }
+    const_reference back() const
+    {
+        return *(last_ - 1);
+    }
+
+    /**
+     * @brief 配列の先頭のポインタを返す
+     * size() が 0 の場合、data()
+     * はヌルポインタを返す場合と返さない場合がある(実装定義なはず)
+     */
+    pointer data()
+    {
+        return first_;
+    }
+    const_pointer data() const
+    {
+        return first_;
+    }
+
     void push_back(const_reference value)
     {
         // 予約メモリーが足りなければ拡張
@@ -231,53 +302,6 @@ public:
     size_type capacity() const
     {
         return reserved_last_ - first_;
-    }
-
-    // 要素アクセス
-    reference operator[](size_type pos)
-    {
-        return first_[pos];
-    }
-    const_reference operator[](size_type pos) const
-    {
-        return first_[pos];
-    }
-
-    reference at(size_type pos)
-    {
-        if (pos >= size()) throw std::out_of_range("vector");
-        return first_[pos];
-    }
-    const_reference at(size_type pos) const
-    {
-        if (pos >= size()) throw std::out_of_range("vector");
-        return first_[pos];
-    }
-
-    reference front()
-    {
-        return *first_;
-    }
-    const_reference front() const
-    {
-        return *first_;
-    }
-    reference back()
-    {
-        return *(last_ - 1);
-    }
-    const_reference back() const
-    {
-        return *(last_ - 1);
-    }
-
-    pointer data()
-    {
-        return first_;
-    }
-    const_pointer data() const
-    {
-        return first_;
     }
 
     // イテレーターアクセス
@@ -367,11 +391,11 @@ public:
     }
 
     /**
-     * コンテナのサイズを変更し、count 個の要素を含むようにする。
+     * コンテナのサイズを変更し、count 個の要素を含むようにする
      * 現在のサイズが count より大きい場合、コンテナは最初の count
-     * 要素まで縮小される。 現在のサイズが count より小さい場合。
+     * 要素まで縮小される 現在のサイズが count より小さい場合
      * 1. デフォルトで挿入されている要素が追加で挿入される
-     * 2. value のコピーを追加する。
+     * 2. value のコピーを追加する
      */
     void resize(size_type sz, value_type val = value_type())
     {
@@ -398,7 +422,7 @@ public:
     }
 
     /**
-     * @brief posの前にvalueを挿入する。
+     * @brief posの前にvalueを挿入する
      * @return 挿入された値を指すイテレータ
      */
 
@@ -420,7 +444,7 @@ public:
     }
 
     /**
-     * @brief posの前にvalueをcountの数挿入する。
+     * @brief posの前にvalueをcountの数挿入する
      * offset: 先頭から挿入するまでの位置
      */
     void insert(const_iterator pos, size_type count, const value_type& value)
@@ -463,10 +487,10 @@ public:
     }
 
     /**
-     * @brief posの前に範囲[first, last]の要素を挿入する。
-     * first と last が *this へのイテレータの場合、動作は未定義。
+     * @brief posの前に範囲[first, last]の要素を挿入する
+     * first と last が *this へのイテレータの場合、動作は未定義
      * enable_if
-     * 整数型かどうかを判定している。
+     * 整数型かどうかを判定している
      * enable_ifの第2型パラメータはデフォルトがvoidなので::typeはvoidとなる
      */
     template <class InputIt>
@@ -507,16 +531,16 @@ public:
     }
 
     /**
-     * @brief pos にある要素を削除する。
+     * @brief pos にある要素を削除する
      * @param  削除するiterator
-     * @return 最後に削除された要素に続くイテレータ。
+     * @return 最後に削除された要素に続くイテレータ
      */
     iterator erase(iterator pos)
     {
         if (pos != end())
         {
             std::copy(pos + 1, end(), pos);
-            // 最後の要素のデストラクタを呼ぶ。
+            // 最後の要素のデストラクタを呼ぶ
             --last_;
             destroy(last_);
         }
@@ -524,12 +548,12 @@ public:
     }
 
     /**
-     * @brief [first, last)で示される範囲の要素が削除する。
-     * @return 最後に削除された要素に続くイテレータ。
+     * @brief [first, last)で示される範囲の要素が削除する
+     * @return 最後に削除された要素に続くイテレータ
      * @detail
-     * first==last の場合、削除せずfirstを返す。
-     * 削除前の last==end() の場合、更新後の end() イテレータが返される。
-     * [first,last) が空の場合、last が返される。
+     * first==last の場合、削除せずfirstを返す
+     * 削除前の last==end() の場合、更新後の end() イテレータが返される
+     * [first,last) が空の場合、last が返される
      */
 
     // a = {1,2,3,4,5};
@@ -600,12 +624,12 @@ protected:
 
     /**
      * @brief
-     * vectorが保持するrbegin()からリバースイテレーターrendまでの要素を破棄する。
+     * vectorが保持するrbegin()からリバースイテレーターrendまでの要素を破棄する
      * @detail
-     * リバースイテレーターを使うので、要素の末尾から先頭に向けて順番に破棄される。
-     * 末尾から先頭に向けて要素を破棄する理由はC++では値の破棄は構築の逆順で行われるという原則があるから。
+     * リバースイテレーターを使うので、要素の末尾から先頭に向けて順番に破棄される
+     * 末尾から先頭に向けて要素を破棄する理由はC++では値の破棄は構築の逆順で行われるという原則があるから
      * ポインターを取るために*riterでまずT &を得て、そこに&を適用することでT
-     * *を得る。 破棄できたら有効な要素数を減らすために--lastする。
+     * *を得る 破棄できたら有効な要素数を減らすために--lastする
      */
     void destroy_until(reverse_iterator rend)
     {
