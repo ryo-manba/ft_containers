@@ -331,7 +331,7 @@ public:
      */
     bool empty() const
     {
-        return begin() == end();
+        return first_ == last_;
     }
 
     /**
@@ -339,7 +339,7 @@ public:
      */
     size_type size() const
     {
-        return std::distance(begin(), end());
+        return last_ - first_;
     }
 
     /**
@@ -357,6 +357,7 @@ public:
         return std::min<size_type>(diffmax, allocmax);
     }
 
+
     /**
      * @brief ベクターの容量をnew_cap以上の値まで増加させる
      * new_cap が現在の capacity()
@@ -365,11 +366,9 @@ public:
      */
     void reserve(size_type new_cap)
     {
-        // TODO: 例外チェック
         if (new_cap > max_size())
         {
-            //            throw length_error("vector::reserve");
-            throw std::out_of_range("vector::reserve");
+            throw std::length_error("vector");
         }
         // すでに指定された要素数以上に予約されているなら何もしない
         if (new_cap <= capacity())
@@ -390,7 +389,6 @@ public:
         last_          = first_;
         reserved_last_ = first_ + new_cap;
 
-        // 実際にはムーブ構築
         for (pointer old_iter = old_first; old_iter != old_last;
              ++old_iter, ++last_)
         {
