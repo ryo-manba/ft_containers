@@ -43,7 +43,9 @@ public:
     typedef ft::reverse_iterator<iterator> reverse_iterator;
     typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
-    // constructor
+    /// Member functions
+
+    // default constructor
     vector()
         : first_(NULL),
           last_(NULL),
@@ -57,6 +59,7 @@ public:
     {
     }
 
+    // fill constructor
     explicit vector(size_type count, const T& value = T(),
                     const Allocator& alloc_ = Allocator())
         : first_(NULL), last_(NULL), reserved_last_(NULL), alloc_(alloc_)
@@ -64,9 +67,9 @@ public:
         resize(count, value);
     }
 
-
-// TODO: InputIteratorとそれ以外で処理を分ける
-// ForwardIteratorで処理を分ける
+    // TODO: InputIteratorとそれ以外で処理を分ける
+    // ForwardIteratorで処理を分ける
+    // range constructor
     template <typename InputIt>
     vector(InputIt first, InputIt last, const Allocator& alloc_ = Allocator(),
            typename ft::enable_if<!ft::is_integral<InputIt>::value,
@@ -150,6 +153,50 @@ public:
         return *this;
     }
 
+    /**
+     * @brief コンテナの再代入
+     * (1) : 範囲を代入
+     * (2) : count個の値tを代入
+     * capacity が count より大きい場合、要素をそのまま埋める
+     * capacity が count より小さい場合、新たにアロケートし直す
+     */
+    void assign(size_type count, const value_type& val)
+    {
+        size_type cap = capacity();
+
+        if (count > cap)
+        {
+            clear();
+            while (cap < count)
+            {
+                cap *= 2;
+            }
+            reserve(cap);
+        }
+        pointer t = first_;
+        for (size_type i = 0; i < count; ++i)
+        {
+            *t = val;
+            ++t;
+        }
+        last_ = t;
+    }
+
+    template <class InputIt>
+    void assign(InputIt first, InputIt last)
+    {
+        clear();
+        insert(begin(), first, last);
+    }
+
+    /**
+     * @brief コンテナに関連付けられたアロケータを返す
+     */
+    allocator_type get_allocator() const
+    {
+        return alloc_;
+    }
+
     void push_back(const_reference value)
     {
         // 予約メモリーが足りなければ拡張
@@ -175,7 +222,7 @@ public:
     // 容量確認
     size_type size() const
     {
-        return end() - begin();
+        return std::distance(begin(), end());
     }
     bool empty() const
     {
@@ -272,22 +319,25 @@ public:
         destroy_until(rend());
     }
 
-    void reserve(size_type sz)
+    /**
+     * @brief vectorの容量をnew_cap以上の値まで増加させる
+     */
+    void reserve(size_type new_cap)
     {
         // TODO: 例外チェック
-        if (sz > max_size())
+        if (new_cap > max_size())
         {
             //            throw length_error("vector::reserve");
             throw std::out_of_range("vector::reserve");
         }
         // すでに指定された要素数以上に予約されているなら何もしない
-        if (sz <= capacity())
+        if (new_cap <= capacity())
         {
             return;
         }
 
         // 動的メモリー確保をする
-        pointer ptr = allocate(sz);
+        pointer ptr = allocate(new_cap);
 
         // 古いストレージの情報を保存
         pointer old_first      = first_;
@@ -297,7 +347,7 @@ public:
         // 新しいストレージに差し替え
         first_         = ptr;
         last_          = first_;
-        reserved_last_ = first_ + sz;
+        reserved_last_ = first_ + new_cap;
 
         // 実際にはムーブ構築
         for (pointer old_iter = old_first; old_iter != old_last;
@@ -340,47 +390,11 @@ public:
     // コンテナが保持できる最大の要素数を返す
     size_type max_size(void) const
     {
-        const size_t diffmax = std::numeric_limits<size_type>::max() /
-                               sizeof(value_type);    // GCC
+        const size_t diffmax =
+            std::numeric_limits<size_type>::max() / sizeof(value_type);
         const size_t allocmax = std::numeric_limits<difference_type>::max();
 
         return std::min<size_type>(diffmax, allocmax);
-    }
-
-    /**
-     * コンテナの再代入。
-     * (1) : 範囲を代入。
-     * (2) : n個の値tを代入。
-     * capacityがnより大きい場合、要素をそのまま埋めるだけ。
-     * capacityがnより小さい場合、新たにallocateし直す。
-     */
-    void assign(size_type n, const value_type& val)
-    {
-        size_type cap = capacity();
-
-        if (n > cap)
-        {
-            clear();
-            while (cap < n)
-            {
-                cap *= 2;
-            }
-            reserve(cap);
-        }
-        pointer t = first_;
-        for (size_type i = 0; i < n; ++i)
-        {
-            *t = val;
-            ++t;
-        }
-        last_ = t;
-    }
-
-    template <class InputIt>
-    void assign(InputIt first, InputIt last)
-    {
-        clear();
-        insert(begin(), first, last);
     }
 
     /**
@@ -547,11 +561,6 @@ public:
         std::swap(last_, other.last_);
         std::swap(reserved_last_, other.reserved_last_);
         std::swap(alloc_, other.alloc_);
-    }
-
-    allocator_type get_allocator() const
-    {
-        return alloc_;
     }
 
     void pop_back()
