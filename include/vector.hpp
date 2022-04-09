@@ -324,49 +324,44 @@ public:
         return const_reverse_iterator(begin());
     }
 
-    void push_back(const_reference value)
-    {
-        // 予約メモリーが足りなければ拡張
-        if (size() + 1 > capacity())
-        {
-            // 現在のストレージサイズ
-            size_type c = size();
-            // 0の場合は1に
-            if (c == 0)
-                c = 1;
-            else
-                // それ以外の場合は2倍する
-                c *= 2;
+    /// Capacity
 
-            reserve(c);
-        }
-        // 要素を末尾に追加
-        construct(last_, value);
-        // 有効な要素数を更新
-        ++last_;
-    }
-
-    // 容量確認
-    size_type size() const
-    {
-        return std::distance(begin(), end());
-    }
+    /**
+     * @brief コンテナに要素がないかどうかを調べる
+     */
     bool empty() const
     {
         return begin() == end();
     }
-    size_type capacity() const
-    {
-        return reserved_last_ - first_;
-    }
 
-    void clear()
+    /**
+     * @brief コンテナ内の要素数を返す
+     */
+    size_type size() const
     {
-        destroy_until(rend());
+        return std::distance(begin(), end());
     }
 
     /**
-     * @brief vectorの容量をnew_cap以上の値まで増加させる
+     * @brief
+     * システムまたはライブラリ実装の制限により、コンテナが保持できる最大の要素数を返す
+     * コンテナのサイズの理論的な制限を反映しており、利用可能な RAM の量によって
+     * max_size() よりも小さな値に制限されることがある
+     */
+    size_type max_size(void) const
+    {
+        const size_t diffmax =
+            std::numeric_limits<size_type>::max() / sizeof(value_type);
+        const size_t allocmax = std::numeric_limits<difference_type>::max();
+
+        return std::min<size_type>(diffmax, allocmax);
+    }
+
+    /**
+     * @brief ベクターの容量をnew_cap以上の値まで増加させる
+     * new_cap が現在の capacity()
+     * より大きい場合、新しいストレージが割り当てられ、そうでない場合は何もしない
+     * 再確保された場合にはシーケンス中の要素を指す全ての参照、ポインタ、イテレータが無効になる
      */
     void reserve(size_type new_cap)
     {
@@ -413,6 +408,19 @@ public:
     }
 
     /**
+     * @brief コンテナが現在割り当てられている要素数を返す
+     */
+    size_type capacity() const
+    {
+        return reserved_last_ - first_;
+    }
+
+    void clear()
+    {
+        destroy_until(rend());
+    }
+
+    /**
      * コンテナのサイズを変更し、count 個の要素を含むようにする
      * 現在のサイズが count より大きい場合、コンテナは最初の count
      * 要素まで縮小される 現在のサイズが count より小さい場合
@@ -431,16 +439,6 @@ public:
         {
             insert(end(), sz - size(), val);
         }
-    }
-
-    // コンテナが保持できる最大の要素数を返す
-    size_type max_size(void) const
-    {
-        const size_t diffmax =
-            std::numeric_limits<size_type>::max() / sizeof(value_type);
-        const size_t allocmax = std::numeric_limits<difference_type>::max();
-
-        return std::min<size_type>(diffmax, allocmax);
     }
 
     /**
@@ -567,6 +565,28 @@ public:
             destroy(last_);
         }
         return pos;
+    }
+
+    void push_back(const_reference value)
+    {
+        // 予約メモリーが足りなければ拡張
+        if (size() + 1 > capacity())
+        {
+            // 現在のストレージサイズ
+            size_type c = size();
+            // 0の場合は1に
+            if (c == 0)
+                c = 1;
+            else
+                // それ以外の場合は2倍する
+                c *= 2;
+
+            reserve(c);
+        }
+        // 要素を末尾に追加
+        construct(last_, value);
+        // 有効な要素数を更新
+        ++last_;
     }
 
     /**
