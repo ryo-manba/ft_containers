@@ -415,46 +415,20 @@ public:
         return reserved_last_ - first_;
     }
 
+    /// Modifiers
+
+    /**
+     * @brief 全ての要素を削除する
+     * この呼び出しの後、size() はゼロを返す
+     */
     void clear()
     {
         destroy_until(rend());
     }
 
     /**
-     * コンテナのサイズを変更し、count 個の要素を含むようにする
-     * 現在のサイズが count より大きい場合、コンテナは最初の count
-     * 要素まで縮小される 現在のサイズが count より小さい場合
-     * 1. デフォルトで挿入されている要素が追加で挿入される
-     * 2. value のコピーを追加する
-     */
-    void resize(size_type sz, value_type val = value_type())
-    {
-        // 現在の要素数より少ない
-        if (sz < size())
-        {
-            erase(begin() + sz, end());
-        }
-        // 現在の要素数より大きい
-        else if (sz > size())
-        {
-            insert(end(), sz - size(), val);
-        }
-    }
-
-    /**
-     * @brief posの前にvalueを挿入する
+     * @brief pos の前に value を挿入する
      * @return 挿入された値を指すイテレータ
-     */
-
-    /**
-     * [example]
-     * a b c
-     * a と b の間に [x y] を挿入する
-     * - a はそのまま
-     * - b c をmemmove
-     * a     b c
-     * - a と　b の間に挿入する
-     * a x y b c
      */
     iterator insert(const_iterator pos, const value_type& value)
     {
@@ -464,7 +438,7 @@ public:
     }
 
     /**
-     * @brief posの前にvalueをcountの数挿入する
+     * @brief pos の前に value を count の数挿入する
      * offset: 先頭から挿入するまでの位置
      */
     void insert(const_iterator pos, size_type count, const value_type& value)
@@ -508,9 +482,8 @@ public:
 
     /**
      * @brief posの前に範囲[first, last]の要素を挿入する
-     * first と last が *this へのイテレータの場合、動作は未定義
-     * enable_if
-     * 整数型かどうかを判定している
+     * first と last が *this へのイテレータの場合、未定義の動作になる
+     * enable_if で整数型かどうかを判定している
      * enable_ifの第2型パラメータはデフォルトがvoidなので::typeはvoidとなる
      */
     template <class InputIt>
@@ -552,7 +525,6 @@ public:
 
     /**
      * @brief pos にある要素を削除する
-     * @param  削除するiterator
      * @return 最後に削除された要素に続くイテレータ
      */
     iterator erase(iterator pos)
@@ -567,6 +539,33 @@ public:
         return pos;
     }
 
+    /**
+     * @brief [first, last)で示される範囲の要素が削除する
+     * @return 最後に削除された要素に続くイテレータ
+     *         first==last の場合、削除せずに first が返される
+     *         削除前の last==end() の場合、更新後の end() イテレータが返される
+     *         [first,last) が空の場合、last が返される
+     */
+
+    // a = {1,2,3,4,5};
+    // a.erase(a.begin()+1, a.begin()+3);
+    //      * * (ここを詰める)
+    // a: 1 2 3 4 5 -> 1 4 5
+    iterator erase(iterator first, iterator last)
+    {
+        difference_type start_idx = std::distance(begin(), first);
+        difference_type del_range = std::distance(first, last);
+
+        // firstの位置からlastの要素を埋めていく
+        std::copy(last, end(), first);
+        // 後ろから削除していく
+        destroy_until(rbegin() + del_range);
+        return (begin() + start_idx);
+    }
+
+    /**
+     * @brief　value を末尾に追加する。
+     */
     void push_back(const_reference value)
     {
         // 予約メモリーが足りなければ拡張
@@ -590,50 +589,42 @@ public:
     }
 
     /**
-     * @brief [first, last)で示される範囲の要素が削除する
-     * @return 最後に削除された要素に続くイテレータ
-     * @detail
-     * first==last の場合、削除せずfirstを返す
-     * 削除前の last==end() の場合、更新後の end() イテレータが返される
-     * [first,last) が空の場合、last が返される
+     * @brief 末尾要素を削除する
      */
-
-    // a = {1,2,3,4,5};
-    // a.erase(a.begin()+1, a.begin()+3);
-    //      * * (ここを詰める)
-    // a: 1 2 3 4 5 -> 1 4 5
-    iterator erase(iterator first, iterator last)
+    void pop_back()
     {
-        difference_type start_idx = std::distance(begin(), first);
-        difference_type del_range = std::distance(first, last);
-
-        // firstの位置からlastの要素を埋めていく
-        std::copy(last, end(), first);
-        //        while (last != end())
-        //        {
-        //            *first = *last;
-        //            ++first;
-        //            ++last;
-        //        }
-        // 削除する要素の先頭を渡す -> 後ろから削除していく
-        destroy_until(rbegin() + del_range);
-        return (begin() + start_idx);
+        pointer tmp = last_;
+        --last_;
+        alloc_.destroy(tmp);
     }
 
-    // vectorの要素を other と入れ替える
+    /**
+     * @brief コンテナのサイズを変更し、count 個の要素を含むようにする
+     * - 現在のサイズが count より大きい場合、count 要素まで縮小される
+     * - 現在のサイズが count より小さい場合、値は変更されずに後ろに value
+     * が追加される
+     */
+    void resize(size_type count, value_type value = value_type())
+    {
+        if (count < size())
+        {
+            erase(begin() + count, end());
+        }
+        else if (count > size())
+        {
+            insert(end(), count - size(), value);
+        }
+    }
+
+    /**
+     * @brief 他のvectorオブジェクトとデータを入れ替える
+     */
     void swap(vector& other)
     {
         std::swap(first_, other.first_);
         std::swap(last_, other.last_);
         std::swap(reserved_last_, other.reserved_last_);
         std::swap(alloc_, other.alloc_);
-    }
-
-    void pop_back()
-    {
-        pointer tmp = last_;
-        --last_;
-        alloc_.destroy(tmp);
     }
 
 protected:
