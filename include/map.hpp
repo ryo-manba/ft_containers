@@ -62,13 +62,16 @@ public:
     typedef ft::reverse_iterator<iterator> reverse_iterator;
     typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
-    // constructor
+    /// Member functions
+
+    // default constructor
     explicit map(const key_compare& comp     = key_compare(),
                  const allocator_type& alloc = allocator_type())
         : tree_(comp, alloc)
     {
     }
 
+    // range constructor
     template <class InputIt>
     map(InputIt first, InputIt last, const key_compare& comp = key_compare(),
         const allocator_type& alloc = allocator_type())
@@ -77,6 +80,7 @@ public:
         tree_.insert_range_unique(first, last);
     }
 
+    // copy constructor
     map(const map& other) : tree_(other.tree_)
     {
     }
@@ -93,17 +97,68 @@ public:
         return *this;
     }
 
+    // destructor
     ~map()
     {
     }
 
-    // Get a copy of the memory allocation object.
+    /**
+     * @brief コンテナに関連づけられたアロケータを返す
+     */
     allocator_type get_allocator() const
     {
         return allocator_type(tree_.get_allocator());
     }
 
-    // iterators
+    /// Element access
+
+    /**
+     *  @brief keyに相当するkeyを持つ要素のマッピングされた値への参照を返す。
+     *  @throw  std::out_of_range  要素が存在しない場合
+     */
+    mapped_type& at(const key_type& key)
+    {
+        iterator it = lower_bound(key);
+        if (it == end() || key_comp()(key, (*it).first))
+            throw std::out_of_range("map::at:  key not found");
+        return (*it).second;
+    }
+
+    const mapped_type& at(const key_type& key) const
+    {
+        const_iterator it = lower_bound(key);
+        if (it == end() || key_comp()(key, (*it).first))
+            throw std::out_of_range("map::at:  key not found");
+        return (*it).second;
+    }
+
+    /**
+     *  @brief
+     * keyと等価なキーにマッピングされた値への参照を返し、そのようなキーがまだ存在しない場合は挿入を実行する。
+     * キーが存在しない場合は value_type(key, T())を挿入する。この関数は return
+     * insert(std::make_pair(key, T())).first->second と等価である。
+     * 挿入が行われた場合、マップされた値は値が初期化され（クラス型の場合はデフォルトで構築され、それ以外はゼロ初期化）、それへの参照が返される。
+     * イテレータや参照は無効化されない。
+     */
+    mapped_type& operator[](const key_type& key)
+    {
+        iterator it = lower_bound(key);
+        // __i->first is greater than or equivalent to key.
+        ft::pair<iterator, bool> p;
+        if (it == end() || key_comp()(key, (*it).first))
+        {
+            p = insert(value_type(key, mapped_type()));
+            //            it = insert(it, value_type(key, mapped_type()));
+            it = p.first;
+        }
+        return (*it).second;
+    }
+
+    /**
+     * @brief
+     */
+
+    /// Iterators
     iterator begin()
     {
         return tree_.begin();
@@ -137,67 +192,38 @@ public:
         return const_reverse_iterator(begin());
     }
 
-    // Capacity
+    /// Capacity
+
+    /**
+     * @brief コンテナに要素が無いかどうかを調べる
+     */
     bool empty() const
     {
         return tree_.empty();
     }
+
+    /**
+     * @brief コンテナ内の要素数を返す
+     */
     size_type size() const
     {
         return tree_.size();
     }
+
+    /**
+     * @brief
+     * システムまたはライブラリ実装の制限により、コンテナが保持できる最大の要素数を返す
+     */
     size_type max_size() const
     {
         return tree_.max_size();
     }
 
-    // Element access
-    /**
-     *  @brief
-     * keyと等価なキーにマッピングされた値への参照を返し、そのようなキーがまだ存在しない場合は挿入を実行する。
-     * キーが存在しない場合は value_type(key, T())を挿入する。この関数は return
-     * insert(std::make_pair(key, T())).first->second と等価である。
-     * 挿入が行われた場合、マップされた値は値が初期化され（クラス型の場合はデフォルトで構築され、それ以外はゼロ初期化）、それへの参照が返される。
-     * イテレータや参照は無効化されない。
-     */
-    mapped_type& operator[](const key_type& key)
-    {
-        iterator it = lower_bound(key);
-        // __i->first is greater than or equivalent to key.
-        ft::pair<iterator, bool> p;
-        if (it == end() || key_comp()(key, (*it).first))
-        {
-            p = insert(value_type(key, mapped_type()));
-            //            it = insert(it, value_type(key, mapped_type()));
-            it = p.first;
-        }
-        return (*it).second;
-    }
+    /// Modifiers
 
     /**
-     *  @brief keyに相当するkeyを持つ要素のマッピングされた値への参照を返す。
-     *  @throw  std::out_of_range  要素が存在しない場合
-     */
-    mapped_type& at(const key_type& key)
-    {
-        iterator it = lower_bound(key);
-        if (it == end() || key_comp()(key, (*it).first))
-            throw std::out_of_range("at");    // TODO: 正しい例外に修正する
-        return (*it).second;
-    }
-
-    const mapped_type& at(const key_type& key) const
-    {
-        const_iterator it = lower_bound(key);
-        if (it == end() || key_comp()(key, (*it).first))
-            throw std::out_of_range("at");    // TODO: 正しい例外に修正する
-        return (*it).second;
-    }
-
-    // Modifiers
-    /**
-     * @brief
-     * コンテナからすべての要素を消去する。この呼び出しの後、size()はゼロを返す。
+     * @brief コンテナからすべての要素を消去する
+     * この呼び出しの後、size()はゼロを返す
      */
     void clear()
     {
@@ -206,8 +232,10 @@ public:
 
     /**
      * @brief
-     * コンテナに同等のキーを持つ要素がまだない場合、コンテナに要素を挿入する。
-     * すでにkeyが存在した場合   : false
+     * コンテナに同等のキーを持つ要素がまだない場合、コンテナに要素を挿入する
+     * @return
+     * 挿入された要素（または挿入を阻止した要素）へのイテレータと、挿入が行われた
+     * かどうかを示す bool のペア すでにkeyが存在した場合   : false
      * 　　　　　　存在しない場合 : true
      */
     ft::pair<iterator, bool> insert(const value_type& val)
@@ -218,6 +246,7 @@ public:
     /**
      * hintの前後に挿入できる場合はO(1)
      * それ以外は対数時間
+     * @return 挿入された要素、または挿入を阻止した要素へのイテレータを返す
      */
     iterator insert(iterator hint, const value_type& val)
     {
@@ -234,33 +263,43 @@ public:
     }
 
     /**
-     * @brief コンテナから指定された要素を削除する
+     * @brief posにある要素を削除する
      */
     void erase(iterator pos)
     {
         return tree_.erase(pos);
     }
 
+    /**
+     * @brief firstからlastの範囲を削除する
+     */
     void erase(iterator first, iterator last)
     {
         return tree_.erase(first, last);
     }
 
-    // 削除された要素の数を返す(1 or 0)
+    /**
+     * @brief key と等価なキーを持つ要素を削除する（存在する場合）
+     * @return 削除された要素の数を返す(1 or 0)
+     */
     size_type erase(const key_type& key)
     {
         return tree_.erase_unique(key);
     }
 
+    /**
+     * @brief コンテナの内容をotherの内容と交換する
+     */
     void swap(map& other)
     {
         tree_.swap(other.tree_);
     }
 
-    // Lookup
+    /// Lookup
+
     /**
-     * @brief key を持つ要素の数を返す。
-     * このコンテナは重複を許さないので、1か0のどちらかである。
+     * @brief key を持つ要素の数を返す
+     * mapは重複を許さないので、1か0のどちらかである
      */
     size_type count(const key_type& key) const
     {
@@ -282,9 +321,10 @@ public:
     }
 
     /**
-     * @brief コンテナ内の与えられたキーを持つすべての要素を含む範囲を返します。
+     * @brief コンテナ内の与えられたキーを持つすべての要素を含む範囲を返す
      * 1つはキーより小さくない最初の要素を指すもの、もう1つはキーより大きい最初の要素を指すものである
-     * 最初のイテレータは lower_bound() で、2 番目のイテレータは upper_bound()
+     * 最初のイテレータは lower_bound() で、
+     * 2 番目のイテレータは upper_bound()
      * で得ることができる。
      */
     ft::pair<iterator, iterator> equal_range(const key_type& key)
@@ -299,34 +339,33 @@ public:
     }
 
     /**
-     * @brief key以上の最初の要素を指すイテレータを返す。
+     * @brief key以上の最初の要素を指すイテレータを返す
      * なかったらend()を返す
      */
     iterator lower_bound(const key_type& key)
     {
         return tree_.lower_bound(key);
     }
-
     const_iterator lower_bound(const key_type& key) const
     {
         return tree_.lower_bound(key);
     }
 
     /**
-     * @brief key よりも大きい最初の要素を指すイテレータを返す。
+     * @brief key よりも大きい最初の要素を指すイテレータを返す
      * なかったらend()を返す
      */
     iterator upper_bound(const key_type& key)
     {
         return tree_.upper_bound(key);
     }
-
     const_iterator upper_bound(const key_type& key) const
     {
         return tree_.upper_bound(key);
     }
 
-    // Observers
+    /// Observers
+
     /**
      * @brief キーを比較する関数オブジェクトを返します
      */
@@ -345,7 +384,8 @@ public:
     }
 };
 
-// operator
+/// Non-member functions
+
 template <class Key, class T, class Compare, class Allocator>
 bool operator==(const ft::map<Key, T, Compare, Allocator>& lhs,
                 const ft::map<Key, T, Compare, Allocator>& rhs)
