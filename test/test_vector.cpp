@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include <vector>
 
 #include "Color.hpp"
@@ -12,7 +13,7 @@
  * Not完全一致 -> 1
  */
 template <typename STD, typename FT>
-bool vector_comp(const STD& st, const FT& ft)
+static bool vector_comp(const STD& st, const FT& ft)
 {
     if (st.size() != ft.size()) return 1;
     // capacityは実装依存なので比較しない
@@ -37,7 +38,7 @@ void init_vector(T v)
     }
 }
 
-bool test_constructor(void)
+static bool test_constructor(void)
 {
     // default constructor
     std::vector<int> std_vec1;
@@ -76,7 +77,25 @@ bool test_constructor(void)
     return true;
 }
 
-bool test_operator_equal(void)
+static bool test_constructor_with_input_iterator(void)
+{
+    std::stringstream ss1;
+    ss1 << 1 << std::endl << 2 << std::endl << 3;
+    std::stringstream ss2;
+    ss2 << 1 << std::endl << 2 << std::endl << 3;
+
+    std::istream_iterator<int> it1(ss1);
+    std::istream_iterator<int> it2(ss2);
+    std::istream_iterator<int> last;
+
+    std::vector<int> std_vec(it1, last);
+    std::vector<int> ft_vec(it2, last);
+
+    if (vector_comp(std_vec, ft_vec)) return false;
+    return true;
+}
+
+static bool test_operator_equal(void)
 {
     std::vector<int> std_vec1(sz);
     ft::vector<int> ft_vec1(sz);
@@ -94,7 +113,7 @@ bool test_operator_equal(void)
     return true;
 }
 
-bool test_assign(void)
+static bool test_assign(void)
 {
     std::vector<int> std_vec1;
     ft::vector<int> ft_vec1;
@@ -118,7 +137,28 @@ bool test_assign(void)
     return true;
 }
 
-bool test_get_allocator(void)
+static bool test_assign_with_input_iterator(void)
+{
+    std::stringstream ss1;
+    ss1 << 1 << std::endl << 2 << std::endl << 3;
+    std::stringstream ss2;
+    ss2 << 1 << std::endl << 2 << std::endl << 3;
+
+    std::istream_iterator<int> it1(ss1);
+    std::istream_iterator<int> it2(ss2);
+    std::istream_iterator<int> last;
+
+    std::vector<int> std_vec;
+    ft::vector<int> ft_vec;
+
+    std_vec.assign(it1, last);
+    ft_vec.assign(it2, last);
+    if (vector_comp(std_vec, ft_vec)) return false;
+
+    return true;
+}
+
+static bool test_get_allocator(void)
 {
     std::allocator<int> alloc;
     std::vector<int> std_vec(alloc);
@@ -129,7 +169,7 @@ bool test_get_allocator(void)
 }
 
 // Element access
-bool test_at(void)
+static bool test_at(void)
 {
     std::vector<int> std_vec(sz);
     ft::vector<int> ft_vec(sz);
@@ -147,7 +187,7 @@ bool test_at(void)
     return true;
 }
 
-bool test_operator_at(void)
+static bool test_operator_at(void)
 {
     std::vector<int> std_vec(sz);
     ft::vector<int> ft_vec(sz);
@@ -161,7 +201,7 @@ bool test_operator_at(void)
     return true;
 }
 
-bool test_front(void)
+static bool test_front(void)
 {
     std::vector<int> std_vec(sz);
     ft::vector<int> ft_vec(sz);
@@ -175,7 +215,7 @@ bool test_front(void)
     return true;
 }
 
-bool test_back(void)
+static bool test_back(void)
 {
     std::vector<int> std_vec(sz);
     ft::vector<int> ft_vec(sz);
@@ -189,7 +229,7 @@ bool test_back(void)
     return true;
 }
 
-bool test_data(void)
+static bool test_data(void)
 {
     std::vector<int> std_vec(sz);
     std::vector<int> ft_vec(sz);
@@ -201,7 +241,7 @@ bool test_data(void)
 }
 
 // Iterators
-bool test_iterator(void)
+static bool test_iterator(void)
 {
     std::vector<int> std_vec(sz);
     ft::vector<int> ft_vec(sz);
@@ -225,7 +265,7 @@ bool test_iterator(void)
     return true;
 }
 
-bool test_const_iterator(void)
+static bool test_const_iterator(void)
 {
     std::vector<int> std_vec(sz);
     ft::vector<int> ft_vec(sz);
@@ -249,7 +289,7 @@ bool test_const_iterator(void)
     return true;
 }
 
-bool test_reverse_iterator(void)
+static bool test_reverse_iterator(void)
 {
     std::vector<int> std_vec(sz);
     ft::vector<int> ft_vec(sz);
@@ -273,7 +313,7 @@ bool test_reverse_iterator(void)
     return true;
 }
 
-bool test_const_reverse_iterator(void)
+static bool test_const_reverse_iterator(void)
 {
     std::vector<int> std_v(sz);
     ft::vector<int> ft_v(sz);
@@ -301,7 +341,7 @@ bool test_const_reverse_iterator(void)
 }
 
 // Capacity
-bool test_empty(void)
+static bool test_empty(void)
 {
     std::vector<int> std_vec1;
     ft::vector<int> ft_vec1;
@@ -318,7 +358,7 @@ bool test_empty(void)
     return true;
 }
 
-bool test_size(void)
+static bool test_size(void)
 {
     std::vector<int> std_vec1;
     ft::vector<int> ft_vec1;
@@ -335,7 +375,7 @@ bool test_size(void)
     return true;
 }
 
-bool test_max_size(void)
+static bool test_max_size(void)
 {
     std::vector<char> std_vec_char;
     std::vector<signed char> std_vec_schar;
@@ -373,7 +413,7 @@ bool test_max_size(void)
     return true;
 }
 
-bool test_reserve(void)
+static bool test_reserve(void)
 {
     std::vector<int> std_vec;
     ft::vector<int> ft_vec;
@@ -395,7 +435,7 @@ bool test_reserve(void)
 
 // 直接比較した場合の結果がローカルとGitHub Actionsで異なる
 // capacityの初期値や増加率などの値は仕様で定められていない
-bool test_capacity(void)
+static bool test_capacity(void)
 {
     std::vector<int> std_vec1;
     ft::vector<int> ft_vec1;
@@ -419,7 +459,7 @@ bool test_capacity(void)
 }
 
 // Modifilers
-bool test_clear(void)
+static bool test_clear(void)
 {
     std::vector<int> std_vec(3);
     ft::vector<int> ft_vec(3);
@@ -431,7 +471,7 @@ bool test_clear(void)
     return true;
 }
 
-bool test_insert(void)
+static bool test_insert(void)
 {
     std::vector<int> std_vec1(sz);
     ft::vector<int> ft_vec1(sz);
@@ -466,16 +506,30 @@ bool test_insert(void)
     return true;
 }
 
-// bool test_insert_input_it(void)
-// {
-//     std::stringstream ssl;
-//     ssl << 1 << endl 2 << endl << 3;
+static bool test_insert_with_input_iterator(void)
+{
+    std::stringstream ss1;
+    ss1 << 1 << std::endl << 2 << std::endl << 3;
+    std::stringstream ss2;
+    ss2 << 1 << std::endl << 2 << std::endl << 3;
 
-// }
+    std::istream_iterator<int> it1(ss1);
+    std::istream_iterator<int> it2(ss2);
+    std::istream_iterator<int> last;
+
+    std::vector<int> std_vec;
+    ft::vector<int> ft_vec;
+
+    std_vec.insert(std_vec.begin(), it1, last);
+    ft_vec.insert(ft_vec.begin(), it2, last);
+    if (vector_comp(std_vec, ft_vec)) return false;
+
+    return true;
+}
 
 //(1) : positionが指す要素が削除される。
 //(2) : [first, last)で示される範囲の要素が削除される。
-bool test_erase(void)
+static bool test_erase(void)
 {
     std::vector<int> std_vec1(sz);
     ft::vector<int> ft_vec1(sz);
@@ -516,7 +570,7 @@ bool test_erase(void)
     return true;
 }
 
-bool test_push_back(void)
+static bool test_push_back(void)
 {
     std::vector<int> std_vec;
     ft::vector<int> ft_vec;
@@ -531,7 +585,7 @@ bool test_push_back(void)
     return true;
 }
 
-bool test_pop_back(void)
+static bool test_pop_back(void)
 {
     std::vector<int> std_vec(sz);
     ft::vector<int> ft_vec(sz);
@@ -548,7 +602,7 @@ bool test_pop_back(void)
     return true;
 }
 
-bool test_resize(void)
+static bool test_resize(void)
 {
     std::vector<int> std_vec;
     ft::vector<int> ft_vec;
@@ -571,7 +625,7 @@ bool test_resize(void)
     return true;
 }
 
-bool test_swap(void)
+static bool test_swap(void)
 {
     std::vector<int> std_vec1(sz);
     ft::vector<int> ft_vec1(sz);
@@ -591,7 +645,7 @@ bool test_swap(void)
 }
 
 // Non-member functions
-bool test_operator_cmp(void)
+static bool test_operator_cmp(void)
 {
     std::vector<int> std_vec1(sz, 1);
     std::vector<int> std_vec2(sz, 1);
@@ -618,7 +672,7 @@ bool test_operator_cmp(void)
     return true;
 }
 
-bool test_std_swap(void)
+static bool test_std_swap(void)
 {
     std::vector<int> std_vec1(sz);
     ft::vector<int> ft_vec1(sz);
@@ -646,8 +700,12 @@ int test_vector(void)
 
     // Member functions
     tester.run(test_constructor(), "test_constructor");
+    tester.run(test_constructor_with_input_iterator(),
+               "test_constructor_with_input_iterator");
     tester.run(test_operator_equal(), "test_operator_equal");
     tester.run(test_assign(), "test_assign");
+    tester.run(test_assign_with_input_iterator(),
+               "test_assign_with_input_iterator");
     tester.run(test_get_allocator(), "test_get_allocator");
 
     // Element access
@@ -673,6 +731,8 @@ int test_vector(void)
     // Modifiers
     tester.run(test_clear(), "test_clear");
     tester.run(test_insert(), "test_insert");
+    tester.run(test_insert_with_input_iterator(),
+               "test_insert_with_input_iterator");
     tester.run(test_erase(), "test_erase");
     tester.run(test_push_back(), "test_push_back");
     tester.run(test_pop_back(), "test_pop_back");
