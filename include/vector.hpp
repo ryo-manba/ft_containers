@@ -12,16 +12,6 @@
 #include "normal_iterator.hpp"
 #include "type_traits.hpp"
 #include "utils.hpp"
-/**
- * @fn
- * ここに関数の説明を書く
- * @brief 要約説明
- * @param (引数名) 引数の説明
- * @param (引数名) 引数の説明
- * @return 戻り値の説明
- * @sa 参照すべき関数を書けばリンクが貼れる
- * @detail 詳細な説明
- */
 
 namespace ft
 {
@@ -726,13 +716,15 @@ bool operator<=(const vector<Tp, Alloc>& lhs, const vector<Tp, Alloc>& rhs)
 {
     return !(rhs < lhs);
 }
+}    // namespace ft
 
+namespace std
+{
 template <class Tp, class Alloc>
 void swap(ft::vector<Tp, Alloc>& lhs, ft::vector<Tp, Alloc>& rhs)
 {
     lhs.swap(rhs);
 }
-
-}    // namespace ft
+}    // namespace std
 
 #endif
