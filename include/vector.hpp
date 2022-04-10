@@ -67,8 +67,6 @@ public:
         resize(count, value);
     }
 
-    // TODO: InputIteratorとそれ以外で処理を分ける
-    // ForwardIteratorで処理を分ける
     // range constructor
     template <typename InputIt>
     vector(InputIt first, InputIt last, const Allocator& alloc_ = Allocator(),
@@ -76,12 +74,7 @@ public:
                                   InputIt>::type* = NULL)
         : first_(NULL), last_(NULL), reserved_last_(NULL), alloc_(alloc_)
     {
-        // InputItは使えない
-        reserve(std::distance(first, last));
-        for (iterator it = first; it != last; ++it)
-        {
-            push_back(*it);
-        }
+        insert(begin(), first, last);
     }
 
     // copy constructor
