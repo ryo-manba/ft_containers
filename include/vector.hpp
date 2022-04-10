@@ -357,7 +357,6 @@ public:
         return std::min<size_type>(diffmax, allocmax);
     }
 
-
     /**
      * @brief ベクターの容量をnew_cap以上の値まで増加させる
      * new_cap が現在の capacity()
@@ -483,42 +482,15 @@ public:
      * first と last が *this へのイテレータの場合、未定義の動作になる
      * enable_if で整数型かどうかを判定している
      * enable_ifの第2型パラメータはデフォルトがvoidなので::typeはvoidとなる
+     * インプットイテレータと前方イテレータで処理を分岐する
      */
     template <class InputIt>
     typename ft::enable_if<!ft::is_integral<InputIt>::value>::type insert(
         iterator pos, InputIt first, InputIt last)
     {
-        size_type offset = std::distance(begin(), pos);
-        size_type count  = std::distance(first, last);
-        if (count == 0) return;
-        size_type new_size = size() + count;
-        size_type c        = capacity();
-
-        // 予約メモリーが足りなければ拡張
-        while (c < new_size)
-        {
-            if (c == 0)
-                c = 1;
-            else
-                c *= 2;
-        }
-        reserve(c);
-        // 追加で確保した要素のコンストラクタを呼ぶ
-        for (; last_ != first_ + new_size; ++last_) construct(last_);
-
-        iterator ite = end() - 1;
-        // endから要素を挿入する先頭(pos + count - 1)までmemmoveする
-        iterator end_pos = begin() + offset + count - 1;
-        for (; ite > end_pos; --ite)
-        {
-            *ite = *(ite - count);
-        }
-
-        // 要素を挿入する
-        for (size_type i = 0; i < count; i++, ++first)
-        {
-            *(first_ + offset + i) = *first;
-        }
+        insert_with_iterator(
+            pos, first, last,
+            typename iterator_traits<InputIt>::iterator_category());
     }
 
     /**
@@ -630,6 +602,57 @@ protected:
     pointer last_;
     pointer reserved_last_;
     allocator_type alloc_;
+
+private:
+    /// insert helper
+    template <class InputIt>
+    void insert_with_iterator(iterator pos, InputIt first, InputIt last,
+                              std::input_iterator_tag)
+    {
+        for (; first != last; first++)
+        {
+            pos = insert(pos, *first);
+            pos++;
+        }
+    }
+
+    template <class ForwardIt>
+    void insert_with_iterator(iterator pos, ForwardIt first, ForwardIt last,
+                              std::forward_iterator_tag)
+    {
+        size_type offset = std::distance(begin(), pos);
+        size_type count  = std::distance(first, last);
+
+        if (count == 0) return;
+        size_type new_size = size() + count;
+        size_type c        = capacity();
+
+        // 予約メモリーが足りなければ拡張
+        while (c < new_size)
+        {
+            if (c == 0)
+                c = 1;
+            else
+                c *= 2;
+        }
+        reserve(c);
+        // 追加で確保した要素のコンストラクタを呼ぶ
+        for (; last_ != first_ + new_size; ++last_) construct(last_);
+
+        iterator ite = end() - 1;
+        // endから要素を挿入する先頭(pos + count - 1)までmemmoveする
+        iterator end_pos = begin() + offset + count - 1;
+        for (; ite > end_pos; --ite)
+        {
+            *ite = *(ite - count);
+        }
+
+        // 要素を挿入する
+        for (size_type i = 0; i < count; i++, ++first)
+        {
+            *(first_ + offset + i) = *first;
+        }
+    }
 
     /// helper method
     pointer allocate(size_type n)
