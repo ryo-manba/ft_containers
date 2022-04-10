@@ -10,17 +10,6 @@
 #include "utils.hpp"
 #include "vector.hpp"
 
-/**
- * @fn
- * ここに関数の説明を書く
- * @brief 要約説明
- * @param (引数名) 引数の説明
- * @param (引数名) 引数の説明
- * @return 戻り値の説明
- * @sa 参照すべき関数を書けばリンクが貼れる
- * @detail 詳細な説明
- */
-
 namespace ft
 {
 template <typename Tp, typename Sequence = ft::vector<Tp> >
@@ -33,19 +22,19 @@ public:
     typedef typename Sequence::size_type size_type;
     typedef Sequence container_type;
 
-template <typename T, typename Seq>
-friend bool operator==(const stack<T, Seq>& lhs,
-                const stack<T, Seq>& rhs);
+    template <typename T, typename Seq>
+    friend bool operator==(const stack<T, Seq>& lhs, const stack<T, Seq>& rhs);
 
-template <typename T, typename Seq>
-friend bool operator<(const stack<T, Seq>& lhs,
-               const stack<T, Seq>& rhs);
+    template <typename T, typename Seq>
+    friend bool operator<(const stack<T, Seq>& lhs, const stack<T, Seq>& rhs);
 
 protected:
     container_type c_;
 
 public:
-    // constoractor
+    /// Member functions
+
+    // default constructor
     explicit stack(const Sequence& c = Sequence()) : c_(c)
     {
     }
@@ -54,17 +43,35 @@ public:
     {
     }
 
+    // destructor
+    ~stack()
+    {
+    }
+
     const stack<Tp, Sequence>& operator=(const stack<Tp, Sequence>& other)
     {
         if (this != &other) c_ = other.c_;
         return *this;
     }
-    ~stack()
-    {
-    }
+
+    /// Element access
 
     /**
-     * @brief Returns true if the %stack is empty.
+     * @brief スタックの先頭要素への参照を返す
+     */
+    reference top()
+    {
+        return c_.back();
+    }
+    const_reference top() const
+    {
+        return c_.back();
+    }
+
+    /// Capacity
+
+    /**
+     * @brief 基礎となるコンテナが空の場合はtrue、それ以外はfalse返す
      */
     bool empty() const
     {
@@ -72,28 +79,15 @@ public:
     }
 
     /**
-     * @brief Returns the number of elements in the %stack.
+     * @brief 基礎となるコンテナ内の要素数を返す
      */
     size_type size() const
     {
         return c_.size();
     }
 
-    /**
-     * @brief
-     * Returns a read/write reference to the data at the first
-     * element of the %stack.
-     */
-    reference top()
-    {
-        // 空のときはassert投げるっぽい
-        // if (c_.empty())
-        return c_.back();
-    }
-    const_reference top() const
-    {
-        return c_.back();
-    }
+    /// Modifiers
+
     /**
      *  @brief 与えられた要素値valueをスタックの先頭にプッシュする。
      */
@@ -111,7 +105,7 @@ public:
     }
 };
 
-// operators
+/// Non-member functions
 template <typename Tp, typename Seq>
 bool operator==(const stack<Tp, Seq>& lhs, const stack<Tp, Seq>& rhs)
 {
