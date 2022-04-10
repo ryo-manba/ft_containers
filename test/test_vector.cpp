@@ -89,9 +89,10 @@ static bool test_constructor_with_input_iterator(void)
     std::istream_iterator<int> last;
 
     std::vector<int> std_vec(it1, last);
-    std::vector<int> ft_vec(it2, last);
+    ft::vector<int> ft_vec(it2, last);
 
     if (vector_comp(std_vec, ft_vec)) return false;
+
     return true;
 }
 
