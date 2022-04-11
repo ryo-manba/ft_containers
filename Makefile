@@ -18,6 +18,10 @@ SRCFILE := test_map.cpp \
 		   tester.cpp \
 		   main.cpp
 
+SUBJECT_SRC := test/subject_main.cpp
+SUBJECT_OBJ := $(SUBJECT_SRC:.cpp=.o)
+SUBJECT_NAME := subj
+
 SRCS    := $(addprefix $(SRCDIR)/, $(SRCFILE))
 OBJS    := $(addprefix $(OBJDIR)/, $(notdir $(SRCS:.cpp=.o)))
 DEPS    := $(addprefix $(DEPDIR)/, $(notdir $(SRCS:.cpp=.d)))
@@ -28,7 +32,10 @@ RM      := rm -rf
 all     : $(NAME)
 
 $(NAME) : $(OBJDIR) $(DEPDIR) $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $(NAME) $(OBJS)
+	$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME)
+
+$(SUBJECT_NAME) : $(SUBJECT_OBJ)
+	$(CXX) $(CXXFLAGS) -I$(INCDIR) $(SUBJECT_OBJ) -o $(SUBJECT_NAME)
 
 $(DEPDIR):
 	mkdir -p dep
@@ -45,7 +52,7 @@ clean:
 
 .PHONY: fclean
 fclean: clean
-	$(RM) $(NAME)
+	$(RM) $(NAME) $(SUBJECT_NAME)
 
 .PHONY: re
 re: fclean all
