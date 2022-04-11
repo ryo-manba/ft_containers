@@ -29,17 +29,17 @@ public:
     friend bool operator<(const stack<T, Seq>& lhs, const stack<T, Seq>& rhs);
 
 protected:
-    container_type c_;
+    container_type c;
 
 public:
     /// Member functions
 
     // default constructor
-    explicit stack(const Sequence& c = Sequence()) : c_(c)
+    explicit stack(const Sequence& c = Sequence()) : c(c)
     {
     }
 
-    stack(const stack& other) : c_(other.c_)
+    stack(const stack& other) : c(other.c)
     {
     }
 
@@ -50,7 +50,7 @@ public:
 
     const stack<Tp, Sequence>& operator=(const stack<Tp, Sequence>& other)
     {
-        if (this != &other) c_ = other.c_;
+        if (this != &other) c = other.c;
         return *this;
     }
 
@@ -61,11 +61,11 @@ public:
      */
     reference top()
     {
-        return c_.back();
+        return c.back();
     }
     const_reference top() const
     {
-        return c_.back();
+        return c.back();
     }
 
     /// Capacity
@@ -75,7 +75,7 @@ public:
      */
     bool empty() const
     {
-        return c_.empty();
+        return c.empty();
     }
 
     /**
@@ -83,7 +83,7 @@ public:
      */
     size_type size() const
     {
-        return c_.size();
+        return c.size();
     }
 
     /// Modifiers
@@ -93,7 +93,7 @@ public:
      */
     void push(const value_type& value)
     {
-        c_.push_back(value);
+        c.push_back(value);
     }
 
     /**
@@ -101,7 +101,7 @@ public:
      */
     void pop()
     {
-        c_.pop_back();
+        c.pop_back();
     }
 };
 
@@ -109,13 +109,13 @@ public:
 template <typename Tp, typename Seq>
 bool operator==(const stack<Tp, Seq>& lhs, const stack<Tp, Seq>& rhs)
 {
-    return lhs.c_ == rhs.c_;
+    return lhs.c == rhs.c;
 }
 
 template <typename Tp, typename Seq>
 bool operator<(const stack<Tp, Seq>& lhs, const stack<Tp, Seq>& rhs)
 {
-    return lhs.c_ < rhs.c_;
+    return lhs.c < rhs.c;
 }
 
 // Based on operator==
