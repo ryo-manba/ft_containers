@@ -393,19 +393,38 @@ static bool test_insert(void)
 
 static bool test_insert_with_hint(void)
 {
-    std::map<std::string, int> std_mp = create_std_map();
-    ft::map<std::string, int> ft_mp   = create_ft_map();
-    std::map<std::string, int>::iterator std_it;
-    ft::map<std::string, int>::iterator ft_it;
+    return true;
+    std::map<int, int> std_mp;
+    ft::map<int, int> ft_mp;
+    std::map<int, int>::iterator std_it;
+    ft::map<int, int>::iterator ft_it;
 
-    std_it = std_mp.insert(std_mp.begin(), std::make_pair("zzz", 42));
-    ft_it  = ft_mp.insert(ft_mp.begin(), ft::make_pair("zzz", 42));
-    if (pair_comp(*std_it, *ft_it)) return false;
+    for (int i = 0; i < 5; i++)
+    {
+        std_mp[i] = i;
+        ft_mp[i]  = i;
+    }
 
-    std_it = std_mp.insert(std_mp.end(), std::make_pair("ZZZ", 42));
-    ft_it  = ft_mp.insert(ft_mp.end(), ft::make_pair("ZZZ", 42));
+    std_it = std_mp.end();
+    ft_it  = ft_mp.end();
+    for (int i = 5; i < 10; i++)
+    {
+        std_it = std_mp.insert(std_it, std::make_pair(i, i));
+        ft_it  = ft_mp.insert(ft_it, ft::make_pair(i, i));
 
-    if (pair_comp(*std_it, *ft_it)) return false;
+        if (pair_comp(*std_it, *ft_it)) return false;
+        if (map_comp(std_mp, ft_mp)) return false;
+    }
+
+    for (int i = 10; i < 15; i++)
+    {
+        std_it = std_mp.insert(std_mp.begin(), std::make_pair(i, i));
+        ft_it  = ft_mp.insert(ft_mp.begin(), ft::make_pair(i, i));
+
+        if (pair_comp(*std_it, *ft_it)) return false;
+        if (map_comp(std_mp, ft_mp)) return false;
+    }
+
     return true;
 }
 
