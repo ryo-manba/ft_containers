@@ -145,16 +145,10 @@ public:
      */
     void assign(size_type count, const value_type& val)
     {
-        size_type cap = capacity();
-
-        if (count > cap)
+        if (count > capacity())
         {
             clear();
-            while (cap < count)
-            {
-                cap *= 2;
-            }
-            reserve(cap);
+            reserve(allocate_size(count));
         }
         pointer t = first_;
         for (size_type i = 0; i < count; ++i)
@@ -428,21 +422,14 @@ public:
         // offset: 先頭から挿入するまでの位置
         difference_type offset = std::distance(begin(), pos);
         size_type new_size     = size() + count;
-        size_type c            = capacity();
 
-        // 予約メモリーが足りなければ拡張
-        while (c < new_size)
-        {
-            if (c == 0)
-                c = 1;
-            else
-                c *= 2;
-        }
-        reserve(c);
+        reserve(allocate_size(new_size));
 
         // 追加で確保した要素のコンストラクタを呼ぶ
-        for (; last_ != first_ + new_size; ++last_) construct(last_);
-
+        for (; last_ != first_ + new_size; ++last_)
+        {
+            construct(last_);
+        }
         iterator ite = last_ - 1;
 
         // endから要素を挿入する先頭(pos + count - 1)までmemmoveする
@@ -521,19 +508,12 @@ public:
      */
     void push_back(const_reference value)
     {
-        // 予約メモリーが足りなければ拡張
-        if (size() + 1 > capacity())
-        {
-            // 現在のストレージサイズ
-            size_type c = size();
-            // 0の場合は1に
-            if (c == 0)
-                c = 1;
-            else
-                // それ以外の場合は2倍する
-                c *= 2;
+        size_type new_size = size() + 1;
 
-            reserve(c);
+        // 予約メモリーが足りなければ拡張
+        if (new_size > capacity())
+        {
+            reserve(allocate_size(new_size));
         }
         // 要素を末尾に追加
         construct(last_, value);
@@ -608,17 +588,9 @@ private:
 
         if (count == 0) return;
         size_type new_size = size() + count;
-        size_type c        = capacity();
 
-        // 予約メモリーが足りなければ拡張
-        while (c < new_size)
-        {
-            if (c == 0)
-                c = 1;
-            else
-                c *= 2;
-        }
-        reserve(c);
+        reserve(new_size);
+
         // 追加で確保した要素のコンストラクタを呼ぶ
         for (; last_ != first_ + new_size; ++last_) construct(last_);
 
@@ -648,7 +620,7 @@ private:
     }
     void construct(pointer ptr)
     {
-        alloc_.construct(ptr, 0);
+        alloc_.construct(ptr);
     }
     void construct(pointer ptr, const_reference value)
     {
@@ -657,6 +629,18 @@ private:
     void destroy(pointer ptr)
     {
         alloc_.destroy(ptr);
+    }
+
+    size_type allocate_size(size_type count)
+    {
+        size_type c = capacity();
+
+        if (c == 0) c = 1;
+        while (c < count)
+        {
+            c <<= 1;
+        }
+        return c;
     }
 
     /**
