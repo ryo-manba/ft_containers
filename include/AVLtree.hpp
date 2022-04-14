@@ -333,11 +333,11 @@ public:
     typedef tree_node<value_type> node_type;
     typedef node_type* node_pointer;
 
-// TODO: この行以下のリファクタ
+    // TODO: この行以下のリファクタ
 
-// DEBUG
-// private:
-   // private:
+    // DEBUG
+    // private:
+    // private:
 public:
     typedef typename allocator_type::template rebind<node_type>::other
         node_allocator;
@@ -453,7 +453,8 @@ public:
         }
 
         root_        = insert_node(root_, data);
-        last_->left_ = root_;    // begin()用
+        root_        = rebalance(root_);
+        last_->left_ = root_;
         if (root_)
         {
             root_->parent_ = last_;
@@ -468,10 +469,6 @@ public:
     // hintが条件を満たしている場合にO(1)で挿入する
     iterator insert_unique(iterator hint, const value_type& data)
     {
-        return insert_unique(data).first;
-//        root_ = insert_node(root_, data);
-//        return search_node(root_, data);
-
         // 挿入ノードとhintの値が同じ場合
         if (hint.base()->data_.first == data.first)
         {
@@ -512,28 +509,21 @@ public:
             {
                 hint.base()->right_          = create_node(data);
                 hint.base()->right_->parent_ = hint.base();
-                root_                        = rebalance(root_);
-                //                root_ = rebalance(hint.base());
-                debug_tree();
-
+                root_                        = rebalance(hint.base());
                 return hint.base()->right_;
             }
             // hintよりも小さいかつ左の子ノードが挿入可能
             if (comp_(data.first, hint.base()->data_.first) &&
                 (hint.base()->left_ == NULL))
             {
-                hint.base()->left_ = create_node(data);
+                hint.base()->left_          = create_node(data);
                 hint.base()->left_->parent_ = hint.base();
-                root_ = rebalance(root_);
-//                root_ = rebalance(hint.base());
-
-                debug_tree();
+                root_                       = rebalance(hint.base());
                 return hint.base()->left_;
             }
         }
-        // hintが正しくないのでルートから挿入する
-        root_ = insert_node(root_, data);
-        return search_node(root_, data);
+        // hintが正しくない場合ルートから挿入する
+        return insert_unique(data).first;
     }
 
     template <typename InputIt>
@@ -598,7 +588,7 @@ public:
         node_pointer node =
             search_node(root_, ft::make_pair(key, mapped_type()));
 
-        if (node)    // && !comp_(key, node->data_.first))
+        if (node)
         {
             return iterator(node);
         }
@@ -888,7 +878,6 @@ private:
     // 回転後のrootを返す
     node_pointer balancing(node_pointer node)
     {
-        // update_height();
         long balance = node->calc_balance_factor();
 
         if (balance > 1)
@@ -905,34 +894,44 @@ private:
             else
                 return rotate_left(node);
         }
+        update_height(node);
         return node;
     }
 
-/**
-      node_pointer rebalance(node_pointer node)
-    {
-        if (node->parent_)
-            if (node->right_) return rebalance(node->right_);
-        if (node->left_) return rebalance(node->left_);
-        return balancing(node);
-    }
- */
-
+    // insertと同じ発想でいける
     node_pointer rebalance(node_pointer node)
     {
-        if (node->left_) rebalance(node->left_);
-        if (node->right_) rebalance(node->right_);
-        return balancing(node);
+        node_pointer balanced;
+
+        while (node != root_)
+        {
+            node_pointer parent = node->parent_;
+            if (tree_is_left_child(node))
+            {
+                balanced          = balancing(node);
+                parent->left_     = balanced;
+                balanced->parent_ = parent;
+            }
+            if (tree_is_right_child(node))
+            {
+                balanced          = balancing(node);
+                parent->right_    = balanced;
+                balanced->parent_ = parent;
+            }
+            node = parent;
+        }
+        return node;
     }
 
+    // node_pointer rebalance(node_pointer node)
+    // {
+    //     if (node->left_) rebalance(node->left_);
+    //     if (node->right_) rebalance(node->right_);
+    //     return balancing(node);
+    // }
+
     /**
-     * @brief
-     * 大小比較して適切な位置にnodeを追加する
-     * 偏りに応じて回転させる
-     * 要素を挿入後再帰的にバランスを取りながらrootまでたどっていく
-     * @param node (NULLになるまでたどっていく)
-     * @param data (追加する要素)
-     * @return node_pointer
+     * @brief 適切な位置にnodeを追加後再帰的にバランスを取る
      */
     node_pointer insert_node(node_pointer node, const value_type& data)
     {
@@ -941,17 +940,13 @@ private:
         {
             return create_node(data);
         }
-        if (comp_(data.first,
-                  node->data_.first))    // 現nodeよりも挿入したい値が小さい場合
+        if (comp_(data.first, node->data_.first))
         {
-            // 左にたどっていく
             node->left_          = insert_node(node->left_, data);
             node->left_->parent_ = node;
         }
-        else if (comp_(node->data_.first,
-                       data.first))    // 現nodeよりも挿入したい値が大きい場合
+        else if (comp_(node->data_.first, data.first))
         {
-            // 右にたどっていく
             node->right_          = insert_node(node->right_, data);
             node->right_->parent_ = node;
         }
@@ -960,16 +955,9 @@ private:
             // すでにkeyが存在した場合
             return node;
         }
-
-        //        update_height(node);
-
-        //        return rebalance(root_);
-        // 木の偏りをもとにバランスを取る
         return balancing(node);
     }
 
-    // less<int>()(2, 3) // true
-    // less<int>()(3, 3) // false
     node_pointer erase_node(node_pointer node, value_type data)
     {
         if (node == NULL)
@@ -999,7 +987,7 @@ private:
                     delete_node(node);
                     node = NULL;
                 }
-                else    // 子が1つのときは入れ替えるだけ
+                else    // 子が1つのときは入れ替える
                 {
                     node_pointer target = node;
 
@@ -1086,13 +1074,6 @@ private:
             return true;
         }
 
-        size_t sz       = size_;
-        long max_height = 0;
-        while (sz)
-        {
-            sz /= 2;
-            max_height += 1;
-        }
         ft::stack<node_pointer> stack;
         stack.push(root_);
 
@@ -1102,7 +1083,7 @@ private:
             stack.pop();
 
             int balance = cur->calc_balance_factor();
-            if (balance <= -2 || 2 <= balance || cur->height_ > max_height)
+            if (balance <= -2 || 2 <= balance)
             {
                 print_node(cur);
                 return false;
