@@ -1,19 +1,20 @@
 #ifndef AVLTREE_HPP
 #define AVLTREE_HPP
-
+#include <fstream>
+#include <iosfwd>
 #include <iostream>
+#include <queue>
 
 #include "iterator.hpp"
 #include "pair.hpp"
 #include "stack.hpp"
 namespace ft
 {
-
 template <class T>
 class tree_iterator;
 
 template <class T>
-class tree_const_iterator;
+class const_tree_iterator;
 
 // Pair : ft::pair<const key, value>
 template <class Pair>
@@ -33,6 +34,7 @@ public:
         : parent_(parent), left_(left), right_(right), height_(0)
     {
     }
+
     tree_node(Pair p)
         : data_(p), parent_(NULL), left_(NULL), right_(NULL), height_(0)
     {
@@ -50,6 +52,7 @@ public:
     ~tree_node(void)
     {
     }
+
     /**
      * utility
      */
@@ -119,6 +122,7 @@ public:
         }
         return cur;
     }
+
     // 木の偏りを返す
     long calc_balance_factor(void)
     {
@@ -221,7 +225,7 @@ public:
 };
 
 template <class T>
-class tree_const_iterator
+class const_tree_iterator
 {
 public:
     typedef std::bidirectional_iterator_tag iterator_category;
@@ -231,7 +235,7 @@ public:
     typedef value_type* pointer;
 
     typedef tree_node<value_type>* node_pointer;
-    typedef tree_const_iterator<value_type> Self;
+    typedef const_tree_iterator<value_type> Self;
 
 private:
     typedef tree_iterator<value_type> tree_iterator;
@@ -239,19 +243,19 @@ private:
     node_pointer node_;
 
 public:
-    tree_const_iterator() : node_(NULL)
+    const_tree_iterator() : node_(NULL)
     {
     }
-    tree_const_iterator(node_pointer p) : node_(p)
+    const_tree_iterator(node_pointer p) : node_(p)
     {
     }
-    tree_const_iterator(const tree_iterator& other) : node_(other.base())
+    const_tree_iterator(const tree_iterator& other) : node_(other.base())
     {
     }
-    tree_const_iterator(const tree_const_iterator& other) : node_(other.base())
+    const_tree_iterator(const const_tree_iterator& other) : node_(other.base())
     {
     }
-    ~tree_const_iterator()
+    ~const_tree_iterator()
     {
     }
 
@@ -271,7 +275,7 @@ public:
     }
     Self operator++(int)
     {
-        tree_const_iterator tmp(*this);
+        const_tree_iterator tmp(*this);
         ++(*this);
         return tmp;
     }
@@ -283,21 +287,21 @@ public:
     }
     Self operator--(int)
     {
-        tree_const_iterator tmp(*this);
+        const_tree_iterator tmp(*this);
         --(*this);
         return tmp;
     }
 
-    friend bool operator==(const tree_const_iterator& lhs,
-                           const tree_const_iterator& rhs)
+    friend bool operator==(const const_tree_iterator& left_,
+                           const const_tree_iterator& rhs)
     {
-        return lhs.node_ == rhs.node_;
+        return left_.node_ == rhs.node_;
     }
 
-    friend bool operator!=(const tree_const_iterator& lhs,
-                           const tree_const_iterator& rhs)
+    friend bool operator!=(const const_tree_iterator& left_,
+                           const const_tree_iterator& rhs)
     {
-        return !(lhs.node_ == rhs.node_);
+        return !(left_.node_ == rhs.node_);
     }
 
     node_pointer base() const
@@ -322,13 +326,14 @@ public:
     typedef value_type* pointer;
 
     typedef tree_iterator<value_type> iterator;
-    typedef tree_const_iterator<value_type> const_iterator;
+    typedef const_tree_iterator<value_type> const_iterator;
     typedef ft::reverse_iterator<iterator> reverse_iterator;
     typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
     typedef tree_node<value_type> node_type;
     typedef node_type* node_pointer;
 
+// TODO: この行以下のリファクタ
 private:
     typedef typename allocator_type::template rebind<node_type>::other
         node_allocator;
