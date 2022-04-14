@@ -54,6 +54,9 @@ public:
 
 private:
     typedef ft::tree<key_type, mapped_type, key_compare, allocator_type> tree;
+#ifdef DEBUG
+public:
+#endif
     tree tree_;
 
 public:
