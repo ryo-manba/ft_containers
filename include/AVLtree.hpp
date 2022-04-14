@@ -337,6 +337,7 @@ public:
 
 // DEBUG
 // private:
+   // private:
 public:
     typedef typename allocator_type::template rebind<node_type>::other
         node_allocator;
@@ -348,6 +349,8 @@ public:
     node_allocator alloc_;
 
 public:
+    /// Member functions
+
     explicit tree(const key_compare& comp     = key_compare(),
                   const allocator_type& alloc = allocator_type())
         : root_(NULL), size_(0), comp_(comp), alloc_(node_allocator(alloc))
@@ -392,7 +395,7 @@ public:
         return alloc_;
     }
 
-    // iterators
+    /// Iterators
     iterator begin()
     {
         return iterator(last_->get_min_node(last_));
@@ -401,6 +404,7 @@ public:
     {
         return const_iterator(last_->get_min_node(last_));
     }
+
     iterator end()
     {
         return iterator(last_);
@@ -410,11 +414,13 @@ public:
         return const_iterator(last_);
     }
 
-    // Capacity
+    /// Capacity
+
     bool empty() const
     {
         return size_ == 0;
     }
+
     size_type size() const
     {
         return size_;
@@ -427,12 +433,12 @@ public:
                             std::numeric_limits<difference_type>::max()));
     }
 
-    // Modifiers
+    /// Modifiers
     void clear()
     {
         all_clear(root_);
-        root_        = NULL;    // NULL埋めしないとデストラクターでダブルフリーしちゃう
-        size_        = 0;    // clearを呼んだあとはsizeが0になる
+        root_        = NULL;
+        size_        = 0;
         last_->left_ = NULL;
     }
 
@@ -441,25 +447,29 @@ public:
     {
         // 既に要素が存在する場合は挿入しない
         node_pointer p = search_node(root_, data);
-        if (p) return ft::make_pair(iterator(p), false);
+        if (p)
+        {
+            return ft::make_pair(iterator(p), false);
+        }
 
         root_        = insert_node(root_, data);
         last_->left_ = root_;    // begin()用
-        if (root_) root_->parent_ = last_;
+        if (root_)
+        {
+            root_->parent_ = last_;
+        }
+
+        debug_tree();
+
         p = search_node(root_, data);
         return ft::make_pair(iterator(p), true);
     }
 
-    // hintの親を見て
-    // less<int>()(2, 3) // true
-    // less<int>()(3, 3) // false
-    // TODO:
-    // 現状nodeを追加した後で全てのノードに対してバランスを取る処理を行っている
-    //       追加したノードから親を辿りながらバランスを取るように変更する
+    // hintが条件を満たしている場合にO(1)で挿入する
     iterator insert_unique(iterator hint, const value_type& data)
     {
         return insert_unique(data).first;
-//        insert_node(root_, data);
+//        root_ = insert_node(root_, data);
 //        return search_node(root_, data);
 
         // 挿入ノードとhintの値が同じ場合
@@ -496,23 +506,28 @@ public:
         }
         if (is_correct_hint)
         {
-            size_ += 1;
-            // hintよりも大きい場合
+            // hintよりも大きいかつ右の子ノードが挿入可能
             if (comp_(hint.base()->data_.first, data.first) &&
-                (hint.base()->right_ != NULL))
+                (hint.base()->right_ == NULL))
             {
-                //                root_ = insert_node(hint.base(), data);
-                hint.base()->right_ = create_node(data);
-                root_               = rebalance(root_);
+                hint.base()->right_          = create_node(data);
+                hint.base()->right_->parent_ = hint.base();
+                root_                        = rebalance(root_);
+                //                root_ = rebalance(hint.base());
+                debug_tree();
+
                 return hint.base()->right_;
             }
+            // hintよりも小さいかつ左の子ノードが挿入可能
             if (comp_(data.first, hint.base()->data_.first) &&
-                (hint.base()->left_ != NULL))
+                (hint.base()->left_ == NULL))
             {
-                //                root_ = insert_node(hint.base(), data);
                 hint.base()->left_ = create_node(data);
-                root_ =
-                    rebalance(root_);    // 全てのノードに対してバランスを取る
+                hint.base()->left_->parent_ = hint.base();
+                root_ = rebalance(root_);
+//                root_ = rebalance(hint.base());
+
+                debug_tree();
                 return hint.base()->left_;
             }
         }
@@ -547,7 +562,10 @@ public:
 
     void erase(iterator first, iterator last)
     {
-        while (first != last) erase(first++);
+        while (first != last)
+        {
+            erase(first++);
+        }
     }
 
     size_type erase_unique(const key_type& key)
@@ -613,10 +631,12 @@ public:
         return ft::make_pair(it1, it2);
     }
 
-    // key以上の値を返す
-    // なかったらendを返す
-    // less<int>()(2, 3) // true
-    // less<int>()(3, 3) // false
+    /**
+     * key以上の値を返す
+     * なかったらendを返す
+     * less<int>()(2, 3) // true
+     * less<int>()(3, 3) // false
+     */
     iterator lower_bound(const key_type& key)
     {
         node_pointer res = last_;
@@ -657,9 +677,11 @@ public:
         return iterator(res);
     }
 
-    // keyより大きい値を返す
-    // less<int>()(2, 3) // true
-    // less<int>()(3, 3) // false
+    /**
+     * keyより大きい値を返す
+     * less<int>()(2, 3) // true
+     * less<int>()(3, 3) // false
+     */
     iterator upper_bound(const key_type& key)
     {
         node_pointer res = last_;
@@ -705,6 +727,7 @@ public:
     {
         return comp_;
     }
+
     key_compare value_comp() const
     {
         return comp_;
@@ -731,6 +754,8 @@ private:
         node->right_  = NULL;
         node->parent_ = NULL;
         node->height_ = 1;
+
+        size_ += 1;
         return node;
     }
 
@@ -863,7 +888,7 @@ private:
     // 回転後のrootを返す
     node_pointer balancing(node_pointer node)
     {
-        update_height(node);
+        // update_height();
         long balance = node->calc_balance_factor();
 
         if (balance > 1)
@@ -883,11 +908,20 @@ private:
         return node;
     }
 
-    node_pointer rebalance(node_pointer node)
+/**
+      node_pointer rebalance(node_pointer node)
     {
         if (node->parent_)
             if (node->right_) return rebalance(node->right_);
         if (node->left_) return rebalance(node->left_);
+        return balancing(node);
+    }
+ */
+
+    node_pointer rebalance(node_pointer node)
+    {
+        if (node->left_) rebalance(node->left_);
+        if (node->right_) rebalance(node->right_);
         return balancing(node);
     }
 
@@ -905,7 +939,6 @@ private:
         // 追加できるところだったら追加する
         if (node == NULL)
         {
-            size_ += 1;
             return create_node(data);
         }
         if (comp_(data.first,
@@ -928,6 +961,9 @@ private:
             return node;
         }
 
+        //        update_height(node);
+
+        //        return rebalance(root_);
         // 木の偏りをもとにバランスを取る
         return balancing(node);
     }
@@ -1009,8 +1045,8 @@ private:
         return node;
     }
 
-    // keyがある : その要素を返す
-    // keyがない : NULL
+    // keyがある -> その要素を返す
+    // keyがない -> NULL
     node_pointer search_node(node_pointer node, const value_type& data) const
     {
         if (node == NULL)
@@ -1035,7 +1071,8 @@ private:
     {
         return x == x->parent_->right_;
     }
-        /// DEBUG
+
+    /// DEBUG
     void debug_tree(void)
     {
         if (!is_valid_tree())
