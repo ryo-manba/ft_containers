@@ -3,7 +3,6 @@
 #include <fstream>
 #include <iosfwd>
 #include <iostream>
-#include <queue>
 
 #include "iterator.hpp"
 #include "pair.hpp"
@@ -159,6 +158,7 @@ public:
     tree_iterator(const tree_iterator& other) : node_(other.base())
     {
     }
+
     tree_iterator& operator=(const tree_iterator& other)
     {
         if (this == &other)
@@ -168,6 +168,7 @@ public:
         node_ = other.base();
         return *this;
     }
+
     ~tree_iterator(void)
     {
     }
@@ -176,7 +177,6 @@ public:
     {
         return node_->data_;
     }
-
     pointer operator->() const
     {
         return &node_->data_;
@@ -187,7 +187,6 @@ public:
         node_ = node_->tree_increment(node_);
         return *this;
     }
-
     Self operator++(int)
     {
         tree_iterator tmp(*this);
@@ -200,7 +199,6 @@ public:
         node_ = node_->tree_decrement(node_);
         return *this;
     }
-
     Self operator--(int)
     {
         Self tmp(*this);
@@ -255,6 +253,7 @@ public:
     const_tree_iterator(const const_tree_iterator& other) : node_(other.base())
     {
     }
+
     ~const_tree_iterator()
     {
     }
@@ -333,18 +332,17 @@ public:
     typedef tree_node<value_type> node_type;
     typedef node_type* node_pointer;
 
-    // TODO: この行以下のリファクタ
-
-    // DEBUG
-    // private:
-    // private:
+#ifdef DEBUG
 public:
+#else
+private:
+#endif
     typedef typename allocator_type::template rebind<node_type>::other
         node_allocator;
 
     node_pointer root_;
     node_pointer last_;    // end()用のダミーノード
-    size_type size_;       // マップの要素数
+    size_type size_;
     key_compare comp_;
     node_allocator alloc_;
 
@@ -396,6 +394,7 @@ public:
     }
 
     /// Iterators
+
     iterator begin()
     {
         return iterator(last_->get_min_node(last_));
@@ -434,6 +433,7 @@ public:
     }
 
     /// Modifiers
+
     void clear()
     {
         all_clear(root_);
@@ -442,7 +442,7 @@ public:
         last_->left_ = NULL;
     }
 
-    // 追加したノードのイテレータと挿入したかを表すbool値
+    // <追加したノードのイテレータ,挿入できたかを表すbool値>
     ft::pair<iterator, bool> insert_unique(const value_type& data)
     {
         // 既に要素が存在する場合は挿入しない
@@ -459,9 +459,6 @@ public:
         {
             root_->parent_ = last_;
         }
-
-        debug_tree();
-
         p = search_node(root_, data);
         return ft::make_pair(iterator(p), true);
     }
@@ -575,14 +572,14 @@ public:
         std::swap(alloc_, other.alloc_);
     }
 
-    // Lookup
+    /// Lookup
+
     size_type count(const key_type& key) const
     {
         if (find(key) == end()) return 0;
         return 1;
     }
 
-    // 木の中からkeyがあるか捜索する
     iterator find(const key_type& key)
     {
         node_pointer node =
@@ -622,10 +619,8 @@ public:
     }
 
     /**
-     * key以上の値を返す
-     * なかったらendを返す
-     * less<int>()(2, 3) // true
-     * less<int>()(3, 3) // false
+     * @brief key以上の値を返す
+     * なかったらend()を返す
      */
     iterator lower_bound(const key_type& key)
     {
@@ -654,8 +649,6 @@ public:
 
         while (cur != NULL)
         {
-            // 左に進んでいく間の値をキャッシュしておく
-            // 右に進み始めたらNULLまで進めてキャッシュを返す
             if (!comp_(cur->data_.first, key))
             {
                 res = cur;
@@ -668,9 +661,7 @@ public:
     }
 
     /**
-     * keyより大きい値を返す
-     * less<int>()(2, 3) // true
-     * less<int>()(3, 3) // false
+     * @brief keyより大きい値を返す
      */
     iterator upper_bound(const key_type& key)
     {
@@ -699,8 +690,6 @@ public:
 
         while (cur != NULL)
         {
-            // 右に進んでいく間の値をキャッシュしておく
-            // 左に進み始めたらNULLまで進めてキャッシュを返す
             if (comp_(key, cur->data_.first))
             {
                 res = cur;
@@ -712,7 +701,8 @@ public:
         return iterator(res);
     }
 
-    // Observers
+    /// Observers
+
     key_compare key_comp() const
     {
         return comp_;
@@ -756,7 +746,6 @@ private:
         size_ -= 1;
     }
 
-    // 再帰的に全てのnodeを削除する
     void all_clear(node_pointer node)
     {
         if (node == NULL) return;
@@ -765,8 +754,6 @@ private:
         delete_node(node);
     }
 
-    // 木の高さを更新する
-    // 木の高さ = 1 + max(左の木の高さ, 右の木の高さ)
     void update_height(node_pointer node)
     {
         if (node == NULL)
@@ -898,7 +885,9 @@ private:
         return node;
     }
 
-    // insertと同じ発想でいける
+    /**
+     * @brief 挿入地点からバランスを取りながらルートまで辿っていく
+     */
     node_pointer rebalance(node_pointer node)
     {
         node_pointer balanced;
@@ -923,19 +912,11 @@ private:
         return node;
     }
 
-    // node_pointer rebalance(node_pointer node)
-    // {
-    //     if (node->left_) rebalance(node->left_);
-    //     if (node->right_) rebalance(node->right_);
-    //     return balancing(node);
-    // }
-
     /**
      * @brief 適切な位置にnodeを追加後再帰的にバランスを取る
      */
     node_pointer insert_node(node_pointer node, const value_type& data)
     {
-        // 追加できるところだったら追加する
         if (node == NULL)
         {
             return create_node(data);
@@ -1033,22 +1014,18 @@ private:
         return node;
     }
 
-    // keyがある -> その要素を返す
-    // keyがない -> NULL
     node_pointer search_node(node_pointer node, const value_type& data) const
     {
         if (node == NULL)
         {
             return NULL;
         }
-        // ノードよりも小さい場合はleftを探す
         if (comp_(data.first, node->data_.first))
             return search_node(node->left_, data);
-        // ノードよりも大きい場合はrightを探す
         else if (comp_(node->data_.first, data.first))
             return search_node(node->right_, data);
         else
-            return node;    // keyが見つかった場合
+            return node;
     }
 
     bool tree_is_left_child(node_pointer x)
@@ -1061,6 +1038,7 @@ private:
     }
 
     /// DEBUG
+
     void debug_tree(void)
     {
         if (!is_valid_tree())
@@ -1085,7 +1063,7 @@ private:
             int balance = cur->calc_balance_factor();
             if (balance <= -2 || 2 <= balance)
             {
-                print_node(cur);
+                print_tree_info(cur);
                 return false;
             }
 
@@ -1095,7 +1073,7 @@ private:
         return true;
     }
 
-    void print_node(node_pointer node)
+    void print_tree_info(node_pointer node)
     {
         std::cout << "======================" << std::endl;
         std::cout << "size      :" << size_ << "\n"
@@ -1107,8 +1085,13 @@ private:
         std::cout << "======================" << std::endl;
     }
 
+#ifdef DEBUG
 public:
-    void graphDebug(void)
+#endif
+    /**
+     * @brief mp.tree_.show_graph()のように使う
+     */
+    void show_graph(void)
     {
         std::ofstream ofs("avltree.dot");
 
@@ -1145,7 +1128,6 @@ public:
                 stack.push(front->right_);
             }
         }
-
         ofs << "}" << std::endl;
 
         system("dot -Kdot -Tpng avltree.dot -o avltree.png");
