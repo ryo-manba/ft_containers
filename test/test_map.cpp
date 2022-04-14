@@ -13,7 +13,7 @@
  * @return 完全一致 0, 一致しない場合 1
  */
 template <class STD, class FT>
-bool map_comp(const STD& st, const FT& ft)
+static bool map_comp(const STD& st, const FT& ft)
 {
     if (st.size() != ft.size()) return 1;
 
@@ -36,14 +36,14 @@ bool map_comp(const STD& st, const FT& ft)
 }
 
 template <class STD, class FT>
-bool pair_comp(const STD& st, const FT& ft)
+static bool pair_comp(const STD& st, const FT& ft)
 {
     if (st.first != ft.first) return 1;
     if (st.second != ft.second) return 1;
     return 0;
 }
 
-std::map<std::string, int> create_std_map(void)
+static std::map<std::string, int> create_std_map(void)
 {
     std::vector<std::pair<std::string, int> > vec;
     vec.push_back(std::make_pair("aaa", 1));
@@ -54,7 +54,7 @@ std::map<std::string, int> create_std_map(void)
     return mp;
 }
 
-ft::map<std::string, int> create_ft_map(void)
+static ft::map<std::string, int> create_ft_map(void)
 {
     std::vector<ft::pair<std::string, int> > vec;
     vec.push_back(ft::make_pair("aaa", 1));
@@ -65,7 +65,7 @@ ft::map<std::string, int> create_ft_map(void)
     return mp;
 }
 
-const std::map<std::string, int> create_const_std_map(void)
+static const std::map<std::string, int> create_const_std_map(void)
 {
     std::vector<std::pair<std::string, int> > vec;
     vec.push_back(std::make_pair("aaa", 1));
@@ -76,7 +76,7 @@ const std::map<std::string, int> create_const_std_map(void)
     return mp;
 }
 
-const ft::map<std::string, int> create_const_ft_map(void)
+static const ft::map<std::string, int> create_const_ft_map(void)
 {
     std::vector<ft::pair<std::string, int> > vec;
     vec.push_back(ft::make_pair("aaa", 1));
@@ -393,7 +393,6 @@ static bool test_insert(void)
 
 static bool test_insert_with_hint(void)
 {
-    return true;
     std::map<int, int> std_mp;
     ft::map<int, int> ft_mp;
     std::map<int, int>::iterator std_it;
