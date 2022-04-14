@@ -334,7 +334,10 @@ public:
     typedef node_type* node_pointer;
 
 // TODO: この行以下のリファクタ
-private:
+
+// DEBUG
+// private:
+public:
     typedef typename allocator_type::template rebind<node_type>::other
         node_allocator;
 
@@ -455,6 +458,10 @@ public:
     //       追加したノードから親を辿りながらバランスを取るように変更する
     iterator insert_unique(iterator hint, const value_type& data)
     {
+        return insert_unique(data).first;
+//        insert_node(root_, data);
+//        return search_node(root_, data);
+
         // 挿入ノードとhintの値が同じ場合
         if (hint.base()->data_.first == data.first)
         {
@@ -958,12 +965,6 @@ private:
                 }
                 else    // 子が1つのときは入れ替えるだけ
                 {
-                    //                    debug(1);
-                    //                    print(node->data_.first);
-                    //                    print(child->data_.first);
-                    //                    std::swap(&(node->data_),
-                    //                    &(child->data_)); delete_node(child);
-
                     node_pointer target = node;
 
                     // つなぎ替える
@@ -1033,6 +1034,104 @@ private:
     bool tree_is_right_child(node_pointer x)
     {
         return x == x->parent_->right_;
+    }
+        /// DEBUG
+    void debug_tree(void)
+    {
+        if (!is_valid_tree())
+            std::cout << "Warning: The trees are not balanced." << std::endl;
+    }
+
+    bool is_valid_tree(void)
+    {
+        if (root_ == NULL)
+        {
+            return true;
+        }
+
+        size_t sz       = size_;
+        long max_height = 0;
+        while (sz)
+        {
+            sz /= 2;
+            max_height += 1;
+        }
+        ft::stack<node_pointer> stack;
+        stack.push(root_);
+
+        while (!stack.empty())
+        {
+            node_pointer cur = stack.top();
+            stack.pop();
+
+            int balance = cur->calc_balance_factor();
+            if (balance <= -2 || 2 <= balance || cur->height_ > max_height)
+            {
+                print_node(cur);
+                return false;
+            }
+
+            if (cur->left_ != NULL) stack.push(cur->left_);
+            if (cur->right_ != NULL) stack.push(cur->right_);
+        }
+        return true;
+    }
+
+    void print_node(node_pointer node)
+    {
+        std::cout << "======================" << std::endl;
+        std::cout << "size      :" << size_ << "\n"
+                  << "key       :" << node->data_.first << "\n"
+                  << "height    :" << node->height_ << "\n"
+                  << "balance   :" << node->calc_balance_factor() << "\n"
+                  << "left_key  :" << node->left_->data_.first << "\n"
+                  << "right_key :" << node->right_->data_.first << std::endl;
+        std::cout << "======================" << std::endl;
+    }
+
+public:
+    void graphDebug(void)
+    {
+        std::ofstream ofs("avltree.dot");
+
+        for (iterator it = begin(); it != end(); ++it)
+        {
+            ofs << "# "
+                << "key : " << it->first << " value : " << it->second
+                << std::endl;
+        }
+
+        ofs << "digraph tree {\n"
+            << "graph "
+            << "[centering=\"true\",ranksep=0.5,ordering=out,nodesep=0.5];\n"
+            << "node [shape=circle, width = 0.5, height = 0.5, margin = 0.01];"
+            << std::endl;
+
+        ft::stack<node_pointer> stack;
+        stack.push(root_);
+
+        while (!stack.empty())
+        {
+            node_pointer front = stack.top();
+            stack.pop();
+            if (front->left_ != NULL)
+            {
+                ofs << front->data_.first << " -> " << front->left_->data_.first
+                    << ";" << std::endl;
+                stack.push(front->left_);
+            }
+            if (front->right_ != NULL)
+            {
+                ofs << front->data_.first << " -> "
+                    << front->right_->data_.first << ";" << std::endl;
+                stack.push(front->right_);
+            }
+        }
+
+        ofs << "}" << std::endl;
+
+        system("dot -Kdot -Tpng avltree.dot -o avltree.png");
+        system("qlmanage -p avltree.png");
     }
 };
 
