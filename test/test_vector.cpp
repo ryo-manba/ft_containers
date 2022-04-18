@@ -38,6 +38,7 @@ void init_vector(T v)
     }
 }
 
+// Member functions
 static bool test_constructor(void)
 {
     // default constructor
@@ -459,7 +460,7 @@ static bool test_capacity(void)
     return true;
 }
 
-// Modifilers
+// Modifiers
 static bool test_clear(void)
 {
     std::vector<int> std_vec(3);

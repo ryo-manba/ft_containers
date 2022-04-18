@@ -1,7 +1,7 @@
 NAME_STL := bm_stl
 NAME_FT  := bm_ft
 CXX      := clang++
-CXXFLAGS := -Wall -Wextra -Werror -std=c++98 -pedantic -g3
+CXXFLAGS := -Wall -Wextra -Werror -std=c++98 -pedantic -g3 -O0
 
 # Directories
 SRCDIR     := ./
