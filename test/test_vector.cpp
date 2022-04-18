@@ -104,13 +104,26 @@ static bool test_operator_equal(void)
     init_vector(std_vec1);
     init_vector(ft_vec1);
 
-    // 代入
     std::vector<int> std_vec2;
     ft::vector<int> ft_vec2;
     std_vec2 = std_vec1;
     ft_vec2  = ft_vec1;
     if (vector_comp(std_vec1, ft_vec1)) return false;
     if (vector_comp(std_vec2, ft_vec2)) return false;
+
+    std::vector<int> std_vec3(sz);
+    ft::vector<int> ft_vec3(sz);
+    std_vec3 = std_vec1;
+    ft_vec3  = ft_vec1;
+    if (vector_comp(std_vec1, ft_vec1)) return false;
+    if (vector_comp(std_vec3, ft_vec3)) return false;
+
+    std::vector<int> std_vec4(sz + 5, sz);
+    ft::vector<int> ft_vec4(sz + 5, sz);
+    std_vec4 = std_vec2;
+    ft_vec4  = ft_vec2;
+    if (vector_comp(std_vec2, ft_vec2)) return false;
+    if (vector_comp(std_vec4, ft_vec4)) return false;
 
     return true;
 }

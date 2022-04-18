@@ -93,46 +93,10 @@ public:
         deallocate();
     }
 
-    vector& operator=(const vector& r)
+    vector& operator=(const vector& other)
     {
-        if (this == &r) return *this;
-
-        // 要素数が同じ
-        if (size() == r.size())
-        {
-            // 要素ごとコピー代入
-            std::copy(r.begin(), r.end(), begin());
-        }
-        else
-        {
-            // 予約数が十分
-            if (capacity() >= r.size())
-            {
-                // 有効な要素はコピー
-                std::copy(r.begin(), r.begin() + r.size(), begin());
-                // 残りはコピー構築
-                for (const_iterator src_iter = r.begin() + r.size(),
-                                    src_end  = r.end();
-                     src_iter != src_end; ++src_iter, ++last_)
-                {
-                    construct(last_, *src_iter);
-                }
-            }
-            else    // 予約数が不十分
-            {
-                // 要素をすべて破棄
-                destroy_until(rbegin());
-                // 予約
-                reserve(r.size());
-                // コピー構築
-                for (const_iterator src_iter = r.begin(), src_end = r.end(),
-                                    dest_iter = begin();
-                     src_iter != src_end; ++src_iter, ++dest_iter, ++last_)
-                {
-                    construct(dest_iter.base(), *src_iter);
-                }
-            }
-        }
+        if (this == &other) return *this;
+        assign(other.begin(), other.end());
         return *this;
     }
 
