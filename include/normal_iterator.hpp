@@ -1,7 +1,7 @@
 #ifndef NORMAL_ITERATOR_HPP
 #define NORMAL_ITERATOR_HPP
 
-#include "iterator.hpp"
+#include "iterator_traits.hpp"
 #include <iterator>
 
 namespace ft
