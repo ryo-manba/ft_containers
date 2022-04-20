@@ -4,6 +4,7 @@
 #include <iostream>
 #include <limits>
 #include <memory>
+#include <iterator>
 
 /***********************/
 #include "debug.hpp"
@@ -28,8 +29,8 @@ public:
     typedef typename allocator_type::const_reference const_reference;
     typedef size_t size_type;
 
-    typedef ft::normal_iterator<value_type> iterator;
-    typedef ft::normal_iterator<value_type> const_iterator;
+    typedef ft::normal_iterator<pointer> iterator;
+    typedef ft::normal_iterator<const_pointer> const_iterator;
     typedef ft::reverse_iterator<iterator> reverse_iterator;
     typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
@@ -71,17 +72,7 @@ public:
     vector(const vector& other)
         : first_(NULL), last_(NULL), reserved_last_(NULL), alloc_(other.alloc_)
     {
-        // コピー元の要素数を保持できるだけのストレージを確保
-        reserve(other.size());
-        // コピー元の要素をコピー構築
-        // destはコピー先
-        // [src, last_)はコピー元
-        for (iterator dest = first_, src = other.begin(), last = other.end();
-             src != last; ++dest, ++src)
-        {
-            construct(dest.base(), *src);
-        }
-        last_ = first_ + other.size();
+        assign(other.begin(), other.end());
     }
 
     // destructor
@@ -112,7 +103,7 @@ public:
         if (count > capacity())
         {
             clear();
-            reserve(allocate_size(count));
+            reserve(count);
         }
         pointer t = first_;
         for (size_type i = 0; i < count; ++i)
@@ -217,11 +208,11 @@ public:
      */
     iterator begin()
     {
-        return first_;
+        return iterator(first_);
     }
     const_iterator begin() const
     {
-        return first_;
+        return const_iterator(first_);
     }
 
     /**
@@ -230,11 +221,11 @@ public:
      */
     iterator end()
     {
-        return last_;
+        return iterator(last_);
     }
     const_iterator end() const
     {
-        return last_;
+        return const_iterator(last_);
     }
 
     /**
@@ -306,43 +297,38 @@ public:
      */
     void reserve(size_type new_cap)
     {
-        if (new_cap > max_size())
-        {
-            throw std::length_error("vector");
-        }
         // すでに指定された要素数以上に予約されているなら何もしない
         if (new_cap <= capacity())
         {
             return;
         }
 
-        // 動的メモリー確保をする
+        new_cap = allocate_size(new_cap);
+        if (new_cap > max_size())
+        {
+            throw std::length_error("vector");
+        }
+
         pointer ptr = allocate(new_cap);
 
         // 古いストレージの情報を保存
         pointer old_first      = first_;
-        pointer old_last       = last_;
+        size_type old_size = size();
         size_type old_capacity = capacity();
 
-        // 新しいストレージに差し替え
-        first_         = ptr;
-        last_          = first_;
-        reserved_last_ = first_ + new_cap;
-
-        for (pointer old_iter = old_first; old_iter != old_last;
-             ++old_iter, ++last_)
+        for (size_type i = 0; i < old_size; i++)
         {
-            construct(last_, *old_iter);
+            construct(ptr + i, *(old_first + i));
         }
-
-        // 新しいストレージにコピーし終えたので古いストレージの値は破棄
-        for (reverse_iterator riter = reverse_iterator(old_last),
-                              rend  = reverse_iterator(old_first);
-             riter != rend; ++riter)
+        for (size_type i = 0; i < old_size; i++)
         {
-            destroy(&*riter);
+            destroy(old_first + i);
         }
         alloc_.deallocate(old_first, old_capacity);
+
+        first_ = ptr;
+        last_ = first_ + old_size;
+        reserved_last_ = first_ + new_cap;
     }
 
     /**
@@ -370,7 +356,8 @@ public:
      */
     iterator insert(const_iterator pos, const value_type& value)
     {
-        difference_type offset = std::distance(begin(), pos);
+//        difference_type offset = std::distance(begin(), pos);
+        difference_type offset = std::distance(const_iterator(first_), pos);
         insert(pos, 1, value);
         return begin() + offset;
     }
@@ -384,17 +371,17 @@ public:
         if (count == 0) return;
 
         // offset: 先頭から挿入するまでの位置
-        difference_type offset = std::distance(begin(), pos);
+        difference_type offset = std::distance(const_iterator(first_), pos);
         size_type new_size     = size() + count;
 
-        reserve(allocate_size(new_size));
+        reserve(new_size);
 
         // 追加で確保した要素のコンストラクタを呼ぶ
         for (; last_ != first_ + new_size; ++last_)
         {
             construct(last_);
         }
-        iterator ite = last_ - 1;
+        iterator ite = iterator(last_ - 1);
 
         // endから要素を挿入する先頭(pos + count - 1)までmemmoveする
         iterator move_end_pos = begin() + offset + count - 1;
@@ -477,7 +464,7 @@ public:
         // 予約メモリーが足りなければ拡張
         if (new_size > capacity())
         {
-            reserve(allocate_size(new_size));
+            reserve(new_size);
         }
         // 要素を末尾に追加
         construct(last_, value);
