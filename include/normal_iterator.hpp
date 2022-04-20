@@ -31,8 +31,6 @@ public:
     template <typename T>
     normal_iterator& operator=(const normal_iterator<T>& other)
     {
-        if (this == &other)
-            return *this;
         current_ = other.base();
         return *this;
     }
