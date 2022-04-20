@@ -106,7 +106,7 @@ public:
     reverse_iterator operator--(int)
     {
         reverse_iterator tmp = *this;
-        **current_;
+        ++current_;
         return tmp;
     }
     reverse_iterator operator+(difference_type n) const
