@@ -6,26 +6,30 @@
 
 namespace ft
 {
-template<typename T>
-class normal_iterator : public ft::iterator<std::random_access_iterator_tag, T>
+template<typename Iterator>
+class normal_iterator : public std::iterator<std::random_access_iterator_tag, Iterator>
 {
 protected:
-    T* current_;
-    typedef typename ft::iterator<std::random_access_iterator_tag, T> traits_type;
+    Iterator current_;
+    typedef ft::iterator_traits<Iterator> traits_type;
 
 public:
+    typedef Iterator iterator_type;
     typedef typename traits_type::iterator_category iterator_category;
     typedef typename traits_type::value_type value_type;
     typedef typename traits_type::difference_type difference_type;
-    typedef T& reference;
-    typedef T* pointer;
+    typedef typename traits_type::reference reference;
+    typedef typename traits_type::pointer pointer;
 
     // Member functions
     normal_iterator() : current_(NULL) {}
-    normal_iterator(pointer p) : current_(p) {}
-    normal_iterator(const normal_iterator& other)
-        : current_(other.base()) { }
-    normal_iterator& operator=(const normal_iterator& other)
+    explicit normal_iterator(iterator_type it) : current_(it) {}
+
+    template <typename T>
+    normal_iterator(const normal_iterator<T>& other) : current_(other.base()) {}
+
+    template <typename T>
+    normal_iterator& operator=(const normal_iterator<T>& other)
     {
         if (this == &other)
             return *this;
@@ -33,7 +37,7 @@ public:
         return *this;
     }
     ~normal_iterator() { }
-    pointer base() const { return current_; }
+    iterator_type base() const { return current_; }
 
     // Forward iterator requirements
     reference operator*() const { return *current_; }
