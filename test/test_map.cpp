@@ -713,28 +713,69 @@ static bool test_lower_bound_const(void)
     return true;
 }
 
+static std::map<int, int> create_int_std_map(void)
+{
+    std::vector<std::pair<int, int> > v(100);
+    for (int i = 0; i < 100; i++) v[i] = std::make_pair(i, i);
+
+    std::map<int, int> mp(v.begin(), v.end());
+    return mp;
+}
+
+static ft::map<int, int> create_int_ft_map(void)
+{
+    std::vector<ft::pair<int, int> > v(100);
+    for (int i = 0; i < 100; i++) v[i] = ft::make_pair(i, i);
+
+    ft::map<int, int> mp(v.begin(), v.end());
+    return mp;
+}
+
 static bool test_upper_bound(void)
 {
-    std::map<std::string, int> std_mp = create_std_map();
-    ft::map<std::string, int> ft_mp   = create_ft_map();
-    std::map<std::string, int>::iterator std_it;
-    ft::map<std::string, int>::iterator ft_it;
+    std::map<std::string, int> std_mp1 = create_std_map();
+    ft::map<std::string, int> ft_mp1   = create_ft_map();
+    std::map<std::string, int>::iterator std_it1;
+    ft::map<std::string, int>::iterator ft_it1;
 
     const std::string key1 = "aaa";
     const std::string key2 = "zzz";
 
-    std_it = std_mp.upper_bound(key1);
-    ft_it  = ft_mp.upper_bound(key1);
-    if (pair_comp(*std_it, *ft_it)) return false;
+    std_it1 = std_mp1.upper_bound(key1);
+    ft_it1  = ft_mp1.upper_bound(key1);
+    if (pair_comp(*std_it1, *ft_it1)) return false;
 
-    std_it = std_mp.upper_bound("xxx");
-    ft_it  = ft_mp.upper_bound("xxx");
-    if (pair_comp(*std_it, *ft_it)) return false;
+    std_it1 = std_mp1.upper_bound("xxx");
+    ft_it1  = ft_mp1.upper_bound("xxx");
+    if (pair_comp(*std_it1, *ft_it1)) return false;
 
-    std_it = std_mp.upper_bound(key2);
-    ft_it  = ft_mp.upper_bound(key2);
-    if (std_it != std_mp.end()) return false;
-    if (ft_it != ft_mp.end()) return false;
+    std_it1 = std_mp1.upper_bound(key2);
+    ft_it1  = ft_mp1.upper_bound(key2);
+    if (std_it1 != std_mp1.end()) return false;
+    if (ft_it1 != ft_mp1.end()) return false;
+
+    std::map<int, int> std_mp2 = create_int_std_map();
+    ft::map<int, int> ft_mp2   = create_int_ft_map();
+    std::map<int, int>::iterator std_it2;
+    ft::map<int, int>::iterator ft_it2;
+
+    std_it2 = std_mp2.upper_bound(-42);
+    ft_it2  = ft_mp2.upper_bound(-42);
+    if (pair_comp(*std_it2, *ft_it2)) return false;
+
+    std_it2 = std_mp2.upper_bound(0);
+    ft_it2  = ft_mp2.upper_bound(0);
+    if (pair_comp(*std_it2, *ft_it2)) return false;
+
+    std_it2 = std_mp2.upper_bound(99);
+    ft_it2  = ft_mp2.upper_bound(99);
+    if (std_it2 != std_mp2.end()) return false;
+    if (ft_it2 != ft_mp2.end()) return false;
+
+    std_it2 = std_mp2.upper_bound(1000);
+    ft_it2  = ft_mp2.upper_bound(1000);
+    if (std_it2 != std_mp2.end()) return false;
+    if (ft_it2 != ft_mp2.end()) return false;
 
     return true;
 }
@@ -743,24 +784,47 @@ static bool test_upper_bound_const(void)
 {
     std::map<std::string, int> std_mp = create_std_map();
     ft::map<std::string, int> ft_mp   = create_ft_map();
-    typedef std::map<std::string, int>::const_iterator st_const_iterator;
-    typedef ft::map<std::string, int>::const_iterator ft_const_iterator;
+    typedef const std::map<std::string, int>::const_iterator st_const_iterator;
+    typedef const ft::map<std::string, int>::const_iterator ft_const_iterator;
 
     const std::string key1 = "aaa";
     const std::string key2 = "zzz";
 
-    st_const_iterator std_cit1 = std_mp.upper_bound(key1);
-    ft_const_iterator ft_cit1  = ft_mp.upper_bound(key1);
+    st_const_iterator std_it1 = std_mp.upper_bound(key1);
+    ft_const_iterator ft_it1  = ft_mp.upper_bound(key1);
+    if (pair_comp(*std_it1, *ft_it1)) return false;
+
+    st_const_iterator std_it2 = std_mp.upper_bound("xxx");
+    ft_const_iterator ft_it2  = ft_mp.upper_bound("xxx");
+    if (pair_comp(*std_it2, *ft_it2)) return false;
+
+    st_const_iterator std_it3 = std_mp.upper_bound(key2);
+    ft_const_iterator ft_it3  = ft_mp.upper_bound(key2);
+    if (std_it3 != std_mp.end()) return false;
+    if (ft_it3 != ft_mp.end()) return false;
+
+    const std::map<int, int> std_mp2 = create_int_std_map();
+    const ft::map<int, int> ft_mp2   = create_int_ft_map();
+    typedef const std::map<int, int>::const_iterator st_const_iterator_int;
+    typedef const ft::map<int, int>::const_iterator ft_const_iterator_int;
+
+    st_const_iterator_int std_cit1 = std_mp2.upper_bound(-42);
+    ft_const_iterator_int ft_cit1  = ft_mp2.upper_bound(-42);
     if (pair_comp(*std_cit1, *ft_cit1)) return false;
 
-    st_const_iterator std_cit2 = std_mp.upper_bound("xxx");
-    ft_const_iterator ft_cit2  = ft_mp.upper_bound("xxx");
+    st_const_iterator_int std_cit2 = std_mp2.upper_bound(0);
+    ft_const_iterator_int ft_cit2  = ft_mp2.upper_bound(0);
     if (pair_comp(*std_cit2, *ft_cit2)) return false;
 
-    st_const_iterator std_cit3 = std_mp.upper_bound(key2);
-    ft_const_iterator ft_cit3  = ft_mp.upper_bound(key2);
-    if (std_cit3 != std_mp.end()) return false;
-    if (ft_cit3 != ft_mp.end()) return false;
+    st_const_iterator_int std_cit3 = std_mp2.upper_bound(99);
+    ft_const_iterator_int ft_cit3  = ft_mp2.upper_bound(99);
+    if (std_cit3 != std_mp2.end()) return false;
+    if (ft_cit3 != ft_mp2.end()) return false;
+
+    st_const_iterator_int std_cit4 = std_mp2.upper_bound(1000);
+    ft_const_iterator_int ft_cit4  = ft_mp2.upper_bound(1000);
+    if (std_cit4 != std_mp2.end()) return false;
+    if (ft_cit4 != ft_mp2.end()) return false;
 
     return true;
 }

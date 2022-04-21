@@ -19,6 +19,10 @@ struct pair
     {
     }
 
+    pair(const pair& other) : first(other.first), second(other.second)
+    {
+    }
+
     template <class U1, class U2>
     pair(const pair<U1, U2>& other) : first(other.first), second(other.second)
     {
@@ -26,10 +30,6 @@ struct pair
 
     pair& operator=(const pair& other)
     {
-        if (this == &other)
-        {
-            return *this;
-        }
         first  = other.first;
         second = other.second;
         return *this;

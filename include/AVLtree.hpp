@@ -619,8 +619,12 @@ public:
     }
 
     /**
-     * @brief key以上の値を返す
-     * なかったらend()を返す
+     * @brief key 以上の値を持つイテレータを返す
+     * 存在しない場合は、end イテレータを返す
+     *
+     * @details
+     * 現在地が key 以上の場合に左に移動するというルールをもとに実装すると、
+     * 最後に左に移動したノードが key 以上で最も key に近い値を持つ
      */
     iterator lower_bound(const key_type& key)
     {
@@ -629,8 +633,7 @@ public:
 
         while (cur != NULL)
         {
-            // 左に進んでいく間の値をキャッシュしておく
-            // 右に進み始めたらNULLまで進めてキャッシュを返す
+            // key 以上の値が来た場合に左に移動する
             if (!comp_(cur->data_.first, key))
             {
                 res = cur;
@@ -657,11 +660,16 @@ public:
             else
                 cur = cur->right_;
         }
-        return iterator(res);
+        return const_iterator(res);
     }
 
     /**
-     * @brief keyより大きい値を返す
+     * @brief key よりも値が大きいイテレータを返す
+     * 存在しない場合は、end イテレータを返す
+     *
+     * @details
+     * 現在地が key よりも大きい値の場合に左に移動するというルールをもとに実装すると、
+     * 最後に左に移動したノードが key よりも大きく最も key に近い値を持つ
      */
     iterator upper_bound(const key_type& key)
     {
@@ -670,8 +678,7 @@ public:
 
         while (cur != NULL)
         {
-            // 右に進んでいく間の値をキャッシュしておく
-            // 左に進み始めたらNULLまで進めてキャッシュを返す
+            // key よりも値が大きい場合に左に移動する
             if (comp_(key, cur->data_.first))
             {
                 res = cur;
@@ -693,12 +700,12 @@ public:
             if (comp_(key, cur->data_.first))
             {
                 res = cur;
-                cur = cur->right_;
+                cur = cur->left_;
             }
             else
-                cur = cur->left_;
+                cur = cur->right_;
         }
-        return iterator(res);
+        return const_iterator(res);
     }
 
     /// Observers
@@ -1091,11 +1098,11 @@ public:
     /**
      * @brief mp.tree_.show_graph()のように使う
      */
-    void show_graph(void)
+    void show_graph(void) const
     {
         std::ofstream ofs("avltree.dot");
 
-        for (iterator it = begin(); it != end(); ++it)
+        for (const_iterator it = begin(); it != end(); ++it)
         {
             ofs << "# "
                 << "key : " << it->first << " value : " << it->second
