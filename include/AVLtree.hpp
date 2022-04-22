@@ -4,8 +4,8 @@
 #include <iosfwd>
 #include <iostream>
 
-#include "reverse_iterator.hpp"
 #include "pair.hpp"
+#include "reverse_iterator.hpp"
 #include "stack.hpp"
 namespace ft
 {
@@ -668,7 +668,8 @@ public:
      * 存在しない場合は、end イテレータを返す
      *
      * @details
-     * 現在地が key よりも大きい値の場合に左に移動するというルールをもとに実装すると、
+     * 現在地が key
+     * よりも大きい値の場合に左に移動するというルールをもとに実装すると、
      * 最後に左に移動したノードが key よりも大きく最も key に近い値を持つ
      */
     iterator upper_bound(const key_type& key)
@@ -962,7 +963,7 @@ private:
         {
             node->right_ = erase_node(node->right_, data);
         }
-        // 削除するノード
+        // 削除するノードが見つかった場合
         else
         {
             if ((node->left_ == NULL) || (node->right_ == NULL))
@@ -981,25 +982,24 @@ private:
 
                     // つなぎ替える
                     child->parent_ = target->parent_;
-                    if (target->parent_->right_ == target)
-                        target->parent_->right_ = child;
-                    else if (target->parent_->left_ == target)
-                        target->parent_->left_ = child;
+                    if (tree_is_left_child(target))
+                        child->parent_->left_ = child;
+                    if (tree_is_right_child(target))
+                        child->parent_->right_ = child;
                     delete_node(target);
                     node = child;
                 }
             }
             else    // 子供が2つあるノード
             {
-                // 左側の部分木のノードの最大ノード
-                node_pointer left_child_max =
-                    node->left_->get_max_node(node->left_);
-                node_pointer target = node;
+                // 左側の部分木の中の最大ノード
+                node_pointer left_child_max = node->get_max_node(node->left_);
+                node_pointer target         = node;
 
-                // 親ノードを新しいノードに設定する
-                if (left_child_max->parent_->left_ == left_child_max)
+                // 差し替えるノードの位置をNULL埋めしとく
+                if (tree_is_left_child(left_child_max))
                     left_child_max->parent_->left_ = NULL;
-                else if (left_child_max->parent_->right_ == left_child_max)
+                if (tree_is_right_child(left_child_max))
                     left_child_max->parent_->right_ = NULL;
 
                 // 削除ノードの子を新しいノードに付け替える
@@ -1017,7 +1017,7 @@ private:
                 node = left_child_max;
             }
         }
-        if (node) balancing(node);
+        if (node) return balancing(node);
         return node;
     }
 
