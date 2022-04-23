@@ -3,10 +3,12 @@
 #include <fstream>
 #include <iosfwd>
 #include <iostream>
+#include <iterator>
 
+#include "iterator_traits.hpp"
 #include "pair.hpp"
-#include "reverse_iterator.hpp"
 #include "stack.hpp"
+
 namespace ft
 {
 template <class T>
@@ -133,39 +135,51 @@ public:
 };
 
 template <class T>
-class tree_iterator
+class tree_iterator : public std::iterator<std::bidirectional_iterator_tag, T>
 {
+protected:
+    typedef ft::iterator_traits<T*> traits_type;
+
 public:
-    typedef std::bidirectional_iterator_tag iterator_category;
-    typedef T value_type;
-    typedef std::ptrdiff_t difference_type;
-    typedef value_type& reference;
-    typedef value_type* pointer;
+    // typedef std::bidirectional_iterator_tag iterator_category;
+    // typedef T value_type;
+    // typedef std::ptrdiff_t difference_type;
+    // typedef value_type& reference;
+    // typedef value_type* pointer;
+
+    typedef typename traits_type::iterator_category iterator_category;
+    typedef typename traits_type::value_type value_type;
+    typedef typename traits_type::difference_type difference_type;
+    typedef typename traits_type::reference reference;
+    typedef typename traits_type::pointer pointer;
 
     typedef tree_node<value_type>* node_pointer;
-    typedef tree_iterator<value_type> Self;
+    typedef tree_iterator<T> Self;
 
 private:
-    node_pointer node_;
+    node_pointer ptr_;
 
 public:
-    tree_iterator() : node_(NULL)
+    tree_iterator() : ptr_(NULL)
     {
     }
-    tree_iterator(node_pointer p) : node_(p)
+    explicit tree_iterator(node_pointer p) : ptr_(p)
     {
     }
-    tree_iterator(const tree_iterator& other) : node_(other.base())
+
+    // template <typename It>
+    // tree_iterator(const tree_iterator<It>& other) : ptr_(other.base())
+    // {
+    //     std::cout << "FUGA" << std::endl;
+    // }
+    tree_iterator(const tree_iterator& other) : ptr_(other.base())
     {
+
     }
 
     tree_iterator& operator=(const tree_iterator& other)
     {
-        if (this == &other)
-        {
-            return *this;
-        }
-        node_ = other.base();
+        ptr_ = other.base();
         return *this;
     }
 
@@ -175,16 +189,16 @@ public:
 
     reference operator*() const
     {
-        return node_->data_;
+        return ptr_->data_;
     }
     pointer operator->() const
     {
-        return &node_->data_;
+        return &ptr_->data_;
     }
 
     Self& operator++()
     {
-        node_ = node_->tree_increment(node_);
+        ptr_ = ptr_->tree_increment(ptr_);
         return *this;
     }
     Self operator++(int)
@@ -196,7 +210,7 @@ public:
 
     Self& operator--()
     {
-        node_ = node_->tree_decrement(node_);
+        ptr_ = ptr_->tree_decrement(ptr_);
         return *this;
     }
     Self operator--(int)
@@ -206,21 +220,53 @@ public:
         return tmp;
     }
 
-    friend bool operator==(const tree_iterator& lhs, const tree_iterator& rhs)
+    bool operator==(const tree_iterator& other) const
     {
-        return lhs.node_ == rhs.node_;
+        return base() == other.base();
     }
-
-    friend bool operator!=(const tree_iterator& lhs, const tree_iterator& rhs)
+    bool operator!=(const tree_iterator& other) const
     {
-        return !(lhs.node_ == rhs.node_);
+        return !(base() == other.base());
     }
 
     node_pointer base() const
     {
-        return node_;
+        return ptr_;
     }
 };
+
+// Non-member functions
+
+// template <typename IteratorL, typename IteratorR>
+// bool operator==(const tree_iterator<IteratorL>& lhs,
+//                 const tree_iterator<IteratorR>& rhs)
+// {
+//     return lhs.base() == rhs.base();
+// }
+// template <typename IteratorL, typename IteratorR>
+// bool operator!=(const tree_iterator<IteratorL>& lhs,
+//                 const tree_iterator<IteratorR>& rhs)
+// {
+//     return !(lhs == rhs);
+// }
+
+//     friend bool operator==(const tree_iterator& lhs, const tree_iterator&
+//     rhs)
+//     {
+//         return lhs.ptr_ == rhs.ptr_;
+//     }
+
+//     friend bool operator!=(const tree_iterator& lhs, const tree_iterator&
+//     rhs)
+//     {
+//         return !(lhs.ptr_ == rhs.ptr_);
+//     }
+
+//     node_pointer base() const
+//     {
+//         return ptr_;
+//     }
+// };
 
 template <class T>
 class const_tree_iterator
@@ -238,20 +284,25 @@ public:
 private:
     typedef tree_iterator<value_type> tree_iterator;
 
-    node_pointer node_;
+    node_pointer ptr_;
 
 public:
-    const_tree_iterator() : node_(NULL)
+    const_tree_iterator() : ptr_(NULL)
     {
     }
-    const_tree_iterator(node_pointer p) : node_(p)
+    explicit const_tree_iterator(node_pointer p) : ptr_(p)
     {
     }
-    const_tree_iterator(const tree_iterator& other) : node_(other.base())
+    const_tree_iterator(const tree_iterator& other) : ptr_(other.base())
     {
     }
-    const_tree_iterator(const const_tree_iterator& other) : node_(other.base())
+    const_tree_iterator(const const_tree_iterator& other) : ptr_(other.base())
     {
+    }
+    const_tree_iterator& operator=(const const_tree_iterator& other)
+    {
+        ptr_ = other.base();
+        return *this;
     }
 
     ~const_tree_iterator()
@@ -260,16 +311,16 @@ public:
 
     reference operator*() const
     {
-        return node_->data_;
+        return ptr_->data_;
     }
     pointer operator->() const
     {
-        return &node_->data_;
+        return &ptr_->data_;
     }
 
     Self& operator++()
     {
-        node_ = node_->tree_increment(node_);
+        ptr_ = ptr_->tree_increment(ptr_);
         return *this;
     }
     Self operator++(int)
@@ -281,7 +332,7 @@ public:
 
     Self& operator--()
     {
-        node_ = node_->tree_decrement(node_);
+        ptr_ = ptr_->tree_decrement(ptr_);
         return *this;
     }
     Self operator--(int)
@@ -291,23 +342,48 @@ public:
         return tmp;
     }
 
-    friend bool operator==(const const_tree_iterator& left_,
-                           const const_tree_iterator& rhs)
+    bool operator==(const const_tree_iterator& other) const
     {
-        return left_.node_ == rhs.node_;
+        return base() == other.base();
     }
-
-    friend bool operator!=(const const_tree_iterator& left_,
-                           const const_tree_iterator& rhs)
+    bool operator!=(const const_tree_iterator& other) const
     {
-        return !(left_.node_ == rhs.node_);
+        return !(base() == other.base());
     }
 
     node_pointer base() const
     {
-        return node_;
+        return ptr_;
     }
 };
+
+// Non-member functions
+
+// template <typename IteratorL, typename IteratorR>
+// bool operator==(const const_tree_iterator<IteratorL>& lhs,
+//                 const const_tree_iterator<IteratorR>& rhs)
+// {
+//     return lhs.base() == rhs.base();
+// }
+// template <typename IteratorL, typename IteratorR>
+// bool operator!=(const const_tree_iterator<IteratorL>& lhs,
+//                 const const_tree_iterator<IteratorR>& rhs)
+// {
+//     return !(lhs == rhs);
+// }
+
+// Non-member functions
+// template <typename IteratorL, typename IteratorR>
+// bool operator==(const const_tree_iterator& lhs, const const_tree_iterator& rhs)
+// {
+//     return lhs.base() == rhs.base();
+// }
+
+// template <typename IteratorL, typename IteratorR>
+// bool operator!=(const const_tree_iterator& lhs, const const_tree_iterator& rhs)
+// {
+//     return !(lhs == rhs);
+// }
 
 template <class Key, class Val, class Compare = std::less<Key>,
           class Allocator = std::allocator<ft::pair<const Key, Val> > >
@@ -326,8 +402,6 @@ public:
 
     typedef tree_iterator<value_type> iterator;
     typedef const_tree_iterator<value_type> const_iterator;
-    typedef ft::reverse_iterator<iterator> reverse_iterator;
-    typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
     typedef tree_node<value_type> node_type;
     typedef node_type* node_pointer;
@@ -507,7 +581,7 @@ public:
                 hint.base()->right_          = create_node(data);
                 hint.base()->right_->parent_ = hint.base();
                 root_                        = rebalance(hint.base());
-                return hint.base()->right_;
+                return iterator(hint.base()->right_);
             }
             // hintよりも小さいかつ左の子ノードが挿入可能
             if (comp_(data.first, hint.base()->data_.first) &&
@@ -516,7 +590,7 @@ public:
                 hint.base()->left_          = create_node(data);
                 hint.base()->left_->parent_ = hint.base();
                 root_                       = rebalance(hint.base());
-                return hint.base()->left_;
+                return iterator(hint.base()->left_);
             }
         }
         // hintが正しくない場合ルートから挿入する
