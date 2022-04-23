@@ -141,12 +141,6 @@ protected:
     typedef ft::iterator_traits<T*> traits_type;
 
 public:
-    // typedef std::bidirectional_iterator_tag iterator_category;
-    // typedef T value_type;
-    // typedef std::ptrdiff_t difference_type;
-    // typedef value_type& reference;
-    // typedef value_type* pointer;
-
     typedef typename traits_type::iterator_category iterator_category;
     typedef typename traits_type::value_type value_type;
     typedef typename traits_type::difference_type difference_type;
@@ -167,11 +161,6 @@ public:
     {
     }
 
-    // template <typename It>
-    // tree_iterator(const tree_iterator<It>& other) : ptr_(other.base())
-    // {
-    //     std::cout << "FUGA" << std::endl;
-    // }
     tree_iterator(const tree_iterator& other) : ptr_(other.base())
     {
 
@@ -215,7 +204,7 @@ public:
     }
     Self operator--(int)
     {
-        Self tmp(*this);
+        tree_iterator tmp(*this);
         --(*this);
         return tmp;
     }
@@ -235,39 +224,6 @@ public:
     }
 };
 
-// Non-member functions
-
-// template <typename IteratorL, typename IteratorR>
-// bool operator==(const tree_iterator<IteratorL>& lhs,
-//                 const tree_iterator<IteratorR>& rhs)
-// {
-//     return lhs.base() == rhs.base();
-// }
-// template <typename IteratorL, typename IteratorR>
-// bool operator!=(const tree_iterator<IteratorL>& lhs,
-//                 const tree_iterator<IteratorR>& rhs)
-// {
-//     return !(lhs == rhs);
-// }
-
-//     friend bool operator==(const tree_iterator& lhs, const tree_iterator&
-//     rhs)
-//     {
-//         return lhs.ptr_ == rhs.ptr_;
-//     }
-
-//     friend bool operator!=(const tree_iterator& lhs, const tree_iterator&
-//     rhs)
-//     {
-//         return !(lhs.ptr_ == rhs.ptr_);
-//     }
-
-//     node_pointer base() const
-//     {
-//         return ptr_;
-//     }
-// };
-
 template <class T>
 class const_tree_iterator
 {
@@ -275,8 +231,8 @@ public:
     typedef std::bidirectional_iterator_tag iterator_category;
     typedef T value_type;
     typedef std::ptrdiff_t difference_type;
-    typedef value_type& reference;
-    typedef value_type* pointer;
+    typedef const value_type& reference;
+    typedef const value_type* pointer;
 
     typedef tree_node<value_type>* node_pointer;
     typedef const_tree_iterator<value_type> Self;
@@ -357,34 +313,6 @@ public:
     }
 };
 
-// Non-member functions
-
-// template <typename IteratorL, typename IteratorR>
-// bool operator==(const const_tree_iterator<IteratorL>& lhs,
-//                 const const_tree_iterator<IteratorR>& rhs)
-// {
-//     return lhs.base() == rhs.base();
-// }
-// template <typename IteratorL, typename IteratorR>
-// bool operator!=(const const_tree_iterator<IteratorL>& lhs,
-//                 const const_tree_iterator<IteratorR>& rhs)
-// {
-//     return !(lhs == rhs);
-// }
-
-// Non-member functions
-// template <typename IteratorL, typename IteratorR>
-// bool operator==(const const_tree_iterator& lhs, const const_tree_iterator& rhs)
-// {
-//     return lhs.base() == rhs.base();
-// }
-
-// template <typename IteratorL, typename IteratorR>
-// bool operator!=(const const_tree_iterator& lhs, const const_tree_iterator& rhs)
-// {
-//     return !(lhs == rhs);
-// }
-
 template <class Key, class Val, class Compare = std::less<Key>,
           class Allocator = std::allocator<ft::pair<const Key, Val> > >
 class tree
@@ -415,7 +343,7 @@ private:
         node_allocator;
 
     node_pointer root_;
-    node_pointer last_;    // end()用のダミーノード
+    node_pointer last_;
     size_type size_;
     key_compare comp_;
     node_allocator alloc_;
