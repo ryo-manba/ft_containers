@@ -163,7 +163,6 @@ public:
 
     tree_iterator(const tree_iterator& other) : ptr_(other.base())
     {
-
     }
 
     tree_iterator& operator=(const tree_iterator& other)
@@ -992,7 +991,7 @@ private:
                     node = child;
                 }
             }
-            else    // 子供が2つあるノード
+            else    // 子が2つある場合
             {
                 // 左側の部分木の中の最大ノード
                 node_pointer left_child_max = node->get_max_node(node->left_);
@@ -1003,16 +1002,24 @@ private:
                 if (tree_is_left_child(left_child_max))
                 {
                     if (left_child_max->left_)
-                       left_child_max->parent_->left_ = left_child_max->left_;
+                    {
+                        left_child_max->parent_->left_ = left_child_max->left_;
+                        left_child_max->left_->parent_ =
+                            left_child_max->parent_;
+                    }
                     else
-                       left_child_max->parent_->left_ = NULL;
+                        left_child_max->parent_->left_ = NULL;
                 }
                 if (tree_is_right_child(left_child_max))
                 {
                     if (left_child_max->left_)
-                       left_child_max->parent_->right_ = left_child_max->left_;
+                    {
+                        left_child_max->parent_->right_ = left_child_max->left_;
+                        left_child_max->left_->parent_ =
+                            left_child_max->parent_;
+                    }
                     else
-                       left_child_max->parent_->right_ = NULL;
+                        left_child_max->parent_->right_ = NULL;
                 }
 
                 // 削除ノードの子を新しいノードに付け替える
@@ -1026,6 +1033,14 @@ private:
                     left_child_max->left_->parent_ = left_child_max;
                 if (left_child_max->right_)
                     left_child_max->right_->parent_ = left_child_max;
+
+                // 削除ターゲットがルートだった場合、ルートからバランスを取る
+                if (target == root_)
+                {
+                    root_ = left_child_max;
+                    delete_node(target);
+                    return rebalance(root_);
+                }
                 delete_node(target);
                 node = left_child_max;
             }
