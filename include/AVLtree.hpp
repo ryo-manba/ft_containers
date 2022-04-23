@@ -998,11 +998,22 @@ private:
                 node_pointer left_child_max = node->get_max_node(node->left_);
                 node_pointer target         = node;
 
-                // 差し替えるノードの位置をNULL埋めしとく
+                // 子がいた場合は付け替える
+                // 子がいない場合はNULL埋め
                 if (tree_is_left_child(left_child_max))
-                    left_child_max->parent_->left_ = NULL;
+                {
+                    if (left_child_max->left_)
+                       left_child_max->parent_->left_ = left_child_max->left_;
+                    else
+                       left_child_max->parent_->left_ = NULL;
+                }
                 if (tree_is_right_child(left_child_max))
-                    left_child_max->parent_->right_ = NULL;
+                {
+                    if (left_child_max->left_)
+                       left_child_max->parent_->right_ = left_child_max->left_;
+                    else
+                       left_child_max->parent_->right_ = NULL;
+                }
 
                 // 削除ノードの子を新しいノードに付け替える
                 if (target->left_) left_child_max->left_ = target->left_;
