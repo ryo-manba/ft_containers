@@ -4,7 +4,6 @@
 
 #include "map.hpp"
 #include "timer.hpp"
-#include "vector.hpp"
 
 #ifdef FT
 #define NAMESPACE ft

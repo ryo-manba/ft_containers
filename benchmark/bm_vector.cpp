@@ -10,7 +10,7 @@
 #define NAMESPACE std
 #endif
 
-const int loops = 10000;
+const int loops = 1000;
 
 static void print_title(void)
 {
