@@ -10,9 +10,12 @@ template <typename Tp, Tp v>
 struct integral_constant
 {
     static const Tp value = v;
-    typedef Tp value_type;
+    typedef Tp                       value_type;
     typedef integral_constant<Tp, v> type;
-    const value_type operator()() const { return value; }
+    const value_type operator()() const
+    {
+        return value;
+    }
 };
 
 template <typename Tp, Tp v>

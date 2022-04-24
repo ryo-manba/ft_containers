@@ -12,19 +12,23 @@ struct pair
     T1 first;
     T2 second;
 
-    pair() : first(), second()
+    pair()
+        : first(), second()
     {
     }
-    pair(const T1& t1, const T2& t2) : first(t1), second(t2)
+    pair(const T1& t1, const T2& t2)
+        : first(t1), second(t2)
     {
     }
 
-    pair(const pair& other) : first(other.first), second(other.second)
+    pair(const pair& other)
+        : first(other.first), second(other.second)
     {
     }
 
     template <class U1, class U2>
-    pair(const pair<U1, U2>& other) : first(other.first), second(other.second)
+    pair(const pair<U1, U2>& other)
+        : first(other.first), second(other.second)
     {
     }
 

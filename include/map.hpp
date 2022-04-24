@@ -3,10 +3,10 @@
 
 #include <stdexcept>
 
-#include "AVLtree.hpp"
-#include "reverse_iterator.hpp"
+#include "algorithm.hpp"
+#include "avl_tree.hpp"
 #include "pair.hpp"
-#include "utils.hpp"
+#include "reverse_iterator.hpp"
 
 template <class pointer>
 struct tree_node;
@@ -21,17 +21,17 @@ class map
 {
 public:
     // types:
-    typedef Key key_type;
-    typedef T mapped_type;
+    typedef Key                                   key_type;
+    typedef T                                     mapped_type;
     typedef ft::pair<const key_type, mapped_type> value_type;
-    typedef Compare key_compare;
-    typedef Allocator allocator_type;
+    typedef Compare                               key_compare;
+    typedef Allocator                             allocator_type;
 
-    typedef typename allocator_type::reference reference;
+    typedef typename allocator_type::reference       reference;
     typedef typename allocator_type::const_reference const_reference;
-    typedef typename allocator_type::pointer pointer;
-    typedef typename allocator_type::const_pointer const_pointer;
-    typedef typename allocator_type::size_type size_type;
+    typedef typename allocator_type::pointer         pointer;
+    typedef typename allocator_type::const_pointer   const_pointer;
+    typedef typename allocator_type::size_type       size_type;
     typedef typename allocator_type::difference_type difference_type;
 
     // value_type 型のオブジェクト（キーと値のペア）を
@@ -43,7 +43,8 @@ public:
         key_compare comp;
 
         // pairのkeyで比較する
-        value_compare(key_compare c) : comp(c)
+        value_compare(key_compare c)
+            : comp(c)
         {
         }
         bool operator()(const value_type& lhs, const value_type& rhs) const
@@ -60,9 +61,9 @@ public:
     tree tree_;
 
 public:
-    typedef typename tree::iterator iterator;
-    typedef typename tree::const_iterator const_iterator;
-    typedef ft::reverse_iterator<iterator> reverse_iterator;
+    typedef typename tree::iterator              iterator;
+    typedef typename tree::const_iterator        const_iterator;
+    typedef ft::reverse_iterator<iterator>       reverse_iterator;
     typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
     /// Member functions
@@ -84,18 +85,15 @@ public:
     }
 
     // copy constructor
-    map(const map& other) : tree_(other.tree_)
+    map(const map& other)
+        : tree_(other.tree_)
     {
     }
 
     map& operator=(const map& other)
     {
-        if (this == &other)
-        {
-            return *this;
-        }
+        if (this == &other) return *this;
         tree_.clear();
-        tree_.value_comp() = other.tree_.value_comp();
         insert(other.begin(), other.end());
         return *this;
     }

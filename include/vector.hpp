@@ -2,17 +2,14 @@
 #define VECTOR_HPP
 
 #include <iostream>
+#include <iterator>
 #include <limits>
 #include <memory>
-#include <iterator>
 
-/***********************/
-#include "debug.hpp"
-/***********************/
-#include "reverse_iterator.hpp"
+#include "algorithm.hpp"
 #include "normal_iterator.hpp"
+#include "reverse_iterator.hpp"
 #include "type_traits.hpp"
-#include "utils.hpp"
 
 namespace ft
 {
@@ -20,18 +17,18 @@ template <typename T, typename Allocator = std::allocator<T> >
 class vector
 {
 public:
-    typedef T value_type;
-    typedef Allocator allocator_type;
+    typedef T                                        value_type;
+    typedef Allocator                                allocator_type;
     typedef typename allocator_type::difference_type difference_type;
-    typedef typename allocator_type::pointer pointer;
-    typedef typename allocator_type::const_pointer const_pointer;
-    typedef typename allocator_type::reference reference;
+    typedef typename allocator_type::pointer         pointer;
+    typedef typename allocator_type::const_pointer   const_pointer;
+    typedef typename allocator_type::reference       reference;
     typedef typename allocator_type::const_reference const_reference;
-    typedef size_t size_type;
+    typedef size_t                                   size_type;
 
-    typedef ft::normal_iterator<pointer> iterator;
-    typedef ft::normal_iterator<const_pointer> const_iterator;
-    typedef ft::reverse_iterator<iterator> reverse_iterator;
+    typedef ft::normal_iterator<pointer>         iterator;
+    typedef ft::normal_iterator<const_pointer>   const_iterator;
+    typedef ft::reverse_iterator<iterator>       reverse_iterator;
     typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
     /// Member functions
@@ -78,9 +75,9 @@ public:
     // destructor
     ~vector()
     {
-        // 1. 要素を末尾から先頭に向かう順番で破棄
+        // 要素を末尾から先頭に向かう順番で破棄
         clear();
-        // 2. 生のメモリーを解放する
+        // 生のメモリーを解放する
         deallocate();
     }
 
@@ -313,7 +310,7 @@ public:
 
         // 古いストレージの情報を保存
         pointer old_first      = first_;
-        size_type old_size = size();
+        size_type old_size     = size();
         size_type old_capacity = capacity();
 
         for (size_type i = 0; i < old_size; i++)
@@ -326,8 +323,8 @@ public:
         }
         alloc_.deallocate(old_first, old_capacity);
 
-        first_ = ptr;
-        last_ = first_ + old_size;
+        first_         = ptr;
+        last_          = first_ + old_size;
         reserved_last_ = first_ + new_cap;
     }
 
@@ -356,7 +353,6 @@ public:
      */
     iterator insert(const_iterator pos, const value_type& value)
     {
-//        difference_type offset = std::distance(begin(), pos);
         difference_type offset = std::distance(const_iterator(first_), pos);
         insert(pos, 1, value);
         return begin() + offset;
@@ -440,7 +436,7 @@ public:
 
     // a = {1,2,3,4,5};
     // a.erase(a.begin()+1, a.begin()+3);
-    //      * * (ここを詰める)
+    //      * *
     // a: 1 2 3 4 5 -> 1 4 5
     iterator erase(iterator first, iterator last)
     {

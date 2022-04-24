@@ -1,7 +1,11 @@
-#ifndef AVLTREE_HPP
-#define AVLTREE_HPP
+#ifndef AVL_TREE_HPP
+#define AVL_TREE_HPP
+
+#ifdef DEBUG
 #include <fstream>
 #include <iosfwd>
+#endif
+
 #include <iostream>
 #include <iterator>
 
@@ -142,10 +146,10 @@ protected:
 
 public:
     typedef typename traits_type::iterator_category iterator_category;
-    typedef typename traits_type::value_type value_type;
-    typedef typename traits_type::difference_type difference_type;
-    typedef typename traits_type::reference reference;
-    typedef typename traits_type::pointer pointer;
+    typedef typename traits_type::value_type        value_type;
+    typedef typename traits_type::difference_type   difference_type;
+    typedef typename traits_type::reference         reference;
+    typedef typename traits_type::pointer           pointer;
 
     typedef tree_node<value_type>* node_pointer;
     typedef tree_iterator<T> Self;
@@ -154,14 +158,17 @@ private:
     node_pointer ptr_;
 
 public:
-    tree_iterator() : ptr_(NULL)
+    tree_iterator()
+        : ptr_(NULL)
     {
     }
-    explicit tree_iterator(node_pointer p) : ptr_(p)
+    explicit tree_iterator(node_pointer p)
+        : ptr_(p)
     {
     }
 
-    tree_iterator(const tree_iterator& other) : ptr_(other.base())
+    tree_iterator(const tree_iterator& other)
+        : ptr_(other.base())
     {
     }
 
@@ -242,16 +249,20 @@ private:
     node_pointer ptr_;
 
 public:
-    const_tree_iterator() : ptr_(NULL)
+    const_tree_iterator()
+        : ptr_(NULL)
     {
     }
-    explicit const_tree_iterator(node_pointer p) : ptr_(p)
+    explicit const_tree_iterator(node_pointer p)
+        : ptr_(p)
     {
     }
-    const_tree_iterator(const tree_iterator& other) : ptr_(other.base())
+    const_tree_iterator(const tree_iterator& other)
+        : ptr_(other.base())
     {
     }
-    const_tree_iterator(const const_tree_iterator& other) : ptr_(other.base())
+    const_tree_iterator(const const_tree_iterator& other)
+        : ptr_(other.base())
     {
     }
     const_tree_iterator& operator=(const const_tree_iterator& other)
@@ -382,10 +393,7 @@ public:
         all_clear(root_);
         comp_  = other.comp_;
         alloc_ = other.alloc_;
-        for (const_iterator it = other.begin(); it != other.end(); ++it)
-        {
-            insert_unique(*it);
-        }
+        insert_range_unique(other.begin(), other.end());
         return *this;
     }
 
@@ -713,11 +721,6 @@ public:
     /// Observers
 
     key_compare key_comp() const
-    {
-        return comp_;
-    }
-
-    key_compare value_comp() const
     {
         return comp_;
     }
@@ -1120,54 +1123,58 @@ private:
         std::cout << "======================" << std::endl;
     }
 
-#ifdef DEBUG
-public:
-#endif
-    /**
-     * @brief mp.tree_.show_graph()のように使う
-     */
-    void show_graph(void) const
-    {
-        std::ofstream ofs("avltree.dot");
+    // #ifdef DEBUG
+    // public:
+    // #endif
 
-        for (const_iterator it = begin(); it != end(); ++it)
-        {
-            ofs << "# "
-                << "key : " << it->first << " value : " << it->second
-                << std::endl;
-        }
+    //     /**
+    //      * @brief mp.tree_.show_graph()のように使う
+    //      */
+    //     void show_graph(void) const
+    //     {
+    //         std::ofstream ofs("avltree.dot");
 
-        ofs << "digraph tree {\n"
-            << "graph "
-            << "[centering=\"true\",ranksep=0.5,ordering=out,nodesep=0.5];\n"
-            << "node [shape=circle, width = 0.5, height = 0.5, margin = 0.01];"
-            << std::endl;
+    //         for (const_iterator it = begin(); it != end(); ++it)
+    //         {
+    //             ofs << "# "
+    //                 << "key : " << it->first << " value : " << it->second
+    //                 << std::endl;
+    //         }
 
-        ft::stack<node_pointer> stack;
-        stack.push(root_);
+    //         ofs << "digraph tree {\n"
+    //             << "graph "
+    //             <<
+    //             "[centering=\"true\",ranksep=0.5,ordering=out,nodesep=0.5];\n"
+    //             << "node [shape=circle, width = 0.5, height = 0.5, margin =
+    //             0.01];"
+    //             << std::endl;
 
-        while (!stack.empty())
-        {
-            node_pointer front = stack.top();
-            stack.pop();
-            if (front->left_ != NULL)
-            {
-                ofs << front->data_.first << " -> " << front->left_->data_.first
-                    << ";" << std::endl;
-                stack.push(front->left_);
-            }
-            if (front->right_ != NULL)
-            {
-                ofs << front->data_.first << " -> "
-                    << front->right_->data_.first << ";" << std::endl;
-                stack.push(front->right_);
-            }
-        }
-        ofs << "}" << std::endl;
+    //         ft::stack<node_pointer> stack;
+    //         stack.push(root_);
 
-        system("dot -Kdot -Tpng avltree.dot -o avltree.png");
-        system("qlmanage -p avltree.png");
-    }
+    //         while (!stack.empty())
+    //         {
+    //             node_pointer front = stack.top();
+    //             stack.pop();
+    //             if (front->left_ != NULL)
+    //             {
+    //                 ofs << front->data_.first << " -> " <<
+    //                 front->left_->data_.first
+    //                     << ";" << std::endl;
+    //                 stack.push(front->left_);
+    //             }
+    //             if (front->right_ != NULL)
+    //             {
+    //                 ofs << front->data_.first << " -> "
+    //                     << front->right_->data_.first << ";" << std::endl;
+    //                 stack.push(front->right_);
+    //             }
+    //         }
+    //         ofs << "}" << std::endl;
+
+    //         system("dot -Kdot -Tpng avltree.dot -o avltree.png");
+    //         system("qlmanage -p avltree.png");
+    //     }
 };
 
 }    // namespace ft

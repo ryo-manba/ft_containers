@@ -1,10 +1,7 @@
 #ifndef STACK_HPP
 #define STACK_HPP
 
-/***********************/
-#include "debug.hpp"
-/***********************/
-#include "utils.hpp"
+#include "algorithm.hpp"
 #include "vector.hpp"
 
 namespace ft
@@ -13,11 +10,11 @@ template <typename Tp, typename Sequence = ft::vector<Tp> >
 class stack
 {
 public:
-    typedef typename Sequence::value_type value_type;
-    typedef typename Sequence::reference reference;
+    typedef typename Sequence::value_type      value_type;
+    typedef typename Sequence::reference       reference;
     typedef typename Sequence::const_reference const_reference;
-    typedef typename Sequence::size_type size_type;
-    typedef Sequence container_type;
+    typedef typename Sequence::size_type       size_type;
+    typedef Sequence                           container_type;
 
     template <typename T, typename Seq>
     friend bool operator==(const stack<T, Seq>& lhs, const stack<T, Seq>& rhs);
@@ -32,11 +29,13 @@ public:
     /// Member functions
 
     // default constructor
-    explicit stack(const Sequence& c = Sequence()) : c(c)
+    explicit stack(const Sequence& c = Sequence())
+        : c(c)
     {
     }
 
-    stack(const stack& other) : c(other.c)
+    stack(const stack& other)
+        : c(other.c)
     {
     }
 

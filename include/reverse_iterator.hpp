@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <iterator>
+
 #include "iterator_traits.hpp"
 
 namespace ft
@@ -16,10 +17,10 @@ template <typename _Category, typename _Tp, typename _Distance = ptrdiff_t,
           typename _Pointer = _Tp*, typename _Reference = _Tp&>
 struct iterator
 {
-    typedef _Category iterator_category;
-    typedef _Tp value_type;
-    typedef _Distance difference_type;
-    typedef _Pointer pointer;
+    typedef _Category  iterator_category;
+    typedef _Tp        value_type;
+    typedef _Distance  difference_type;
+    typedef _Pointer   pointer;
     typedef _Reference reference;
 };
 
@@ -37,18 +38,20 @@ protected:
     typedef iterator_traits<Iterator> traits_type;
 
 public:
-    typedef Iterator iterator_type;
+    typedef Iterator                                iterator_type;
     typedef typename traits_type::iterator_category iterator_category;
-    typedef typename traits_type::value_type value_type;
-    typedef typename traits_type::difference_type difference_type;
-    typedef typename traits_type::reference reference;
-    typedef typename traits_type::pointer pointer;
+    typedef typename traits_type::value_type        value_type;
+    typedef typename traits_type::difference_type   difference_type;
+    typedef typename traits_type::reference         reference;
+    typedef typename traits_type::pointer           pointer;
 
     // member functions
-    reverse_iterator() : current_()
+    reverse_iterator()
+        : current_()
     {
     }
-    explicit reverse_iterator(iterator_type it) : current_(it)
+    explicit reverse_iterator(iterator_type it)
+        : current_(it)
     {
     }
 
@@ -58,7 +61,8 @@ public:
     {
     }
 
-    reverse_iterator(const reverse_iterator& other) : current_(other.base())
+    reverse_iterator(const reverse_iterator& other)
+        : current_(other.base())
     {
     }
 
