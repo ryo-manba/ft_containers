@@ -36,3 +36,12 @@ format.sh
 .gitignore
 todo/
 stl/
+benchmark*.log
+bm_ft
+bm_stl
+a.cpp
+a.sh
+foo.hpp
+score
+ft
+std

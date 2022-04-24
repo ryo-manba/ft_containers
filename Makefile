@@ -49,6 +49,7 @@ clean:
 
 fclean: clean
 	$(RM) $(NAME) $(SUBJ_NAME)
+	make fclean -C benchmark
 
 re: fclean all
 
