@@ -277,7 +277,7 @@ public:
      * コンテナのサイズの理論的な制限を反映しており、利用可能な RAM の量によって
      * max_size() よりも小さな値に制限されることがある
      */
-    size_type max_size(void) const
+    size_type max_size() const
     {
         const size_t diffmax =
             std::numeric_limits<size_type>::max() / sizeof(value_type);

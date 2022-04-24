@@ -92,17 +92,17 @@ public:
     {
     }
 
+    // destructor
+    ~map()
+    {
+    }
+
     map& operator=(const map& other)
     {
         if (this == &other) return *this;
         tree_.clear();
         insert(other.begin(), other.end());
         return *this;
-    }
-
-    // destructor
-    ~map()
-    {
     }
 
     /**
@@ -157,11 +157,8 @@ public:
         return (*it).second;
     }
 
-    /**
-     * @brief
-     */
-
     /// Iterators
+
     iterator begin()
     {
         return tree_.begin();

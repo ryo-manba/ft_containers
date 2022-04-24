@@ -317,7 +317,7 @@ static void bm_operator_cmp(void)
     init_map(mp1);
     init_map(mp2);
 
-    Timer t("mapoperator_cmp");
+    Timer t("map::operator_cmp");
     for (int i = 0; i < loops; i++)
     {
         static_cast<void>(mp1 == mp2);

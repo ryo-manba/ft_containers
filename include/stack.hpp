@@ -44,7 +44,7 @@ public:
     {
     }
 
-    const stack<Tp, Sequence>& operator=(const stack<Tp, Sequence>& other)
+    stack& operator=(const stack& other)
     {
         if (this != &other) c = other.c;
         return *this;
