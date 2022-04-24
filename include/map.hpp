@@ -39,7 +39,8 @@ public:
     class value_compare
         : public std::binary_function<value_type, value_type, bool>
     {
-    public:
+        friend class map;
+    protected:
         key_compare comp;
 
         // pairのkeyで比較する
@@ -47,6 +48,7 @@ public:
             : comp(c)
         {
         }
+    public:
         bool operator()(const value_type& lhs, const value_type& rhs) const
         {
             return comp(lhs.first, rhs.first);
