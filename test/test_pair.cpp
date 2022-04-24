@@ -1,6 +1,5 @@
 #include <iostream>
 #include <string>
-#include <tuple>
 #include <utility>
 
 #include "pair.hpp"
@@ -91,5 +90,5 @@ int test_pair(void)
     tester.run(test_operator_equal(), "test_operator_equal");
     tester.run(test_operator_cmp(), "test_operator_cmp");
     tester.run(test_make_pair(), "test_make_pair");
-    return tester.getRet();
+    return tester.get_retval();
 }

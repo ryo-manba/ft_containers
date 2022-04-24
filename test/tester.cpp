@@ -1,10 +1,20 @@
 #include "tester.hpp"
-#include "Color.hpp"
+
 #include <iostream>
 
-Tester::Tester() : ret_(0) {}
-Tester::Tester(const Tester& other) : ret_(other.getRet()) {}
-Tester::~Tester()  {}
+#include "color.hpp"
+
+Tester::Tester()
+    : ret_(0)
+{
+}
+Tester::Tester(const Tester& other)
+    : ret_(other.get_retval())
+{
+}
+Tester::~Tester()
+{
+}
 
 void Tester::run(bool result, std::string test_case)
 {
@@ -22,7 +32,7 @@ void Tester::run(bool result, std::string test_case)
         ret_ += 1;
 }
 
-int Tester::getRet(void) const
+int Tester::get_retval(void) const
 {
     return ret_;
 }

@@ -3,7 +3,6 @@
 #include <stack>
 #include <vector>
 
-#include "Color.hpp"
 #include "debug.hpp"
 #include "stack.hpp"
 #include "tester.hpp"
@@ -234,5 +233,5 @@ int test_stack(void)
 
     // Non-member functions
     tester.run(test_operator_cmp(), "test_operator_cmp");
-    return tester.getRet();
+    return tester.get_retval();
 }

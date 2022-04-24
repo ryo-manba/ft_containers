@@ -2,7 +2,6 @@
 #include <sstream>
 #include <vector>
 
-#include "Color.hpp"
 #include "debug.hpp"
 #include "tester.hpp"
 #include "vector.hpp"
@@ -81,9 +80,13 @@ static bool test_constructor(void)
 static bool test_constructor_with_input_iterator(void)
 {
     std::stringstream ss1;
-    ss1 << 1 << std::endl << 2 << std::endl << 3;
+    ss1 << 1 << std::endl
+        << 2 << std::endl
+        << 3;
     std::stringstream ss2;
-    ss2 << 1 << std::endl << 2 << std::endl << 3;
+    ss2 << 1 << std::endl
+        << 2 << std::endl
+        << 3;
 
     std::istream_iterator<int> it1(ss1);
     std::istream_iterator<int> it2(ss2);
@@ -155,9 +158,13 @@ static bool test_assign(void)
 static bool test_assign_with_input_iterator(void)
 {
     std::stringstream ss1;
-    ss1 << 1 << std::endl << 2 << std::endl << 3;
+    ss1 << 1 << std::endl
+        << 2 << std::endl
+        << 3;
     std::stringstream ss2;
-    ss2 << 1 << std::endl << 2 << std::endl << 3;
+    ss2 << 1 << std::endl
+        << 2 << std::endl
+        << 3;
 
     std::istream_iterator<int> it1(ss1);
     std::istream_iterator<int> it2(ss2);
@@ -524,9 +531,13 @@ static bool test_insert(void)
 static bool test_insert_with_input_iterator(void)
 {
     std::stringstream ss1;
-    ss1 << 1 << std::endl << 2 << std::endl << 3;
+    ss1 << 1 << std::endl
+        << 2 << std::endl
+        << 3;
     std::stringstream ss2;
-    ss2 << 1 << std::endl << 2 << std::endl << 3;
+    ss2 << 1 << std::endl
+        << 2 << std::endl
+        << 3;
 
     std::istream_iterator<int> it1(ss1);
     std::istream_iterator<int> it2(ss2);
@@ -758,5 +769,5 @@ int test_vector(void)
     tester.run(test_operator_cmp(), "test_operator_cmp");
     tester.run(test_std_swap(), "test_std_swap");
 
-    return tester.getRet();
+    return tester.get_retval();
 }

@@ -3,7 +3,6 @@
 #include <utility>
 #include <vector>
 
-#include "Color.hpp"
 #include "debug.hpp"
 #include "map.hpp"
 #include "pair.hpp"
@@ -996,5 +995,5 @@ int test_map(void)
     tester.run(test_operator_cmp(), "test_operator_cmp");
     tester.run(test_std_swap(), "test_std_swap");
 
-    return tester.getRet();
+    return tester.get_retval();
 }
