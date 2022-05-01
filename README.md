@@ -1,7 +1,7 @@
 # ft_containers
 
 ## Description
-Reimplementation of STL container with C++98.
+Reimplementation of STL containers with C++98.
 
 ## Requirement
 
