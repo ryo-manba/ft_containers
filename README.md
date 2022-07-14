@@ -15,7 +15,7 @@ Implement a series of containers:
 - map
 
 ## Test
-```
+```bash
 git clone https://github.com/ryo-manba/ft_containers
 cd ft_containers
 
